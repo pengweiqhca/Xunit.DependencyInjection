@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
+    <Authors>Wei Peng</Authors>
+    <Copyright>Copyright © 2018</Copyright>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">True</GeneratePackageOnBuild>
+    <IncludeSymbols>True</IncludeSymbols>
+    <LangVersion>latest</LangVersion>
+    <NoWarn>1591</NoWarn>
+    <RepositoryUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <SignAssembly>True</SignAssembly>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass</Description>
+    <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
+    <Version>1.0.1</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.2.0" />
+  </ItemGroup>
+
+</Project>
