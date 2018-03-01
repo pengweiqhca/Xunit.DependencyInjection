@@ -25,8 +25,7 @@ namespace Xunit.DependencyInjection
                 messageBus, testCaseOrderer, aggregator,
                 cancellationTokenSource, collectionFixtureMappings) =>
             _provider = provider;
-
-
+        
         protected override bool TryGetConstructorArgument(ConstructorInfo constructor, int index,
             ParameterInfo parameter, out object argumentValue)
         {

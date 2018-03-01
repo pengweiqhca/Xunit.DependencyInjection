@@ -16,7 +16,12 @@ namespace Xunit.DependencyInjection
 
             ConfigureServices(services);
 
-            return new DependencyInjectionTestFrameworkExecutor(GetServiceProvider(services),
+            var provider = GetServiceProvider(services);
+
+            using (var scope = provider.CreateScope())
+                Configure(scope.ServiceProvider);
+
+            return new DependencyInjectionTestFrameworkExecutor(provider,
                 assemblyName, SourceInformationProvider, DiagnosticMessageSink);
         }
 
@@ -25,5 +30,7 @@ namespace Xunit.DependencyInjection
         /// <summary>You can use autofac or other</summary>
         protected virtual IServiceProvider GetServiceProvider(IServiceCollection services) =>
             services.BuildServiceProvider();
+
+        protected virtual void Configure(IServiceProvider provider) { }
     }
 }

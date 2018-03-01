@@ -17,7 +17,8 @@
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
+    <PackageReleaseNotes>1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
