@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -9,9 +10,14 @@ namespace Xunit.DependencyInjection.Test
     {
         public ConfigureTestFramework(IMessageSink messageSink) : base(messageSink) { }
 
+        protected override void Configuration(IConfigurationBuilder builder)
+        {
+            builder.AddJsonFile("appsettings.json");
+        }
+
         protected override void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IDependency, DependencyClass>();
+            services.AddScoped<IDependency, DependencyClass>();
         }
     }
 }
