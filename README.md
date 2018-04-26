@@ -54,7 +54,7 @@ public class MyAwesomeTests
 }
 ```
 
-How to use InstancePerTest(not test class)?
+How to use InstancePerTestCase(not test class)?
 ``` C#
 public class InstancePerTest : IDisposable
 {
