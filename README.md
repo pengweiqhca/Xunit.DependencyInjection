@@ -1,4 +1,4 @@
-Use Microsoft.Extensions.DependencyInjection to resolve xUnit test cases.
+ï»¿Use Microsoft.Extensions.DependencyInjection to resolve xUnit test cases.
 
 How to use
 =============
@@ -54,7 +54,7 @@ public class MyAwesomeTests
 }
 ```
 
-How to use InstancePerTest(not test class)£¿
+How to use InstancePerTest(not test class)?
 ``` C#
 public class InstancePerTest : IDisposable
 {
