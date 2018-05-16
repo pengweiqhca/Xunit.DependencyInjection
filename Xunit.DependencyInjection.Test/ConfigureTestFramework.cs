@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 using Xunit;
 using Xunit.Abstractions;
 
@@ -15,9 +16,11 @@ namespace Xunit.DependencyInjection.Test
             builder.AddJsonFile("appsettings.json");
         }
 
-        protected override void ConfigureServices(IServiceCollection services)
+        protected override IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IDependency, DependencyClass>();
+
+            return services.BuildServiceProvider();
         }
     }
 }

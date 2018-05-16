@@ -23,11 +23,9 @@ namespace Xunit.DependencyInjection
 
             services.AddSingleton<IConfiguration>(Root = builder.Build());
 
-            ConfigureServices(services);
+            var provider = ConfigureServices(services);
 
-            var provider = GetServiceProvider(services);
-
-            using (var scope = provider.CreateScope())
+            using (var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope())
                 Configure(scope.ServiceProvider);
 
             return new DependencyInjectionTestFrameworkExecutor(provider,
@@ -36,11 +34,7 @@ namespace Xunit.DependencyInjection
 
         protected virtual void Configuration(IConfigurationBuilder builder) { }
 
-        protected abstract void ConfigureServices(IServiceCollection services);
-
-        /// <summary>You can use autofac or other</summary>
-        protected virtual IServiceProvider GetServiceProvider(IServiceCollection services) =>
-            services.BuildServiceProvider();
+        protected abstract IServiceProvider ConfigureServices(IServiceCollection services);
 
         protected virtual void Configure(IServiceProvider provider) { }
     }

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
@@ -14,19 +14,21 @@
     <RepositoryUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <SignAssembly>True</SignAssembly>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net45;netstandard1.1</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>1.2.0</Version>
+    <Version>2.0.0</Version>
     <PackageReleaseNotes>1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
-1.2.0: DependencyInjectionTestFramework class add Configuration(IConfigurationBuilder builder) method</PackageReleaseNotes>
+1.2.0: DependencyInjectionTestFramework class add Configuration(IConfigurationBuilder builder) method
+2.0.0: Change ConfigureServices retrun value from void to IServiceProvider; Decrease dependency package version.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="2.0.0" />
-    <PackageReference Include="xunit.extensibility.execution" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.1.0" Condition="'$(TargetFramework)' == 'net45'" />
+    <PackageReference Include="xunit.extensibility.execution" Version="2.2.0" Condition="'$(TargetFramework)' == 'netstandard1.1'" />
   </ItemGroup>
 
 </Project>
