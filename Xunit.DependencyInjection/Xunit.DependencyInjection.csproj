@@ -17,10 +17,11 @@
     <TargetFrameworks>net45;netstandard1.1</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>2.0.0</Version>
+    <Version>3.0.0</Version>
     <PackageReleaseNotes>1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
 1.2.0: DependencyInjectionTestFramework class add Configuration(IConfigurationBuilder builder) method
-2.0.0: Change ConfigureServices retrun value from void to IServiceProvider; Decrease dependency package version.</PackageReleaseNotes>
+2.0.0: Change ConfigureServices retrun value from void to IServiceProvider; Decrease dependency package version.
+3.0.0: Move ServiceScope from TestClass to TestCase.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</PackageProjectUrl>
   </PropertyGroup>
 

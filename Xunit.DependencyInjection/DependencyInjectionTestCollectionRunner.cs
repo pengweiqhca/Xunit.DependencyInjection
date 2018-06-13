@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,14 +27,11 @@ namespace Xunit.DependencyInjection
             _diagnosticMessageSink = diagnosticMessageSink;
         }
 
-        protected override async Task<RunSummary> RunTestClassAsync(ITestClass testClass, IReflectionTypeInfo @class,
-            IEnumerable<IXunitTestCase> testCases)
-        {
-            using (var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope())
-                return await new DependencyInjectionTestClassRunner(scope.ServiceProvider, testClass, @class, testCases,
-                        _diagnosticMessageSink, MessageBus, TestCaseOrderer,
-                        new ExceptionAggregator(Aggregator), CancellationTokenSource, CollectionFixtureMappings)
-                    .RunAsync();
-        }
+        protected override Task<RunSummary> RunTestClassAsync(ITestClass testClass, IReflectionTypeInfo @class,
+            IEnumerable<IXunitTestCase> testCases) =>
+            new DependencyInjectionTestClassRunner(_provider, testClass, @class, testCases,
+                    _diagnosticMessageSink, MessageBus, TestCaseOrderer,
+                    new ExceptionAggregator(Aggregator), CancellationTokenSource, CollectionFixtureMappings)
+                .RunAsync();
     }
 }

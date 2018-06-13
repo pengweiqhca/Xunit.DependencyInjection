@@ -53,21 +53,3 @@ public class MyAwesomeTests
     }
 }
 ```
-
-How to use InstancePerTestCase(not test class)?
-``` C#
-public class InstancePerTest : IDisposable
-{
-    private readonly IServiceScope _serviceScope;
-    private readonly IDependency _d;
-
-    public InstancePerTest(IServiceProvider provider)
-    {
-        _serviceScope = provider.CreateScope();
-
-        _d = _serviceScope.ServiceProvider.GetRequiredService<IDependency>();
-    }
-
-    public void Dispose() => _serviceScope.Dispose();
-}
-```
