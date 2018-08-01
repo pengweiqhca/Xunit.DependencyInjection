@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.Sdk;
 
 [assembly: TestFramework("Xunit.DependencyInjection.Test.ConfigureTestFramework", "Xunit.DependencyInjection.Test")]
 namespace Xunit.DependencyInjection.Test
@@ -19,7 +20,7 @@ namespace Xunit.DependencyInjection.Test
         protected override IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IDependency, DependencyClass>();
-
+            services.AddSingleton<ITestOutputHelper>(new TestOutputHelper());
             return services.BuildServiceProvider();
         }
     }

@@ -31,6 +31,12 @@ namespace Xunit.DependencyInjection.Test
             Assert.Equal(1, _d.Value);
         }
 
+        [Fact]
+        public void Test3()
+        {
+            _d.TestWriteLine();
+        }
+
         public void Dispose() => _serviceScope.Dispose();
     }
 }
