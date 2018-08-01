@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,34 +10,35 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestInvoker : TestInvoker<IXunitTestCase>
     {
+        private readonly ITestOutputHelperAccessor _accessor;
+
         public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus, Type testClass,
             object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
             ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) : base(test, messageBus,
             testClass, constructorArguments, testMethod, testMethodArguments, aggregator, cancellationTokenSource)
         {
-            _testOutputHelper = (TestOutputHelper)provider.GetService(typeof(ITestOutputHelper));
+            _accessor = provider.GetRequiredService<ITestOutputHelperAccessor>();
         }
 
         public string Output { get; set; }
 
         protected override Task BeforeTestMethodInvokedAsync()
         {
-            _testOutputHelper?.Initialize(MessageBus, Test);
+            if (_accessor.Output is TestOutputHelper output)
+                output.Initialize(MessageBus, Test);
 
             return base.BeforeTestMethodInvokedAsync();
         }
 
         protected override Task AfterTestMethodInvokedAsync()
         {
-            if (_testOutputHelper != null)
+            if (_accessor.Output is TestOutputHelper output)
             {
-                Output = _testOutputHelper.Output;
-                _testOutputHelper.Uninitialize();
+                Output = output.Output;
+                output.Uninitialize();
             }
-            
+
             return base.AfterTestMethodInvokedAsync();
         }
-
-        private readonly TestOutputHelper _testOutputHelper;
     }
 }

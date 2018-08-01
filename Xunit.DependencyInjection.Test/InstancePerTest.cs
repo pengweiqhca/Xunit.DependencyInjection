@@ -34,7 +34,7 @@ namespace Xunit.DependencyInjection.Test
         [Fact]
         public void Test3()
         {
-            _d.TestWriteLine();
+            _d.TestWriteLine(100);
         }
 
         public void Dispose() => _serviceScope.Dispose();

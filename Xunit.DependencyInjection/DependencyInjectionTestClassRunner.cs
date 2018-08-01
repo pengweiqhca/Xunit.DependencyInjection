@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
@@ -35,7 +36,9 @@ namespace Xunit.DependencyInjection
             var constructor = SelectTestClassConstructor();
             if (constructor == null)
                 return new object[0];
-
+#if ASYNCLOCAL
+            _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
+#endif
             var parameters = constructor.GetParameters();
             var objArray = new object[parameters.Length];
             for (var index = 0; index < parameters.Length; ++index)
@@ -49,7 +52,18 @@ namespace Xunit.DependencyInjection
 
             return objArray;
         }
+#if ASYNCLOCAL
+        protected override bool TryGetConstructorArgument(ConstructorInfo constructor, int index, ParameterInfo parameter, out object argumentValue)
+        {
+            if (parameter.ParameterType == typeof(ITestOutputHelper))
+            {
+                argumentValue = _provider.GetRequiredService<ITestOutputHelperAccessor>().Output;
+                return true;
+            }
 
+            return base.TryGetConstructorArgument(constructor, index, parameter, out argumentValue);
+        }
+#endif
         internal class DelayArgument
         {
             public DelayArgument(ParameterInfo parameter, Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> formatConstructorArgsMissingMessage)

@@ -27,6 +27,9 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1'">
+    <Compile Remove="DependencyInjectionTestCaseRunner.cs" />
+    <Compile Remove="DependencyInjectionTestRunner.cs" />
+    <Compile Remove="DependencyInjectionTestInvoker.cs" />
     <Compile Remove="TestOutputHelperAccessor.cs" />
   </ItemGroup>
 

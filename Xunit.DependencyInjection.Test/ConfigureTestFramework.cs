@@ -20,7 +20,7 @@ namespace Xunit.DependencyInjection.Test
         protected override IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddScoped<IDependency, DependencyClass>();
-            services.AddSingleton<ITestOutputHelper>(new TestOutputHelper());
+
             return services.BuildServiceProvider();
         }
     }

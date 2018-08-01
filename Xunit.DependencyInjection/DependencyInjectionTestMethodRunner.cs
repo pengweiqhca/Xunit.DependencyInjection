@@ -59,16 +59,19 @@ namespace Xunit.DependencyInjection
             return args;
         }
 
-        protected override Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
+        protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
         {
             using (var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            {
-                return new DependencyInjectionTestCaseRunner(_provider,
-                    CreateTestClassConstructorArguments(scope.ServiceProvider),
-                    testCase as XunitTestCase, 
-                    this.MessageBus,
-                    new ExceptionAggregator(Aggregator), CancellationTokenSource).RunAsync();
-            }
+#if ASYNCLOCAL
+                return await new DependencyInjectionTestCaseRunner(_provider,
+                        CreateTestClassConstructorArguments(scope.ServiceProvider),
+                        testCase as XunitTestCase,
+                        MessageBus,
+                        new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                    .RunAsync();
+# else
+                return await testCase.RunAsync(_diagnosticMessageSink, MessageBus, CreateTestClassConstructorArguments(scope.ServiceProvider), new ExceptionAggregator(Aggregator), CancellationTokenSource);
+#endif
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Xunit.DependencyInjection
         private readonly IServiceProvider _provider;
         private readonly object[] _constructorArguments;
 
-        public DependencyInjectionTestCaseRunner(IServiceProvider provider, object[] constructorArguments, XunitTestCase testCase, 
+        public DependencyInjectionTestCaseRunner(IServiceProvider provider, object[] constructorArguments, XunitTestCase testCase,
             IMessageBus messageBus,
             ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) : base(testCase,
             messageBus, aggregator, cancellationTokenSource)
@@ -32,12 +32,12 @@ namespace Xunit.DependencyInjection
 
             return new DependencyInjectionTestRunner(_provider,
                     test,
-                    MessageBus, 
-                    testClass, 
+                    MessageBus,
+                    testClass,
                     _constructorArguments,
                     testMethod,
-                    TestCase.TestMethodArguments, 
-                    TestCase.SkipReason, 
+                    TestCase.TestMethodArguments,
+                    TestCase.SkipReason,
                     Aggregator,
                     CancellationTokenSource)
                 .RunAsync();

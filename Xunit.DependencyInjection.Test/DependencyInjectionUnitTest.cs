@@ -34,5 +34,11 @@ namespace Xunit.DependencyInjection.Test
         {
             Assert.Equal("value", _configuration["key"]);
         }
+
+        [Fact]
+        public void Test4()
+        {
+            _d.TestWriteLine(100);
+        }
     }
 }

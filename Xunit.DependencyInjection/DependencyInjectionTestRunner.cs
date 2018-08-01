@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -7,11 +8,12 @@ using Xunit.Sdk;
 
 namespace Xunit.DependencyInjection
 {
-    public class DependencyInjectionTestRunner : TestRunner<IXunitTestCase>
+    public class DependencyInjectionTestRunner : XunitTestMethodRunner
     {
         private readonly IServiceProvider _provider;
 
-        public DependencyInjectionTestRunner(IServiceProvider provider, ITest test, IMessageBus messageBus, Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments, string skipReason, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments, skipReason, aggregator, cancellationTokenSource)
+        public DependencyInjectionTestRunner(IServiceProvider provider, ITestMethod testMethod, IReflectionTypeInfo @class, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, object[] constructorArguments)
+            : base(testMethod, @class, method, testCases, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource, constructorArguments)
         {
             _provider = provider;
         }

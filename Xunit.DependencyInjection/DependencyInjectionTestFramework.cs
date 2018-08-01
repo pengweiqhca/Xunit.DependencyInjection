@@ -23,8 +23,7 @@ namespace Xunit.DependencyInjection
 
             services.AddSingleton<IConfiguration>(Root = builder.Build());
 #if ASYNCLOCAL
-            services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>()
-                .AddSingleton(provicer => provicer.GetRequiredService<ITestOutputHelperAccessor>().Output);
+            services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
 #endif
             var provider = ConfigureServices(services);
 

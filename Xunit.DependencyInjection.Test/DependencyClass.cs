@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using Xunit.Abstractions;
 
 namespace Xunit.DependencyInjection.Test
@@ -11,23 +8,30 @@ namespace Xunit.DependencyInjection.Test
     {
         int Value { get; set; }
 
-        int TestWriteLine();
+        int TestWriteLine(int count);
     }
 
     internal class DependencyClass : IDependency
     {
-        private readonly ITestOutputHelper _testOutputHelper;
+        private readonly ITestOutputHelperAccessor _testOutputHelperAccessor;
 
-        public DependencyClass(ITestOutputHelper testOutputHelper)
+        public DependencyClass(ITestOutputHelperAccessor testOutputHelperAccessor)
         {
-            _testOutputHelper = testOutputHelper;
+            _testOutputHelperAccessor = testOutputHelperAccessor;
         }
 
         public int Value { get; set; }
 
-        public int TestWriteLine()
+        public int TestWriteLine(int count)
         {
-            _testOutputHelper.WriteLine("test");
+            var output = _testOutputHelperAccessor.Output;
+            if (output != null)
+                for (var index = 0; index < count; index++)
+                {
+                    output.WriteLine($"{DateTime.Now:ss.fff} test {index}");
+                    Thread.Sleep(1);
+                }
+
             return 1;
         }
     }
