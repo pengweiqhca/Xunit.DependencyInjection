@@ -25,8 +25,9 @@ namespace Xunit.DependencyInjection
             ITestCollection testCollection,
             IEnumerable<IXunitTestCase> testCases,
             CancellationTokenSource cancellationTokenSource) =>
-            new DependencyInjectionTestCollectionRunner(_provider, testCollection, testCases, DiagnosticMessageSink,
-                messageBus, TestCaseOrderer, new ExceptionAggregator(Aggregator), cancellationTokenSource)
+            new DependencyInjectionTestCollectionRunner(_provider, testCollection,
+                    testCases, DiagnosticMessageSink, messageBus, TestCaseOrderer,
+                    new ExceptionAggregator(Aggregator), cancellationTokenSource)
                 .RunAsync();
     }
 }

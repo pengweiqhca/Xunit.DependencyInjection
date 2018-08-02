@@ -53,3 +53,15 @@ public class MyAwesomeTests
     }
 }
 ```
+## How to inject ITestOutputHelper
+``` C#
+internal class DependencyClass : IDependency
+{
+    private readonly ITestOutputHelperAccessor _testOutputHelperAccessor;
+
+    public DependencyClass(ITestOutputHelperAccessor testOutputHelperAccessor)
+    {
+        _testOutputHelperAccessor = testOutputHelperAccessor;
+    }
+}
+```

@@ -36,10 +36,11 @@ namespace Xunit.DependencyInjection
             var constructor = SelectTestClassConstructor();
             if (constructor == null)
                 return new object[0];
-#if ASYNCLOCAL
-            _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
-#endif
+
             var parameters = constructor.GetParameters();
+            if (parameters.Length > 0)
+                _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
+
             var objArray = new object[parameters.Length];
             for (var index = 0; index < parameters.Length; ++index)
             {
@@ -52,7 +53,7 @@ namespace Xunit.DependencyInjection
 
             return objArray;
         }
-#if ASYNCLOCAL
+
         protected override bool TryGetConstructorArgument(ConstructorInfo constructor, int index, ParameterInfo parameter, out object argumentValue)
         {
             if (parameter.ParameterType == typeof(ITestOutputHelper))
@@ -63,7 +64,7 @@ namespace Xunit.DependencyInjection
 
             return base.TryGetConstructorArgument(constructor, index, parameter, out argumentValue);
         }
-#endif
+
         internal class DelayArgument
         {
             public DelayArgument(ParameterInfo parameter, Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> formatConstructorArgsMissingMessage)
@@ -98,8 +99,11 @@ namespace Xunit.DependencyInjection
         private static object GetDefaultValue(Type typeInfo) =>
             typeInfo.GetTypeInfo().IsValueType ? Activator.CreateInstance(typeInfo) : null;
 
-        protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object[] constructorArguments) =>
-            new DependencyInjectionTestMethodRunner(_provider, testMethod, Class, method, testCases, DiagnosticMessageSink, MessageBus, new ExceptionAggregator(Aggregator), CancellationTokenSource, constructorArguments)
-            .RunAsync();
+        protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod,
+            IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object[] constructorArguments) =>
+            new DependencyInjectionTestMethodRunner(_provider, testMethod, Class, method,
+                    testCases, MessageBus, new ExceptionAggregator(Aggregator),
+                    CancellationTokenSource, constructorArguments)
+                .RunAsync();
     }
 }

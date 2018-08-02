@@ -14,30 +14,23 @@
     <RepositoryUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <SignAssembly>True</SignAssembly>
-    <TargetFrameworks>net45;net46;netstandard1.1;netstandard1.3</TargetFrameworks>
-    <DefineConstants Condition="'$(TargetFramework)' == 'net46' OR '$(TargetFramework)' == 'netstandard1.3'">$(DefineConstants);ASYNCLOCAL</DefineConstants>
+    <TargetFrameworks>net45;net46;netstandard1.3</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>3.0.0</Version>
+    <Version>3.1.0</Version>
     <PackageReleaseNotes>1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
 1.2.0: DependencyInjectionTestFramework class add Configuration(IConfigurationBuilder builder) method
 2.0.0: Change ConfigureServices retrun value from void to IServiceProvider; Decrease dependency package version.
-3.0.0: Move ServiceScope from TestClass to TestCase.</PackageReleaseNotes>
+3.0.0: Move ServiceScope from TestClass to TestCase.
+3.1.0: Add ITestOutputHelperAccessor to access ITestOutputHelper.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</PackageProjectUrl>
   </PropertyGroup>
-
-  <ItemGroup Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'netstandard1.1'">
-    <Compile Remove="DependencyInjectionTestCaseRunner.cs" />
-    <Compile Remove="DependencyInjectionTestRunner.cs" />
-    <Compile Remove="DependencyInjectionTestInvoker.cs" />
-    <Compile Remove="TestOutputHelperAccessor.cs" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
-    <PackageReference Include="xunit.extensibility.execution" Version="2.1.0" Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46'" />
-    <PackageReference Include="xunit.extensibility.execution" Version="2.2.0" Condition="'$(TargetFramework)' == 'netstandard1.1' OR '$(TargetFramework)' == 'netstandard1.3'" />
+    <PackageReference Include="xunit.extensibility.execution" Version="[2.1.0,3.0.0)" Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46'" />
+    <PackageReference Include="xunit.extensibility.execution" Version="[2.2.0,3.0.0)" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
   </ItemGroup>
 
 </Project>

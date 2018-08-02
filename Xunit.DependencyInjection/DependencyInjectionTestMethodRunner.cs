@@ -12,7 +12,6 @@ namespace Xunit.DependencyInjection
     public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCase>
     {
         private readonly IServiceProvider _provider;
-        private readonly IMessageSink _diagnosticMessageSink;
         private readonly object[] _constructorArguments;
 
         public DependencyInjectionTestMethodRunner(IServiceProvider provider,
@@ -20,7 +19,6 @@ namespace Xunit.DependencyInjection
             IReflectionTypeInfo @class,
             IReflectionMethodInfo method,
             IEnumerable<IXunitTestCase> testCases,
-            IMessageSink diagnosticMessageSink,
             IMessageBus messageBus,
             ExceptionAggregator aggregator,
             CancellationTokenSource cancellationTokenSource,
@@ -28,7 +26,6 @@ namespace Xunit.DependencyInjection
             : base(testMethod, @class, method, testCases, messageBus, aggregator, cancellationTokenSource)
         {
             _provider = provider;
-            _diagnosticMessageSink = diagnosticMessageSink;
             _constructorArguments = constructorArguments;
         }
 
@@ -62,16 +59,11 @@ namespace Xunit.DependencyInjection
         protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
         {
             using (var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope())
-#if ASYNCLOCAL
-                return await new DependencyInjectionTestCaseRunner(_provider,
-                        CreateTestClassConstructorArguments(scope.ServiceProvider),
-                        testCase as XunitTestCase,
-                        MessageBus,
-                        new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                return await new DependencyInjectionTestCaseRunner(scope.ServiceProvider, testCase,
+                        testCase.DisplayName, testCase.SkipReason,
+                        CreateTestClassConstructorArguments(scope.ServiceProvider), testCase.TestMethodArguments,
+                        MessageBus, new ExceptionAggregator(Aggregator), CancellationTokenSource)
                     .RunAsync();
-# else
-                return await testCase.RunAsync(_diagnosticMessageSink, MessageBus, CreateTestClassConstructorArguments(scope.ServiceProvider), new ExceptionAggregator(Aggregator), CancellationTokenSource);
-#endif
         }
     }
 }

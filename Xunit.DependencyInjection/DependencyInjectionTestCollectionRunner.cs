@@ -27,8 +27,8 @@ namespace Xunit.DependencyInjection
             _diagnosticMessageSink = diagnosticMessageSink;
         }
 
-        protected override Task<RunSummary> RunTestClassAsync(ITestClass testClass, IReflectionTypeInfo @class,
-            IEnumerable<IXunitTestCase> testCases) =>
+        protected override Task<RunSummary> RunTestClassAsync(ITestClass testClass,
+            IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases) =>
             new DependencyInjectionTestClassRunner(_provider, testClass, @class, testCases,
                     _diagnosticMessageSink, MessageBus, TestCaseOrderer,
                     new ExceptionAggregator(Aggregator), CancellationTokenSource, CollectionFixtureMappings)

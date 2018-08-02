@@ -15,8 +15,14 @@ namespace Xunit.DependencyInjection
             AssemblyName assemblyName,
             ISourceInformationProvider sourceInformationProvider,
             IMessageSink diagnosticMessageSink)
-            : base(assemblyName, sourceInformationProvider, diagnosticMessageSink) =>
+            : base(assemblyName, sourceInformationProvider, diagnosticMessageSink)
+        {
             _provider = provider;
+
+            var scope = _provider.GetService<IServiceScope>();
+            if (scope != null)
+                DisposalTracker.Add(scope);
+        }
 
         protected override async void RunTestCases(
             IEnumerable<IXunitTestCase> testCases,
@@ -26,8 +32,6 @@ namespace Xunit.DependencyInjection
             using (var runner = new DependencyInjectionTestAssemblyRunner(_provider, TestAssembly,
                 testCases, DiagnosticMessageSink, executionMessageSink, executionOptions))
                 await runner.RunAsync();
-
-            _provider.GetService<IServiceScope>()?.Dispose();
         }
     }
 }

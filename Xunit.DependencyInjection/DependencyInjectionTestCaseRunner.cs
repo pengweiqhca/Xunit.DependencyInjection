@@ -5,42 +5,20 @@ using Xunit.Sdk;
 
 namespace Xunit.DependencyInjection
 {
-    public class DependencyInjectionTestCaseRunner : TestCaseRunner<XunitTestCase>
+    public class DependencyInjectionTestCaseRunner : XunitTestCaseRunner
     {
         private readonly IServiceProvider _provider;
-        private readonly object[] _constructorArguments;
 
-        public DependencyInjectionTestCaseRunner(IServiceProvider provider, object[] constructorArguments, XunitTestCase testCase,
-            IMessageBus messageBus,
-            ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) : base(testCase,
-            messageBus, aggregator, cancellationTokenSource)
-        {
-            _provider = provider;
-            _constructorArguments = constructorArguments;
+        public DependencyInjectionTestCaseRunner(IServiceProvider provider, IXunitTestCase testCase,
+            string displayName, string skipReason, object[] constructorArguments, object[] testMethodArguments,
+            IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
+            : base(testCase, displayName, skipReason, constructorArguments, testMethodArguments, messageBus,
+                aggregator, cancellationTokenSource) => _provider = provider;
 
-            if (testCase == null)
-            {
-                throw new ArgumentNullException(nameof(XunitTestCase));
-            }
-        }
-
-        protected override Task<RunSummary> RunTestAsync()
-        {
-            var testClass = TestCase.TestMethod.TestClass.Class.ToRuntimeType();
-            var testMethod = TestCase.TestMethod.Method.ToRuntimeMethod();
-            var test = new XunitTest(TestCase, this.TestCase.DisplayName);
-
-            return new DependencyInjectionTestRunner(_provider,
-                    test,
-                    MessageBus,
-                    testClass,
-                    _constructorArguments,
-                    testMethod,
-                    TestCase.TestMethodArguments,
-                    TestCase.SkipReason,
-                    Aggregator,
-                    CancellationTokenSource)
+        protected override Task<RunSummary> RunTestAsync() =>
+            new DependencyInjectionTestRunner(_provider, new XunitTest(TestCase, DisplayName), MessageBus,
+                    TestClass, ConstructorArguments, TestMethod, TestMethodArguments, SkipReason,
+                    BeforeAfterAttributes, new ExceptionAggregator(Aggregator), CancellationTokenSource)
                 .RunAsync();
-        }
     }
 }

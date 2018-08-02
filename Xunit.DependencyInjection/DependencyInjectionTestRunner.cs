@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
@@ -8,22 +9,33 @@ using Xunit.Sdk;
 
 namespace Xunit.DependencyInjection
 {
-    public class DependencyInjectionTestRunner : XunitTestMethodRunner
+    public class DependencyInjectionTestRunner : XunitTestRunner
     {
         private readonly IServiceProvider _provider;
 
-        public DependencyInjectionTestRunner(IServiceProvider provider, ITestMethod testMethod, IReflectionTypeInfo @class, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, object[] constructorArguments)
-            : base(testMethod, @class, method, testCases, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource, constructorArguments)
-        {
+        public DependencyInjectionTestRunner(IServiceProvider provider, ITest test, IMessageBus messageBus,
+            Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
+            string skipReason, IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+            ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
+            : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
+                skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource) =>
             _provider = provider;
-        }
 
         protected override async Task<Tuple<decimal, string>> InvokeTestAsync(ExceptionAggregator aggregator)
         {
-            var invoker = new DependencyInjectionTestInvoker(_provider, Test, MessageBus, TestClass, ConstructorArguments, TestMethod, TestMethodArguments, aggregator, CancellationTokenSource);
-            var duration = await invoker.RunAsync();
+            var testOutputHelper = _provider.GetRequiredService<ITestOutputHelperAccessor>().Output as TestOutputHelper;
+            if (testOutputHelper != null)
+                testOutputHelper.Initialize(MessageBus, Test);
 
-            return Tuple.Create(duration, invoker.Output);
+            var item = await InvokeTestMethodAsync(aggregator);
+
+            var output = string.Empty;
+            if (testOutputHelper != null)
+            {
+                output = testOutputHelper.Output;
+                testOutputHelper.Uninitialize();
+            }
+            return Tuple.Create(item, output);
         }
     }
 }
