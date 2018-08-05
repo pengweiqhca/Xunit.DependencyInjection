@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
 using Xunit;
@@ -13,14 +12,9 @@ namespace Xunit.DependencyInjection.Test
     {
         public Startup(IMessageSink messageSink) : base(messageSink) { }
 
-        protected override void Configuration(IConfigurationBuilder builder)
-        {
-            builder.AddJsonFile("appsettings.json");
-        }
-
         protected override IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddScoped<IDependency, DependencyClass>();
+            services.AddLogging().AddScoped<IDependency, DependencyClass>();
 
             return services.BuildServiceProvider();
         }
