@@ -18,10 +18,10 @@
     <TargetFrameworks>net45;netstandard1.3</TargetFrameworks>
     <Description>Support Microsoft.Extensions.Logging to ITestOutputHelper.
 protected override void Configure(IServiceProvider provider)
-{
+{{
     provider.GetRequiredService&lt;ILoggerFactory&gt;()
         .AddProvider(new XunitTestOutputLoggerProvider(provider.GetRequiredService&lt;ITestOutputHelperAccessor&gt;()));
-}</Description>
+}}</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
     <Version>1.0.0</Version>
     <PackageProjectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</PackageProjectUrl>
