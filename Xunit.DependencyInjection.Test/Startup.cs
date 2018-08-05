@@ -6,12 +6,12 @@ using Xunit;
 using Xunit.Abstractions;
 using Xunit.DependencyInjection.Logging;
 
-[assembly: TestFramework("Xunit.DependencyInjection.Test.ConfigureTestFramework", "Xunit.DependencyInjection.Test")]
+[assembly: TestFramework("Xunit.DependencyInjection.Test.Startup", "Xunit.DependencyInjection.Test")]
 namespace Xunit.DependencyInjection.Test
 {
-    public class ConfigureTestFramework : DependencyInjectionTestFramework
+    public class Startup : DependencyInjectionTestFramework
     {
-        public ConfigureTestFramework(IMessageSink messageSink) : base(messageSink) { }
+        public Startup(IMessageSink messageSink) : base(messageSink) { }
 
         protected override void Configuration(IConfigurationBuilder builder)
         {

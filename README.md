@@ -11,13 +11,13 @@ Install-Package Xunit.DependencyInjection
 In your testing project, add the following framework
 
 ```cs
-[assembly: TestFramework("Your.Test.Project.ConfigureTestFramework", "AssemblyName")]
+[assembly: TestFramework("Your.Test.Project.Startup", "AssemblyName")]
 
 namespace Your.Test.Project
 {
-    public class ConfigureTestFramework : AutofacTestFramework
+    public class Startup : AutofacTestFramework
     {
-        public ConfigureTestFramework(IMessageSink messageSink) : base(messageSink) { }
+        public Startup(IMessageSink messageSink) : base(messageSink) { }
 
         protected override void ConfigureServices(IServiceCollection services)
         {
