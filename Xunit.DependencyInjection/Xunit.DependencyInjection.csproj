@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>Key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>..\Key.snk</AssemblyOriginatorKeyFile>
+    <AssemblyTitle>$(AssemblyName) ($(TargetFramework))</AssemblyTitle>
     <Authors>Wei Peng</Authors>
     <Copyright>Copyright © 2018</Copyright>
     <DebugSymbols>true</DebugSymbols>
