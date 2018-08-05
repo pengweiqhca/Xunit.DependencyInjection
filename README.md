@@ -65,3 +65,15 @@ internal class DependencyClass : IDependency
     }
 }
 ```
+
+## Write Microsoft.Extensions.Logging to ITestOutputHelper
+``` C#
+    public class Startup : AutofacTestFramework
+    {
+        protected override void Configure(IServiceProvider provider)
+        {
+            provider.GetRequiredService<ILoggerFactory>()
+                .AddProvider(new XunitTestOutputLoggerProvider(provider.GetRequiredService<ITestOutputHelperAccessor>()));
+        }
+    }
+```

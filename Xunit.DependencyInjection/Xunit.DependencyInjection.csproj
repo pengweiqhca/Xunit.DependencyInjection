@@ -16,14 +16,22 @@
     <RepositoryType>git</RepositoryType>
     <SignAssembly>True</SignAssembly>
     <TargetFrameworks>net45;net46;netstandard1.3</TargetFrameworks>
-    <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass</Description>
+    <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
+Release notes:
+1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
+1.2.0: DependencyInjectionTestFramework class add Configuration(IConfigurationBuilder builder) method
+2.0.0: Change ConfigureServices retrun value from void to IServiceProvider; Decrease dependency package version.
+3.0.0: Move ServiceScope from TestClass to TestCase.
+3.1.0: Add ITestOutputHelperAccessor to access ITestOutputHelper.
+4.0.0: Remove Microsoft.Extensions.Configuration, reduce the amount of package reference; Support Microsoft.Extensions.Logging to ITestOutputHelper.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>3.1.0</Version>
+    <Version>4.0.0</Version>
     <PackageReleaseNotes>1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
 1.2.0: DependencyInjectionTestFramework class add Configuration(IConfigurationBuilder builder) method
 2.0.0: Change ConfigureServices retrun value from void to IServiceProvider; Decrease dependency package version.
 3.0.0: Move ServiceScope from TestClass to TestCase.
-3.1.0: Add ITestOutputHelperAccessor to access ITestOutputHelper.</PackageReleaseNotes>
+3.1.0: Add ITestOutputHelperAccessor to access ITestOutputHelper.
+4.0.0: Remove Microsoft.Extensions.Configuration, reduce the amount of package reference; Support Microsoft.Extensions.Logging to ITestOutputHelper.</PackageReleaseNotes>
     <PackageProjectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</PackageProjectUrl>
   </PropertyGroup>
 
