@@ -73,7 +73,7 @@ internal class DependencyClass : IDependency
         protected override void Configure(IServiceProvider provider)
         {
             provider.GetRequiredService<ILoggerFactory>()
-                .AddProvider(new XunitTestOutputLoggerProvider(provider.GetRequiredService<ITestOutputHelperAccessor>()));
+                .AddProvider(new XunitTestOutputLoggerProvider(provider.GetRequiredService<ITestOutputHelperAccessor>()[, Func<string, LogLevel, bool> filter]));
         }
     }
 ```
