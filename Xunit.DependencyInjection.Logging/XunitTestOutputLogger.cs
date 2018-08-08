@@ -22,11 +22,13 @@ namespace Xunit.DependencyInjection.Logging
 
         private readonly ITestOutputHelperAccessor _accessor;
         private readonly string _categoryName;
+        private readonly Func<string, LogLevel, bool> _filter;
 
-        public XunitTestOutputLogger(ITestOutputHelperAccessor accessor, string categoryName)
+        public XunitTestOutputLogger(ITestOutputHelperAccessor accessor, string categoryName, Func<string, LogLevel, bool> filter)
         {
             _accessor = accessor;
             _categoryName = categoryName;
+            _filter = filter ?? throw new ArgumentNullException(nameof(filter));
         }
 
         public bool IsEnabled(LogLevel logLevel) => true;
@@ -35,17 +37,16 @@ namespace Xunit.DependencyInjection.Logging
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
+            if (!_filter(_categoryName, logLevel))
+                return;
+
             if (formatter == null)
-            {
                 throw new ArgumentNullException(nameof(formatter));
-            }
 
             var message = formatter(state, exception);
 
             if (!string.IsNullOrEmpty(message) || exception != null)
-            {
                 WriteMessage(logLevel, _categoryName, eventId.Id, message, exception);
-            }
         }
 
         public virtual void WriteMessage(LogLevel logLevel, string logName, int eventId, string message, Exception exception)

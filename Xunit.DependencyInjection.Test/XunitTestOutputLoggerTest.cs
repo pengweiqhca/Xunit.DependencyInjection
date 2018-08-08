@@ -11,6 +11,7 @@ namespace Xunit.DependencyInjection.Test
         [Fact]
         public void Test()
         {
+            _logger.LogDebug("LogDebug");
             _logger.LogInformation("LogInformation");
             _logger.LogError("LogError");
         }
