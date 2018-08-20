@@ -31,7 +31,7 @@ namespace Xunit.DependencyInjection.Logging
             _filter = filter ?? throw new ArgumentNullException(nameof(filter));
         }
 
-        public bool IsEnabled(LogLevel logLevel) => true;
+        public bool IsEnabled(LogLevel logLevel) => _filter(_categoryName, logLevel);
 
         public IDisposable BeginScope<TState>(TState state) => NullScope.Instance;
 
