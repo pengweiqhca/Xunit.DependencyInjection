@@ -14,7 +14,7 @@ namespace Xunit.DependencyInjection.Test
 
         protected override IServiceProvider ConfigureServices(IServiceCollection services)
         {
-            services.AddLogging().AddScoped<IDependency, DependencyClass>();
+            services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Information)).AddScoped<IDependency, DependencyClass>();
 
             return services.BuildServiceProvider();
         }
