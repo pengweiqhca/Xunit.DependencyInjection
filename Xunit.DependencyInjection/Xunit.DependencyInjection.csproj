@@ -37,6 +37,7 @@ Release notes:
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-*" PrivateAssets="All"/>
     <PackageReference Include="xunit.extensibility.execution" Version="[2.1.0,3.0.0)" Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46'" />
     <PackageReference Include="xunit.extensibility.execution" Version="[2.2.0,3.0.0)" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
   </ItemGroup>
