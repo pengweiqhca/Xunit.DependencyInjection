@@ -41,7 +41,7 @@ namespace Xunit.DependencyInjection
                 {
                     formatConstructorArgsMissingMessage = delay.FormatConstructorArgsMissingMessage;
 
-                    if (delay.TryGetConstructorArgument(provider, out var arg))
+                    if (delay.TryGetConstructorArgument(provider, Aggregator, out var arg))
                         args[index] = arg;
                     else
                         unusedArguments.Add(Tuple.Create(index, delay.Parameter));

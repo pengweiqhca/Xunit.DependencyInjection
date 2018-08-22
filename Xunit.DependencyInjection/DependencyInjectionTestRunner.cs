@@ -24,8 +24,7 @@ namespace Xunit.DependencyInjection
         protected override async Task<Tuple<decimal, string>> InvokeTestAsync(ExceptionAggregator aggregator)
         {
             var testOutputHelper = _provider.GetRequiredService<ITestOutputHelperAccessor>().Output as TestOutputHelper;
-            if (testOutputHelper != null)
-                testOutputHelper.Initialize(MessageBus, Test);
+            testOutputHelper?.Initialize(MessageBus, Test);
 
             var item = await InvokeTestMethodAsync(aggregator);
 

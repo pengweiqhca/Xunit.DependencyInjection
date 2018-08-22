@@ -77,9 +77,21 @@ namespace Xunit.DependencyInjection
 
             public Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> FormatConstructorArgsMissingMessage { get; }
 
-            public bool TryGetConstructorArgument(IServiceProvider provider, out object argumentValue)
+            public bool TryGetConstructorArgument(IServiceProvider provider, ExceptionAggregator aggregator, out object argumentValue)
             {
-                argumentValue = provider.GetService(Parameter.ParameterType);
+                argumentValue = null;
+
+                try
+                {
+                    argumentValue = provider.GetService(Parameter.ParameterType);
+                }
+                catch (Exception ex)
+                {
+                    aggregator.Add(ex);
+
+                    return true;
+                }
+
                 if (argumentValue != null)
                     return true;
 

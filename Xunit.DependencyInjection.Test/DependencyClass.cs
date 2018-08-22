@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using Xunit.Abstractions;
 
 namespace Xunit.DependencyInjection.Test
 {

@@ -1,5 +1,3 @@
-using Microsoft.Extensions.Configuration;
-
 namespace Xunit.DependencyInjection.Test
 {
     public class DependencyInjectionUnitTest
