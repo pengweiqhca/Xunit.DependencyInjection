@@ -16,7 +16,7 @@ namespace Xunit.DependencyInjection
 
             services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
 
-            var provider = ConfigureServices(services);
+            var provider = ConfigureServices(assemblyName, services);
 
             using (var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope())
                 Configure(scope.ServiceProvider);
@@ -24,6 +24,8 @@ namespace Xunit.DependencyInjection
             return new DependencyInjectionTestFrameworkExecutor(provider,
                 assemblyName, SourceInformationProvider, DiagnosticMessageSink);
         }
+
+        protected virtual IServiceProvider ConfigureServices(AssemblyName assemblyName, IServiceCollection services) => ConfigureServices(services);
 
         protected abstract IServiceProvider ConfigureServices(IServiceCollection services);
 
