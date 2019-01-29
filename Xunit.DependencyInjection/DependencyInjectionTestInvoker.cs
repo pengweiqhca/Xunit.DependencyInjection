@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -8,37 +9,43 @@ using Xunit.Sdk;
 
 namespace Xunit.DependencyInjection
 {
-    public class DependencyInjectionTestInvoker : TestInvoker<IXunitTestCase>
+    public class DependencyInjectionTestInvoker : XunitTestInvoker
     {
-        private readonly ITestOutputHelperAccessor _accessor;
+        private readonly IServiceProvider _provider;
 
-        public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus, Type testClass,
-            object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
-            ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource) : base(test, messageBus,
-            testClass, constructorArguments, testMethod, testMethodArguments, aggregator, cancellationTokenSource)
+        public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus,
+            Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
+            IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator,
+            CancellationTokenSource cancellationTokenSource)
+            : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
+                beforeAfterAttributes, aggregator, cancellationTokenSource) =>
+            _provider = provider;
+
+        protected override object CallTestMethod(object testClassInstance)
         {
-            _accessor = provider.GetRequiredService<ITestOutputHelperAccessor>();
-        }
+            var result = base.CallTestMethod(testClassInstance);
 
-        public string Output { get; set; }
+            return result is Task task ? AsyncStack(task) : result;
 
-        protected override Task BeforeTestMethodInvokedAsync()
-        {
-            if (_accessor.Output is TestOutputHelper output)
-                output.Initialize(MessageBus, Test);
-
-            return base.BeforeTestMethodInvokedAsync();
-        }
-
-        protected override Task AfterTestMethodInvokedAsync()
-        {
-            if (_accessor.Output is TestOutputHelper output)
+            async Task AsyncStack(Task t)
             {
-                Output = output.Output;
-                output.Uninitialize();
-            }
+                try
+                {
+                    await t;
+                }
+                catch (Exception ex)
+                {
+                    while (true)
+                    {
+                        if (ex is TargetInvocationException tie)
+                            ex = tie.InnerException;
+                        else
+                            break;
+                    }
 
-            return base.AfterTestMethodInvokedAsync();
+                    Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
+                }
+            }
         }
     }
 }

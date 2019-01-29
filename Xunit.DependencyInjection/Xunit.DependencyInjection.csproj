@@ -1,20 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\Key.snk</AssemblyOriginatorKeyFile>
-    <AssemblyTitle>$(AssemblyName) ($(TargetFramework))</AssemblyTitle>
-    <Authors>Wei Peng</Authors>
-    <Copyright>Copyright © 2018</Copyright>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <GenerateDocumentationFile>True</GenerateDocumentationFile>
-    <GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">True</GeneratePackageOnBuild>
-    <IncludeSymbols>True</IncludeSymbols>
-    <LangVersion>latest</LangVersion>
-    <NoWarn>1591</NoWarn>
-    <RepositoryUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <SignAssembly>True</SignAssembly>
     <TargetFrameworks>net45;net46;netstandard1.3</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
@@ -24,9 +10,11 @@ Release notes:
 3.0.0: Move ServiceScope from TestClass to TestCase.
 3.1.0: Add ITestOutputHelperAccessor to access ITestOutputHelper.
 4.0.0: Remove Microsoft.Extensions.Configuration, reduce the amount of package reference; Support Microsoft.Extensions.Logging to ITestOutputHelper.
-4.1.0: Catch GetService Exception.</Description>
+4.1.0: Catch GetService Exception.
+4.2.0: DependencyInjectionTestFramework add ConfigureServices overload.
+4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>4.2.0</Version>
+    <Version>4.3.0</Version>
     <PackageReleaseNotes>1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
 1.2.0: DependencyInjectionTestFramework class add Configuration(IConfigurationBuilder builder) method
 2.0.0: Change ConfigureServices retrun value from void to IServiceProvider; Decrease dependency package version.
@@ -34,13 +22,12 @@ Release notes:
 3.1.0: Add ITestOutputHelperAccessor to access ITestOutputHelper.
 4.0.0: Remove Microsoft.Extensions.Configuration, reduce the amount of package reference; Support Microsoft.Extensions.Logging to ITestOutputHelper.
 4.1.0: Catch GetService Exception.
-4.2.0: DependencyInjectionTestFramework add ConfigureServices overload</PackageReleaseNotes>
-    <PackageProjectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</PackageProjectUrl>
+4.2.0: DependencyInjectionTestFramework add ConfigureServices overload.
+4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-*" PrivateAssets="All" />
     <PackageReference Include="xunit.extensibility.execution" Version="[2.1.0,3.0.0)" Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46'" />
     <PackageReference Include="xunit.extensibility.execution" Version="[2.2.0,3.0.0)" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
   </ItemGroup>

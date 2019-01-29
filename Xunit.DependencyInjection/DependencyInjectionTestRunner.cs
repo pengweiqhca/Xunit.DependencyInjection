@@ -36,5 +36,10 @@ namespace Xunit.DependencyInjection
             }
             return Tuple.Create(item, output);
         }
+
+        protected override Task<decimal> InvokeTestMethodAsync(ExceptionAggregator aggregator) =>
+            new DependencyInjectionTestInvoker(_provider, Test, MessageBus, TestClass,
+                    ConstructorArguments, TestMethod, TestMethodArguments, BeforeAfterAttributes, aggregator, CancellationTokenSource)
+                .RunAsync();
     }
 }
