@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.DependencyInjection.Demystifier;
 using Xunit.DependencyInjection.Logging;
 
 [assembly: TestFramework("Xunit.DependencyInjection.Test.Startup", "Xunit.DependencyInjection.Test")]
@@ -15,6 +16,8 @@ namespace Xunit.DependencyInjection.Test
         protected override IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Information)).AddScoped<IDependency, DependencyClass>();
+
+            services.AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
             return services.BuildServiceProvider();
         }
