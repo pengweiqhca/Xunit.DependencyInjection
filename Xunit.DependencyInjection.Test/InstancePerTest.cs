@@ -10,7 +10,7 @@ namespace Xunit.DependencyInjection.Test
 
         public InstancePerTest(IServiceProvider provider)
         {
-            _serviceScope = provider.CreateScope();
+            _serviceScope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
             _d = _serviceScope.ServiceProvider.GetRequiredService<IDependency>();
         }
