@@ -12,10 +12,13 @@ Release notes:
 4.0.0: Remove Microsoft.Extensions.Configuration, reduce the amount of package reference; Support Microsoft.Extensions.Logging to ITestOutputHelper.
 4.1.0: Catch GetService Exception.
 4.2.0: DependencyInjectionTestFramework add ConfigureServices overload.
-4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.</Description>
+4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.
+4.4.0: Add MemberDataAttribute support</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>4.3.0</Version>
-    <PackageReleaseNotes>1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
+    <Version>4.4.0</Version>
+    <PackageReleaseNotes>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
+Release notes:
+1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
 1.2.0: DependencyInjectionTestFramework class add Configuration(IConfigurationBuilder builder) method
 2.0.0: Change ConfigureServices retrun value from void to IServiceProvider; Decrease dependency package version.
 3.0.0: Move ServiceScope from TestClass to TestCase.
@@ -23,7 +26,8 @@ Release notes:
 4.0.0: Remove Microsoft.Extensions.Configuration, reduce the amount of package reference; Support Microsoft.Extensions.Logging to ITestOutputHelper.
 4.1.0: Catch GetService Exception.
 4.2.0: DependencyInjectionTestFramework add ConfigureServices overload.
-4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.</PackageReleaseNotes>
+4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.
+4.4.0: Add MemberDataAttribute support</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
