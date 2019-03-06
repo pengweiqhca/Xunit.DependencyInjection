@@ -19,9 +19,11 @@ namespace Your.Test.Project
     {
         public Startup(IMessageSink messageSink) : base(messageSink) { }
 
-        protected override void ConfigureServices(IServiceCollection services)
+        protected override IServiceProvider ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IDependency, DependencyClass>();
+
+            return services.BuildServiceProvider();
         }
     }
 }
