@@ -15,7 +15,7 @@ In your testing project, add the following framework
 
 namespace Your.Test.Project
 {
-    public class Startup : AutofacTestFramework
+    public class Startup : DependencyInjectionTestFramework
     {
         public Startup(IMessageSink messageSink) : base(messageSink) { }
 
