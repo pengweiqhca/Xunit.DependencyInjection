@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Reflection;
 using Xunit.Abstractions;
@@ -9,19 +8,17 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecutor
     {
-        private readonly IServiceProvider _provider;
+        private readonly IHost _host;
 
-        public DependencyInjectionTestFrameworkExecutor(IServiceProvider provider,
+        public DependencyInjectionTestFrameworkExecutor(IHost host,
             AssemblyName assemblyName,
             ISourceInformationProvider sourceInformationProvider,
             IMessageSink diagnosticMessageSink)
             : base(assemblyName, sourceInformationProvider, diagnosticMessageSink)
         {
-            _provider = provider;
+            _host = host;
 
-            var scope = _provider.GetService<IServiceScope>();
-            if (scope != null)
-                DisposalTracker.Add(scope);
+            DisposalTracker.Add(_host);
         }
 
         protected override async void RunTestCases(
@@ -29,9 +26,13 @@ namespace Xunit.DependencyInjection
             IMessageSink executionMessageSink,
             ITestFrameworkExecutionOptions executionOptions)
         {
-            using (var runner = new DependencyInjectionTestAssemblyRunner(_provider, TestAssembly,
+            await _host.StartAsync();
+
+            using (var runner = new DependencyInjectionTestAssemblyRunner(_host.Services, TestAssembly,
                 testCases, DiagnosticMessageSink, executionMessageSink, executionOptions))
                 await runner.RunAsync();
+
+            await _host.StopAsync();
         }
     }
 }

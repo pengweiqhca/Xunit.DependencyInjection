@@ -8,6 +8,9 @@ namespace Xunit.DependencyInjection.Test
         [MemberData(nameof(GetComplexData))]
         public void ComplexParameterizedTest(string arg1, Dictionary<string, string> arg2, Dictionary<string, string> arg3)
         {
+            Assert.Equal("Test", arg1);
+            Assert.Equal("Value", arg2["Key"]);
+            Assert.Equal("Value", arg3["Key"]);
         }
 
         [Theory]

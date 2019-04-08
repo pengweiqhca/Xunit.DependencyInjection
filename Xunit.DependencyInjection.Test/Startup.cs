@@ -13,13 +13,11 @@ namespace Xunit.DependencyInjection.Test
     {
         public Startup(IMessageSink messageSink) : base(messageSink) { }
 
-        protected override IServiceProvider ConfigureServices(IServiceCollection services)
+        protected override void ConfigureServices(IServiceCollection services)
         {
             services.AddLogging().AddScoped<IDependency, DependencyClass>();
 
             services.AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
-
-            return services.BuildServiceProvider();
         }
 
         protected override void Configure(IServiceProvider provider)

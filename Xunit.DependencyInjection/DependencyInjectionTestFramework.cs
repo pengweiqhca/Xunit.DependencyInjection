@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Reflection;
 using Xunit.Abstractions;
@@ -12,22 +13,21 @@ namespace Xunit.DependencyInjection
 
         protected sealed override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
-            var services = new ServiceCollection();
+            var host = new HostBuilder()
+                .ConfigureServices(services => services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>())
+                .ConfigureServices(services => ConfigureServices(assemblyName, services))
+                .Build();
 
-            services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
-
-            var provider = ConfigureServices(assemblyName, services);
-
-            using (var scope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            using (var scope = host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
                 Configure(scope.ServiceProvider);
 
-            return new DependencyInjectionTestFrameworkExecutor(provider,
+            return new DependencyInjectionTestFrameworkExecutor(host,
                 assemblyName, SourceInformationProvider, DiagnosticMessageSink);
         }
 
-        protected virtual IServiceProvider ConfigureServices(AssemblyName assemblyName, IServiceCollection services) => ConfigureServices(services);
+        protected virtual void ConfigureServices(AssemblyName assemblyName, IServiceCollection services) => ConfigureServices(services);
 
-        protected abstract IServiceProvider ConfigureServices(IServiceCollection services);
+        protected abstract void ConfigureServices(IServiceCollection services);
 
         protected virtual void Configure(IServiceProvider provider) { }
     }

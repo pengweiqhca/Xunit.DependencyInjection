@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net45;net46;netstandard1.3</TargetFrameworks>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
 1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
@@ -13,7 +13,8 @@ Release notes:
 4.1.0: Catch GetService Exception.
 4.2.0: DependencyInjectionTestFramework add ConfigureServices overload.
 4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.
-4.4.0: Add MemberDataAttribute support</Description>
+4.4.0: Add MemberDataAttribute support
+5.0.0: Use the generic host refactor DependencyInjectionTestFramework</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
     <Version>4.4.0</Version>
     <PackageReleaseNotes>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
@@ -27,13 +28,14 @@ Release notes:
 4.1.0: Catch GetService Exception.
 4.2.0: DependencyInjectionTestFramework add ConfigureServices overload.
 4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.
-4.4.0: Add MemberDataAttribute support</PackageReleaseNotes>
+4.4.0: Add MemberDataAttribute support
+5.0.0: Use the generic host refactor DependencyInjectionTestFramework</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
-    <PackageReference Include="xunit.extensibility.execution" Version="[2.1.0,3.0.0)" Condition="'$(TargetFramework)' == 'net45' OR '$(TargetFramework)' == 'net46'" />
-    <PackageReference Include="xunit.extensibility.execution" Version="[2.2.0,3.0.0)" Condition="'$(TargetFramework)' == 'netstandard1.3'" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.0" />
+    <PackageReference Include="xunit.extensibility.execution" Version="[2.1.0,3.0.0)" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+    <PackageReference Include="xunit.extensibility.execution" Version="[2.2.0,3.0.0)" Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'" />
   </ItemGroup>
 
 </Project>
