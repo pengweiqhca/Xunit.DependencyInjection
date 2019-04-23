@@ -14,9 +14,10 @@ Release notes:
 4.2.0: DependencyInjectionTestFramework add ConfigureServices overload.
 4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.
 4.4.0: Add MemberDataAttribute support
-5.0.0: Use the generic host refactor DependencyInjectionTestFramework</Description>
+5.0.0: Use the generic host refactor DependencyInjectionTestFramework
+5.1.0: Move new HostBuilder() to CreateHostBuilder method</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>5.0.0</Version>
+    <Version>5.1.0</Version>
     <PackageReleaseNotes>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
 1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
@@ -29,7 +30,8 @@ Release notes:
 4.2.0: DependencyInjectionTestFramework add ConfigureServices overload.
 4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.
 4.4.0: Add MemberDataAttribute support
-5.0.0: Use the generic host refactor DependencyInjectionTestFramework</PackageReleaseNotes>
+5.0.0: Use the generic host refactor DependencyInjectionTestFramework
+5.1.0: Move new HostBuilder() to CreateHostBuilder method</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
