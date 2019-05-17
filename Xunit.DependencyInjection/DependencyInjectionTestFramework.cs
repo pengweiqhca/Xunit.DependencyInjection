@@ -1,6 +1,8 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -13,16 +15,36 @@ namespace Xunit.DependencyInjection
 
         protected sealed override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
-            var host = CreateHostBuilder(assemblyName)
-                .ConfigureServices(services => services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>())
-                .ConfigureServices(services => ConfigureServices(assemblyName, services))
-                .Build();
+            IHost host = null;
+            try
+            {
+                host = CreateHostBuilder(assemblyName)
+                    .ConfigureAppConfiguration((context, builder) =>
+                    {
+                        if (string.IsNullOrWhiteSpace(context.HostingEnvironment.ApplicationName))
+                            builder.AddInMemoryCollection(new Dictionary<string, string>
+                            {
+                                {
+                                    HostDefaults.ApplicationKey,
+                                    context.HostingEnvironment.ApplicationName = assemblyName.Name
+                                }
+                            });
+                    })
+                    .ConfigureServices(services => services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>())
+                    .ConfigureServices(services => ConfigureServices(assemblyName, services))
+                    .Build();
 
-            using (var scope = host.Services.CreateScope())
-                Configure(scope.ServiceProvider);
+                using (var scope = host.Services.CreateScope())
+                    Configure(scope.ServiceProvider);
 
-            return new DependencyInjectionTestFrameworkExecutor(host,
-                assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+                return new DependencyInjectionTestFrameworkExecutor(host, null,
+                    assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+            }
+            catch (Exception e)
+            {
+                return new DependencyInjectionTestFrameworkExecutor(host, e,
+                    assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+            }
         }
 
         protected virtual IHostBuilder CreateHostBuilder(AssemblyName assembly) => new HostBuilder();
