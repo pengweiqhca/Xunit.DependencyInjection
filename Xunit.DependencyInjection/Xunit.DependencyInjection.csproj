@@ -11,18 +11,9 @@ Release notes:
     <Version>5.2.0</Version>
     <PackageReleaseNotes>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
-1.1.0: DependencyInjectionTestFramework class add Configure(IServiceProvider provider) method
-1.2.0: DependencyInjectionTestFramework class add Configuration(IConfigurationBuilder builder) method
-2.0.0: Change ConfigureServices retrun value from void to IServiceProvider; Decrease dependency package version.
-3.0.0: Move ServiceScope from TestClass to TestCase.
-3.1.0: Add ITestOutputHelperAccessor to access ITestOutputHelper.
-4.0.0: Remove Microsoft.Extensions.Configuration, reduce the amount of package reference; Support Microsoft.Extensions.Logging to ITestOutputHelper.
-4.1.0: Catch GetService Exception.
-4.2.0: DependencyInjectionTestFramework add ConfigureServices overload.
-4.3.0: Add IAsyncExceptionFilter, support Ben.Demystifier.
-4.4.0: Add MemberDataAttribute support
 5.0.0: Use the generic host refactor DependencyInjectionTestFramework
-5.1.0: Move new HostBuilder() to CreateHostBuilder method</PackageReleaseNotes>
+5.1.0: Move new HostBuilder() to CreateHostBuilder method
+5.2.0: Add ApplicationName and catch CreateExecutor Exception</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
