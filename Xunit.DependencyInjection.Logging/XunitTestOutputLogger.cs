@@ -86,14 +86,15 @@ namespace Xunit.DependencyInjection.Logging
 
             if (logBuilder.Length > 0)
             {
-                // Queue log message
-                if (string.IsNullOrEmpty(logLevelString))
+                if (!string.IsNullOrEmpty(logLevelString)) logBuilder.Insert(0, logLevelString);
+
+                try
                 {
                     _accessor.Output?.WriteLine(logBuilder.ToString().TrimEnd());
                 }
-                else
+                catch (InvalidOperationException) //There is no currently active test case.
                 {
-                    _accessor.Output?.WriteLine(logLevelString + logBuilder.ToString().TrimEnd());
+                    // ignored
                 }
             }
 
