@@ -8,12 +8,13 @@ Release notes:
 5.1.0: Move new HostBuilder() to CreateHostBuilder method
 5.2.0: Add ApplicationName and catch CreateExecutor Exception</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>5.2.0</Version>
+    <Version>5.3.0</Version>
     <PackageReleaseNotes>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
 5.0.0: Use the generic host refactor DependencyInjectionTestFramework
 5.1.0: Move new HostBuilder() to CreateHostBuilder method
-5.2.0: Add ApplicationName and catch CreateExecutor Exception</PackageReleaseNotes>
+5.2.0: Add ApplicationName and catch CreateExecutor Exception
+5.3.0: Support from constructor inject CancellationToken</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

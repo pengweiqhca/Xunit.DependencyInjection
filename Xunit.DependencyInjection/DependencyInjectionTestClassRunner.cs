@@ -62,6 +62,12 @@ namespace Xunit.DependencyInjection
                 return true;
             }
 
+            if (parameter.ParameterType == typeof(CancellationToken))
+            {
+                argumentValue = CancellationTokenSource.Token;
+                return true;
+            }
+
             return base.TryGetConstructorArgument(constructor, index, parameter, out argumentValue);
         }
 

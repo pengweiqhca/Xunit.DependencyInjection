@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Threading;
 
 namespace Xunit.DependencyInjection.Test
 {
@@ -8,11 +9,13 @@ namespace Xunit.DependencyInjection.Test
         private readonly IServiceScope _serviceScope;
         private readonly IDependency _d;
 
-        public InstancePerTest(IServiceProvider provider)
+        public InstancePerTest(IServiceProvider provider, CancellationToken cancellationToken)
         {
             _serviceScope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
             _d = _serviceScope.ServiceProvider.GetRequiredService<IDependency>();
+
+            Assert.NotEqual(CancellationToken.None, cancellationToken);
         }
 
         [Fact]
