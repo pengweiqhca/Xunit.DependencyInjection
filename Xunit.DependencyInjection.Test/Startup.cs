@@ -1,6 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Xunit;
 using Xunit.Abstractions;
 using Xunit.DependencyInjection.Demystifier;
@@ -19,6 +23,10 @@ namespace Xunit.DependencyInjection.Test
 
             services.AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
         }
+
+        protected override IHostBuilder CreateHostBuilder(AssemblyName assemblyName) =>
+            base.CreateHostBuilder(assemblyName)
+                .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
 
         protected override void Configure(IServiceProvider provider)
         {
