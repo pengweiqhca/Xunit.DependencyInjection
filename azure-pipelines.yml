@@ -23,7 +23,7 @@ jobs:
     inputs:
       command: build
       projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-      arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
+      arguments: '-c $(buildConfiguration) -v n'
       includePreviewVersions: true
   - task: DotNetCoreCLI@2
     inputs:
@@ -42,7 +42,7 @@ jobs:
     inputs:
       command: build
       projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-      arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
+      arguments: '-c $(buildConfiguration) -v n'
       includePreviewVersions: true
   - task: DotNetCoreCLI@2
     inputs:
@@ -61,13 +61,13 @@ jobs:
       inputs:
         command: build
         projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-        arguments: '-c $(buildConfiguration) /p:TreatWarningsAsErrors=True /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+        arguments: '-c $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
         includePreviewVersions: true
     - task: DotNetCoreCLI@2
       inputs:
         command: 'pack'
         feedsToUse: 'select'
-        arguments: '-c $(buildConfiguration) /p:TreatWarningsAsErrors=True'
+        arguments: '-c $(buildConfiguration)'
         packagesToPack: '**/*.sln'
         versioningScheme: 'byEnvVar'
         versionEnvVar: PackageVersion
@@ -76,7 +76,7 @@ jobs:
       inputs:
         command: test
         projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-        arguments: '-c $(buildConfiguration) /p:TreatWarningsAsErrors=True /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+        arguments: '-c $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
         includePreviewVersions: true
     # Generate the report using ReportGenerator (https://github.com/danielpalme/ReportGenerator)
     # First install the tool on the machine, then run it
