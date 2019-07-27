@@ -18,12 +18,15 @@ jobs:
   steps:
   - task: DotNetCoreInstaller@0
     inputs:
+      version: '2.2.301'
+  - task: DotNetCoreInstaller@0
+    inputs:
       version: '3.0.100-preview7-012821'
   - task: DotNetCoreCLI@2
     inputs:
       command: build
       projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-      arguments: '-c $(buildConfiguration) -v n'
+      arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
       includePreviewVersions: true
   - task: DotNetCoreCLI@2
     inputs:
@@ -37,12 +40,15 @@ jobs:
   steps:
   - task: DotNetCoreInstaller@0
     inputs:
+      version: '2.2.301'
+  - task: DotNetCoreInstaller@0
+    inputs:
       version: '3.0.100-preview7-012821'
   - task: DotNetCoreCLI@2
     inputs:
       command: build
       projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-      arguments: '-c $(buildConfiguration) -v n'
+      arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
       includePreviewVersions: true
   - task: DotNetCoreCLI@2
     inputs:
@@ -61,7 +67,7 @@ jobs:
       inputs:
         command: build
         projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-        arguments: '-c $(buildConfiguration) -v n'
+        arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
         includePreviewVersions: true
     - task: DotNetCoreCLI@2
       inputs:
