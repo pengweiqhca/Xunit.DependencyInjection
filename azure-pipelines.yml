@@ -50,7 +50,7 @@ jobs:
       projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
       arguments: '-c $(buildConfiguration)'
       includePreviewVersions: true
-- job: Windows_Build_Test_and_Package
+- job: Windows_Build_and_Test
   pool:
     vmImage: 'windows-latest'
   steps:
@@ -61,27 +61,11 @@ jobs:
       inputs:
         command: build
         projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-        arguments: '-c $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
-        includePreviewVersions: true
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: 'pack'
-        feedsToUse: 'select'
-        arguments: '-c $(buildConfiguration)'
-        packagesToPack: '**/*.sln'
-        versioningScheme: 'byEnvVar'
-        versionEnvVar: PackageVersion
+        arguments: '-c $(buildConfiguration) -v n'
         includePreviewVersions: true
     - task: DotNetCoreCLI@2
       inputs:
         command: test
         projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-        arguments: '-c $(buildConfiguration) /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+        arguments: '-c $(buildConfiguration)'
         includePreviewVersions: true
-    # Generate the report using ReportGenerator (https://github.com/danielpalme/ReportGenerator)
-    # First install the tool on the machine, then run it
-    - pwsh: |
-        dotnet tool install -g dotnet-reportgenerator-globaltool
-        reportgenerator "-reports:**\coverage.cobertura.xml" "-targetdir:$(Build.SourcesDirectory)\CodeCoverage" -reporttypes:Cobertura
-      displayName: Create Code coverage report
-      condition: always()
