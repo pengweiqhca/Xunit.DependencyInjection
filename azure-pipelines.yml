@@ -16,6 +16,9 @@ jobs:
   pool:
     vmImage: 'Ubuntu-latest'
   steps:
+  - task: DotNetCoreInstaller@0
+    inputs:
+      version: '3.0.100-preview7'
   - task: DotNetCoreCLI@2
     inputs:
       command: build
@@ -32,6 +35,9 @@ jobs:
   pool:
     vmImage: 'macOS-latest'
   steps:
+  - task: DotNetCoreInstaller@0
+    inputs:
+      version: '3.0.100-preview7'
   - task: DotNetCoreCLI@2
     inputs:
       command: build
@@ -48,6 +54,9 @@ jobs:
   pool:
     vmImage: 'windows-latest'
   steps:
+    - task: DotNetCoreInstaller@0
+      inputs:
+        version: '3.0.100-preview7'
     - task: DotNetCoreCLI@2
       inputs:
         command: build
