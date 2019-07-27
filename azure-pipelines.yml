@@ -6,12 +6,61 @@
 trigger:
 - master
 
-pool:
-  vmImage: 'ubuntu-latest'
-
 variables:
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: 1
   buildConfiguration: 'Release'
 
-steps:
-- script: dotnet build --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+jobs:
+- job: Linux_Build_and_Test
+  pool:
+    vmImage: 'Ubuntu-latest'
+  steps:
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: build
+      projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
+      arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: test
+      projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
+      arguments: '-c $(buildConfiguration)'
+- job: MacOS_Build_and_Test
+  pool:
+    vmImage: 'macOS-latest'
+  steps:
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: build
+      projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
+      arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: test
+      projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
+      arguments: '-c $(buildConfiguration)'
+- job: Windows_Build_Test_and_Package
+  pool:
+    vmImage: 'windows-latest'
+  steps:
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: 'pack'
+        feedsToUse: 'select'
+        arguments: '-c $(buildConfiguration) /p:TreatWarningsAsErrors=True'
+        packagesToPack: '**/*.sln'
+        versioningScheme: 'byEnvVar'
+        versionEnvVar: PackageVersion
+    - task: DotNetCoreCLI@2
+      inputs:
+        command: test
+        projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
+        arguments: '-c $(buildConfiguration) /p:TreatWarningsAsErrors=True /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura'
+    # Generate the report using ReportGenerator (https://github.com/danielpalme/ReportGenerator)
+    # First install the tool on the machine, then run it
+    - pwsh: |
+        dotnet tool install -g dotnet-reportgenerator-globaltool
+        reportgenerator "-reports:**\coverage.cobertura.xml" "-targetdir:$(Build.SourcesDirectory)\CodeCoverage" -reporttypes:Cobertura
+      displayName: Create Code coverage report
+      condition: always()

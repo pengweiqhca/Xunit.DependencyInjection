@@ -16,11 +16,12 @@
     <RepositoryType>git</RepositoryType>
     <SignAssembly>True</SignAssembly>
     <PackageProjectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</PackageProjectUrl>
+    <IsWindows Condition="$(OS.Contains('Win'))">true</IsWindows>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="JetBrains.Annotations" Version="2019.*" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-*" PrivateAssets="All" Condition="! $(OS.Contains('Win'))" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-*" PrivateAssets="All" Condition="'$(IsWindows)' == ''" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-*" PrivateAssets="All"/>
   </ItemGroup>
 
