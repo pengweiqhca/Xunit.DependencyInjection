@@ -32,9 +32,9 @@ namespace Xunit.DependencyInjection
         {
             if (_host == null)
             {
-                using (var runner = new DependencyInjectionTestAssemblyRunner(null, _exception, TestAssembly,
-                    testCases, DiagnosticMessageSink, executionMessageSink, executionOptions))
-                    await runner.RunAsync();
+                using var runner = new DependencyInjectionTestAssemblyRunner(null, _exception, TestAssembly,
+                    testCases, DiagnosticMessageSink, executionMessageSink, executionOptions);
+                await runner.RunAsync();
 
                 return;
             }

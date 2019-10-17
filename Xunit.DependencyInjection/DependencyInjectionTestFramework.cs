@@ -21,8 +21,8 @@ namespace Xunit.DependencyInjection
                     .ConfigureServices(services => ConfigureServices(assemblyName, services))
                     .Build();
 
-                using (var scope = host.Services.CreateScope())
-                    Configure(scope.ServiceProvider);
+                var scope = host.Services.CreateScope();
+                Configure(scope.ServiceProvider);
 
                 return new DependencyInjectionTestFrameworkExecutor(host, null,
                     assemblyName, SourceInformationProvider, DiagnosticMessageSink);
