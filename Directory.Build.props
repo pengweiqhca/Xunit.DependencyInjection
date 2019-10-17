@@ -6,23 +6,22 @@
     <Authors>Wei Peng</Authors>
     <Copyright>Copyright © 2019</Copyright>
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>Full</DebugType>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
     <IncludeSymbols>True</IncludeSymbols>
-    <LangVersion>latest</LangVersion>
+    <LangVersion>8.0</LangVersion>
     <NoWarn>1591</NoWarn>
+    <Nullable>enable</Nullable>
     <RepositoryUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <SignAssembly>True</SignAssembly>
     <PackageProjectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</PackageProjectUrl>
-    <IsWindows Condition="$(OS.Contains('Win'))">true</IsWindows>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" Version="2019.*" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-*" PrivateAssets="All" Condition="'$(IsWindows)' == ''" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0-*" PrivateAssets="All" Condition="'$(OS)' != 'Windows_NT'" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-*" PrivateAssets="All"/>
+    <PackageReference Include="Nullable" Version="1.*" PrivateAssets="All"/>
   </ItemGroup>
 
 </Project>

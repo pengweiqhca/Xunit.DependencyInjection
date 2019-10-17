@@ -1,5 +1,4 @@
-﻿using JetBrains.Annotations;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,10 +9,10 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
     {
-        [CanBeNull] private readonly IServiceProvider _provider;
+        private readonly IServiceProvider? _provider;
 
-        public DependencyInjectionTestAssemblyRunner(IServiceProvider provider,
-            Exception exception,
+        public DependencyInjectionTestAssemblyRunner(IServiceProvider? provider,
+            Exception? exception,
             ITestAssembly testAssembly,
             IEnumerable<IXunitTestCase> testCases,
             IMessageSink diagnosticMessageSink,

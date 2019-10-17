@@ -13,7 +13,7 @@ namespace Xunit.DependencyInjection
 
         protected sealed override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
-            IHost host = null;
+            IHost? host = null;
             try
             {
                 host = CreateHostBuilder(assemblyName)

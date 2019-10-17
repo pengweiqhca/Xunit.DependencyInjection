@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,20 +29,20 @@ namespace Xunit.DependencyInjection
                 cancellationTokenSource, collectionFixtureMappings) =>
             _provider = provider;
 
-        protected override object[] CreateTestClassConstructorArguments()
+        protected override object?[] CreateTestClassConstructorArguments()
         {
             if ((!Class.Type.GetTypeInfo().IsAbstract ? 0 : (Class.Type.GetTypeInfo().IsSealed ? 1 : 0)) != 0)
-                return new object[0];
+                return new object?[0];
 
             var constructor = SelectTestClassConstructor();
             if (constructor == null)
-                return new object[0];
+                return new object?[0];
 
             var parameters = constructor.GetParameters();
             if (parameters.Length > 0)
                 _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
 
-            var objArray = new object[parameters.Length];
+            var objArray = new object?[parameters.Length];
             for (var index = 0; index < parameters.Length; ++index)
             {
                 var parameterInfo = parameters[index];
@@ -54,7 +55,7 @@ namespace Xunit.DependencyInjection
             return objArray;
         }
 
-        protected override bool TryGetConstructorArgument(ConstructorInfo constructor, int index, ParameterInfo parameter, out object argumentValue)
+        protected override bool TryGetConstructorArgument(ConstructorInfo constructor, int index, ParameterInfo parameter, out object? argumentValue)
         {
             if (parameter.ParameterType == typeof(ITestOutputHelper))
             {
@@ -83,7 +84,7 @@ namespace Xunit.DependencyInjection
 
             public Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> FormatConstructorArgsMissingMessage { get; }
 
-            public bool TryGetConstructorArgument(IServiceProvider provider, ExceptionAggregator aggregator, out object argumentValue)
+            public bool TryGetConstructorArgument(IServiceProvider provider, ExceptionAggregator aggregator, [NotNullWhen(true)]out object? argumentValue)
             {
                 argumentValue = null;
 
@@ -114,7 +115,7 @@ namespace Xunit.DependencyInjection
             }
         }
 
-        private static object GetDefaultValue(Type typeInfo) =>
+        private static object? GetDefaultValue(Type typeInfo) =>
             typeInfo.GetTypeInfo().IsValueType ? Activator.CreateInstance(typeInfo) : null;
 
         protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod,

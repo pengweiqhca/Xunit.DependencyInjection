@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using System;
 using System.Collections.Concurrent;
 
 namespace Xunit.DependencyInjection.Logging

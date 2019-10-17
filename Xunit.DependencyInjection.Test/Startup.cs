@@ -26,7 +26,7 @@ namespace Xunit.DependencyInjection.Test
 
         protected override IHostBuilder CreateHostBuilder(AssemblyName assemblyName) =>
             base.CreateHostBuilder(assemblyName)
-                .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
+                .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name! } }));
 
         protected override void Configure(IServiceProvider provider)
         {

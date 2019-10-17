@@ -35,7 +35,7 @@ namespace Xunit.DependencyInjection
         protected object[] CreateTestClassConstructorArguments(IServiceProvider provider)
         {
             var unusedArguments = new List<Tuple<int, ParameterInfo>>();
-            Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> formatConstructorArgsMissingMessage = null;
+            Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string>? formatConstructorArgsMissingMessage = null;
 
             var args = new object[_constructorArguments.Length];
             for (var index = 0; index < _constructorArguments.Length; index++)

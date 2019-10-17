@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using JetBrains.Annotations;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -10,11 +9,11 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecutor
     {
-        [CanBeNull] private readonly Exception _exception;
-        [CanBeNull] private readonly IHost _host;
+        private readonly Exception? _exception;
+        private readonly IHost? _host;
 
-        public DependencyInjectionTestFrameworkExecutor(IHost host,
-            Exception exception,
+        public DependencyInjectionTestFrameworkExecutor(IHost? host,
+            Exception? exception,
             AssemblyName assemblyName,
             ISourceInformationProvider sourceInformationProvider,
             IMessageSink diagnosticMessageSink)

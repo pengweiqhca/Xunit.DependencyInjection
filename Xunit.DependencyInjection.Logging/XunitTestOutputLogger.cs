@@ -11,7 +11,7 @@ namespace Xunit.DependencyInjection.Logging
         private static readonly string NewLineWithMessagePadding;
 
         [ThreadStatic]
-        private static StringBuilder _logBuilder;
+        private static StringBuilder? _logBuilder;
 
         static XunitTestOutputLogger()
         {
