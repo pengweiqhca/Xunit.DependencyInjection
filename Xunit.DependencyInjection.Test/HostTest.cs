@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Hosting;
-#if NETCOREAPP3_0
+#if NETCOREAPP3_1
 using IHostingEnvironment = Microsoft.Extensions.Hosting.IHostEnvironment;
 #endif
 
