@@ -59,6 +59,7 @@ namespace Xunit.DependencyInjection
             return args;
         }
 
+        /// <inheritdoc />
         protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
         {
             if (testCase is ExecutionErrorTestCase)

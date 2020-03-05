@@ -29,6 +29,7 @@ namespace Xunit.DependencyInjection
                 cancellationTokenSource, collectionFixtureMappings) =>
             _provider = provider;
 
+        /// <inheritdoc />
         protected override object?[] CreateTestClassConstructorArguments()
         {
             if ((!Class.Type.GetTypeInfo().IsAbstract ? 0 : (Class.Type.GetTypeInfo().IsSealed ? 1 : 0)) != 0)
@@ -55,6 +56,7 @@ namespace Xunit.DependencyInjection
             return objArray;
         }
 
+        /// <inheritdoc />
         protected override bool TryGetConstructorArgument(ConstructorInfo constructor, int index, ParameterInfo parameter, out object? argumentValue)
         {
             if (parameter.ParameterType == typeof(ITestOutputHelper))
@@ -118,6 +120,7 @@ namespace Xunit.DependencyInjection
         private static object? GetDefaultValue(Type typeInfo) =>
             typeInfo.GetTypeInfo().IsValueType ? Activator.CreateInstance(typeInfo) : null;
 
+        /// <inheritdoc />
         protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod,
             IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object[] constructorArguments) =>
             new DependencyInjectionTestMethodRunner(_provider, testMethod, Class, method,

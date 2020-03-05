@@ -21,6 +21,7 @@ namespace Xunit.DependencyInjection
                 beforeAfterAttributes, aggregator, cancellationTokenSource) =>
             _provider = provider;
 
+        /// <inheritdoc />
         protected override object CallTestMethod(object testClassInstance)
         {
             var result = base.CallTestMethod(testClassInstance);
@@ -35,12 +36,9 @@ namespace Xunit.DependencyInjection
                 }
                 catch (Exception ex)
                 {
-                    while (true)
+                    while (ex is TargetInvocationException tie)
                     {
-                        if (ex is TargetInvocationException tie)
-                            ex = tie.InnerException;
-                        else
-                            break;
+                        ex = tie.InnerException;
                     }
 
                     Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);

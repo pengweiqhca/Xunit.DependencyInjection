@@ -26,6 +26,7 @@ namespace Xunit.DependencyInjection
             if (exception != null) Aggregator.Add(exception);
         }
 
+        /// <inheritdoc />
         protected override Task<RunSummary> RunTestCollectionAsync(IMessageBus messageBus,
             ITestCollection testCollection,
             IEnumerable<IXunitTestCase> testCases,

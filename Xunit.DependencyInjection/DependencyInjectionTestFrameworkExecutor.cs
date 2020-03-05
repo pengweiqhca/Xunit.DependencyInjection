@@ -25,6 +25,7 @@ namespace Xunit.DependencyInjection
             if (_host != null) DisposalTracker.Add(_host);
         }
 
+        /// <inheritdoc />
         protected override async void RunTestCases(
             IEnumerable<IXunitTestCase> testCases,
             IMessageSink executionMessageSink,
@@ -34,18 +35,20 @@ namespace Xunit.DependencyInjection
             {
                 using var runner = new DependencyInjectionTestAssemblyRunner(null, _exception, TestAssembly,
                     testCases, DiagnosticMessageSink, executionMessageSink, executionOptions);
-                await runner.RunAsync();
 
-                return;
+                await runner.RunAsync();
             }
+            else
+            {
+                await _host.StartAsync();
 
-            await _host.StartAsync();
+                using var runner = new DependencyInjectionTestAssemblyRunner(_host.Services, _exception, TestAssembly,
+                    testCases, DiagnosticMessageSink, executionMessageSink, executionOptions);
 
-            using (var runner = new DependencyInjectionTestAssemblyRunner(_host.Services, _exception, TestAssembly,
-                testCases, DiagnosticMessageSink, executionMessageSink, executionOptions))
                 await runner.RunAsync();
 
-            await _host.StopAsync();
+                await _host.StopAsync();
+            }
         }
     }
 }

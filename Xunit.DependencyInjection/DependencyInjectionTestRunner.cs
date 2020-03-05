@@ -21,6 +21,7 @@ namespace Xunit.DependencyInjection
                 skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource) =>
             _provider = provider;
 
+        /// <inheritdoc />
         protected override async Task<Tuple<decimal, string>> InvokeTestAsync(ExceptionAggregator aggregator)
         {
             var testOutputHelper = _provider.GetRequiredService<ITestOutputHelperAccessor>().Output as TestOutputHelper;
@@ -37,6 +38,7 @@ namespace Xunit.DependencyInjection
             return Tuple.Create(item, output);
         }
 
+        /// <inheritdoc />
         protected override Task<decimal> InvokeTestMethodAsync(ExceptionAggregator aggregator) =>
             new DependencyInjectionTestInvoker(_provider, Test, MessageBus, TestClass,
                     ConstructorArguments, TestMethod, TestMethodArguments, BeforeAfterAttributes, aggregator, CancellationTokenSource)

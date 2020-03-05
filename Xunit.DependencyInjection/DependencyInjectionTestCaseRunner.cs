@@ -19,6 +19,7 @@ namespace Xunit.DependencyInjection
             : base(testCase, displayName, skipReason, constructorArguments, testMethodArguments, messageBus,
                 aggregator, cancellationTokenSource) => _provider = provider;
 
+        /// <inheritdoc />
         protected override Task<RunSummary> RunTestAsync() =>
             new DependencyInjectionTestRunner(_provider, new XunitTest(TestCase, DisplayName), MessageBus,
                     TestClass, ConstructorArguments, TestMethod, TestMethodArguments, SkipReason,
@@ -53,6 +54,7 @@ namespace Xunit.DependencyInjection
             : base(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource) =>
             _provider = provider;
 
+        /// <inheritdoc />
         protected override async Task AfterTestCaseStartingAsync()
         {
             await base.AfterTestCaseStartingAsync();
