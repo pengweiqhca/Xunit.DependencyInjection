@@ -7,10 +7,17 @@ using Xunit.Sdk;
 
 namespace Xunit.DependencyInjection
 {
-    public abstract class DependencyInjectionTestFramework : XunitTestFramework
+    public abstract class DependencyInjectionTestFramework : TestFramework
     {
+        /// <inheritdoc />
         protected DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
 
+        /// <inheritdoc />
+        protected override ITestFrameworkDiscoverer CreateDiscoverer(
+            IAssemblyInfo assemblyInfo) =>
+            new XunitTestFrameworkDiscoverer(assemblyInfo, SourceInformationProvider, DiagnosticMessageSink);
+
+        /// <inheritdoc />
         protected sealed override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
             IHost? host = null;
@@ -18,11 +25,9 @@ namespace Xunit.DependencyInjection
             {
                 host = CreateHostBuilder(assemblyName)
                     .ConfigureServices(services => services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>())
-                    .ConfigureServices(services => ConfigureServices(assemblyName, services))
                     .Build();
 
-                var scope = host.Services.CreateScope();
-                Configure(scope.ServiceProvider);
+                Configure(host.Services);
 
                 return new DependencyInjectionTestFrameworkExecutor(host, null,
                     assemblyName, SourceInformationProvider, DiagnosticMessageSink);
@@ -34,11 +39,10 @@ namespace Xunit.DependencyInjection
             }
         }
 
+        /// <summary>Override this method to provide the implementation of <see cref="T:IHostBuilder" />.</summary>
+        /// <param name="assemblyName">The assembly that is being executed.</param>
+        /// <returns>Returns the host builder.</returns>
         protected virtual IHostBuilder CreateHostBuilder(AssemblyName assemblyName) => new HostBuilder();
-
-        protected virtual void ConfigureServices(AssemblyName assemblyName, IServiceCollection services) => ConfigureServices(services);
-
-        protected abstract void ConfigureServices(IServiceCollection services);
 
         protected virtual void Configure(IServiceProvider provider) { }
     }

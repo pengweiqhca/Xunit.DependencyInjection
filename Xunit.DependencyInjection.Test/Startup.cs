@@ -17,7 +17,7 @@ namespace Xunit.DependencyInjection.Test
     {
         public Startup(IMessageSink messageSink) : base(messageSink) { }
 
-        protected override void ConfigureServices(IServiceCollection services)
+        protected void ConfigureServices(IServiceCollection services)
         {
             services.AddLogging().AddScoped<IDependency, DependencyClass>();
 
@@ -26,6 +26,7 @@ namespace Xunit.DependencyInjection.Test
 
         protected override IHostBuilder CreateHostBuilder(AssemblyName assemblyName) =>
             base.CreateHostBuilder(assemblyName)
+                .ConfigureServices(ConfigureServices)
                 .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name! } }));
 
         protected override void Configure(IServiceProvider provider)
