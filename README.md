@@ -82,7 +82,6 @@ internal class DependencyClass : IDependency
     }
 ```
 
-
 ## How to inject `IConfiguration` or `IHostingEnvironment` into `Startup`?
 ``` C#
     public class Startup : DependencyInjectionTestFramework
@@ -90,5 +89,16 @@ internal class DependencyClass : IDependency
         protected override IHostBuilder CreateHostBuilder(AssemblyName assemblyName) =>
             base.CreateHostBuilder(assemblyName)
                 .ConfigureServices((context, services) => { context.XXXX });
+    }
+```
+
+## How to configure `IConfiguration`?
+``` C#
+    public class Startup : DependencyInjectionTestFramework
+    {
+        protected override IHostBuilder CreateHostBuilder(AssemblyName assemblyName) =>
+            Host.CreateDefaultBuilder()
+                .ConfigureHostConfiguration(builder => { })
+                .ConfigureAppConfiguration((context, builder) => { });
     }
 ```
