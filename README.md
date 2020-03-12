@@ -58,7 +58,7 @@ public class MyAwesomeTests
 }
 ```
 ## V5 to V6 break changes
-``` diif
+``` diff
 namespace Your.Test.Project
 {
     public class Startup : DependencyInjectionTestFramework
