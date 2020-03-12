@@ -57,6 +57,27 @@ public class MyAwesomeTests
     }
 }
 ```
+V5 to V6 break changes
+``` diif
+namespace Your.Test.Project
+{
+    public class Startup : DependencyInjectionTestFramework
+    {
+        public Startup(IMessageSink messageSink) : base(messageSink) { }
+
+-       protected override void ConfigureServices(IServiceCollection services)
++       protected void ConfigureServices(IServiceCollection services)
+        {
+            services.AddTransient<IDependency, DependencyClass>();
+        }
+
++       protected override IHostBuilder CreateHostBuilder(AssemblyName assemblyName) =>
++           base.CreateHostBuilder(assemblyName)
++               .ConfigureServices(ConfigureServices);
+    }
+}
+```
+
 ## How to inject ITestOutputHelper
 ``` C#
 internal class DependencyClass : IDependency
