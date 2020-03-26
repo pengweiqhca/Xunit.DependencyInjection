@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -86,7 +85,7 @@ namespace Xunit.DependencyInjection
 
             public Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> FormatConstructorArgsMissingMessage { get; }
 
-            public bool TryGetConstructorArgument(IServiceProvider provider, ExceptionAggregator aggregator, [NotNullWhen(true)]out object? argumentValue)
+            public bool TryGetConstructorArgument(IServiceProvider provider, ExceptionAggregator aggregator, out object? argumentValue)
             {
                 argumentValue = null;
 

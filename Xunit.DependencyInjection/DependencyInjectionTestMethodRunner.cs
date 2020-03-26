@@ -32,12 +32,12 @@ namespace Xunit.DependencyInjection
             _constructorArguments = constructorArguments;
         }
 
-        protected object[] CreateTestClassConstructorArguments(IServiceProvider provider)
+        protected object?[] CreateTestClassConstructorArguments(IServiceProvider provider)
         {
             var unusedArguments = new List<Tuple<int, ParameterInfo>>();
             Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string>? formatConstructorArgsMissingMessage = null;
 
-            var args = new object[_constructorArguments.Length];
+            var args = new object?[_constructorArguments.Length];
             for (var index = 0; index < _constructorArguments.Length; index++)
             {
                 if (_constructorArguments[index] is DependencyInjectionTestClassRunner.DelayArgument delay)

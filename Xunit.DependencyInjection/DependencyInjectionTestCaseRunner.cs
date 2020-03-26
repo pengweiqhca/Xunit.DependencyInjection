@@ -14,7 +14,7 @@ namespace Xunit.DependencyInjection
         private readonly IServiceProvider _provider;
 
         public DependencyInjectionTestCaseRunner(IServiceProvider provider, IXunitTestCase testCase,
-            string displayName, string skipReason, object[] constructorArguments, object[] testMethodArguments,
+            string displayName, string skipReason, object?[] constructorArguments, object[] testMethodArguments,
             IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
             : base(testCase, displayName, skipReason, constructorArguments, testMethodArguments, messageBus,
                 aggregator, cancellationTokenSource) => _provider = provider;
@@ -49,7 +49,7 @@ namespace Xunit.DependencyInjection
         }
 
         public DependencyInjectionTheoryTestCaseRunner(IServiceProvider provider, IXunitTestCase testCase,
-            string displayName, string skipReason, object[] constructorArguments, IMessageSink diagnosticMessageSink,
+            string displayName, string skipReason, object?[] constructorArguments, IMessageSink diagnosticMessageSink,
             IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
             : base(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource) =>
             _provider = provider;
