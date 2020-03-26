@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
@@ -22,6 +21,7 @@ namespace Xunit.DependencyInjection
         /// <inheritdoc />
         protected override Task<RunSummary> RunTestAsync() =>
             new DependencyInjectionTestRunner(_provider, new XunitTest(TestCase, DisplayName), MessageBus,
+                    FromServicesAttribute.CreateFromServices(TestMethod),
                     TestClass, ConstructorArguments, TestMethod, TestMethodArguments, SkipReason,
                     BeforeAfterAttributes, new ExceptionAggregator(Aggregator), CancellationTokenSource)
                 .RunAsync();
@@ -31,7 +31,6 @@ namespace Xunit.DependencyInjection
     {
         private static readonly Func<XunitTheoryTestCaseRunner, List<XunitTestRunner>> GetTestRunners;
         private static readonly Func<TestRunner<IXunitTestCase>, ITest> GetTest;
-        private static readonly Func<TestRunner<IXunitTestCase>, MethodInfo> GetTestMethod;
         private static readonly Func<TestRunner<IXunitTestCase>, object[]> GetTestMethodArguments;
         private readonly IServiceProvider _provider;
 
@@ -44,7 +43,6 @@ namespace Xunit.DependencyInjection
             var testRunner = Expression.Parameter(typeof(TestRunner<IXunitTestCase>));
 
             GetTest = Expression.Lambda<Func<TestRunner<IXunitTestCase>, ITest>>(Expression.PropertyOrField(testRunner, "Test"), testRunner).Compile();
-            GetTestMethod = Expression.Lambda<Func<TestRunner<IXunitTestCase>, MethodInfo>>(Expression.PropertyOrField(testRunner, "TestMethod"), testRunner).Compile();
             GetTestMethodArguments = Expression.Lambda<Func<TestRunner<IXunitTestCase>, object[]>>(Expression.PropertyOrField(testRunner, "TestMethodArguments"), testRunner).Compile();
         }
 
@@ -59,12 +57,13 @@ namespace Xunit.DependencyInjection
         {
             await base.AfterTestCaseStartingAsync();
 
+            var fromServices = FromServicesAttribute.CreateFromServices(TestMethod);
             var runners = GetTestRunners(this);
             for (var index = 0; index < runners.Count; index++)
             {
                 if (runners[index] is TestRunner<IXunitTestCase> runner)
                     runners[index] = new DependencyInjectionTestRunner(_provider, GetTest(runner),
-                        MessageBus, TestClass, ConstructorArguments, GetTestMethod(runner), GetTestMethodArguments(runner),
+                        MessageBus, fromServices, TestClass, ConstructorArguments, TestMethod, GetTestMethodArguments(runner),
                         SkipReason, BeforeAfterAttributes, Aggregator, CancellationTokenSource);
             }
         }
