@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ namespace Xunit.DependencyInjection
     public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     {
         private readonly IServiceProvider _provider;
+        private IServiceScope? _serviceScope;
 
         public DependencyInjectionTestClassRunner(IServiceProvider provider,
             ITestClass testClass,
@@ -71,6 +73,22 @@ namespace Xunit.DependencyInjection
             }
 
             return base.TryGetConstructorArgument(constructor, index, parameter, out argumentValue);
+        }
+
+        protected override void CreateClassFixture(Type fixtureType)
+        {
+            _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
+            Aggregator.Run(() => ClassFixtureMappings[fixtureType] = ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, fixtureType));
+        }
+
+        protected override async Task BeforeTestClassFinishedAsync()
+        {
+            var disposeAsyncTasks = ClassFixtureMappings.Values.OfType<IAsyncLifetime>().Select(fixture => Aggregator.RunAsync(fixture.DisposeAsync)).ToList();
+
+            await Task.WhenAll(disposeAsyncTasks);
+
+            _serviceScope?.Dispose();
         }
 
         internal class DelayArgument
