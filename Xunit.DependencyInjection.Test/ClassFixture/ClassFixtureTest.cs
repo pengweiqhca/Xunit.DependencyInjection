@@ -1,5 +1,6 @@
 namespace Xunit.DependencyInjection.Test
 {
+    [TestCaseOrderer("Xunit.DependencyInjection.Test.TestCaseByMethodNameOrderer", "Xunit.DependencyInjection.Test")]
     public class ClassFixtureTest : IClassFixture<FixtureWithDependency>
     {
         private readonly FixtureWithDependency _fixture;
@@ -21,15 +22,15 @@ namespace Xunit.DependencyInjection.Test
             Assert.IsType<DependencyClass>(_fixture.Dependency);
         }
 
-        [Fact(Skip="Implement test ordering")]
-        public void SameClassFixtureDependencyInstance1()
+        [Fact]
+        public void SameClassFixtureDependencyInstance_1()
         {
             Assert.Equal(0, _fixture.Dependency.Value);
             _fixture.Dependency.Value = 5555;
         }
 
-        [Fact(Skip="Implement test ordering")]
-        public void SameClassFixtureDependencyInstance0()
+        [Fact]
+        public void SameClassFixtureDependencyInstance_2()
         {
             Assert.Equal(5555, _fixture.Dependency.Value);
         }
