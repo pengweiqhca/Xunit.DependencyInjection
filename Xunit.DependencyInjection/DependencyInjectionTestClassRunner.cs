@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -75,6 +74,7 @@ namespace Xunit.DependencyInjection
             return base.TryGetConstructorArgument(constructor, index, parameter, out argumentValue);
         }
 
+        /// <inheritdoc />
         protected override void CreateClassFixture(Type fixtureType)
         {
             _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
@@ -82,11 +82,10 @@ namespace Xunit.DependencyInjection
             Aggregator.Run(() => ClassFixtureMappings[fixtureType] = ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, fixtureType));
         }
 
+        /// <inheritdoc />
         protected override async Task BeforeTestClassFinishedAsync()
         {
-            var disposeAsyncTasks = ClassFixtureMappings.Values.OfType<IAsyncLifetime>().Select(fixture => Aggregator.RunAsync(fixture.DisposeAsync)).ToList();
-
-            await Task.WhenAll(disposeAsyncTasks);
+            await base.BeforeTestClassFinishedAsync();
 
             _serviceScope?.Dispose();
         }

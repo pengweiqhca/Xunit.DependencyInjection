@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -10,6 +11,7 @@ namespace Xunit.DependencyInjection
     public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
     {
         private readonly IServiceProvider _provider;
+        private IServiceScope? _serviceScope;
         private readonly IMessageSink _diagnosticMessageSink;
 
         public DependencyInjectionTestCollectionRunner(IServiceProvider provider,
@@ -25,6 +27,23 @@ namespace Xunit.DependencyInjection
         {
             _provider = provider;
             _diagnosticMessageSink = diagnosticMessageSink;
+        }
+
+        /// <inheritdoc />
+        protected override void CreateCollectionFixture(Type fixtureType)
+        {
+            _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
+            Aggregator.Run(() => CollectionFixtureMappings[fixtureType] =
+                ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, fixtureType));
+        }
+
+        /// <inheritdoc/>
+        protected override async Task BeforeTestCollectionFinishedAsync()
+        {
+            await base.BeforeTestCollectionFinishedAsync();
+
+             _serviceScope?.Dispose();
         }
 
         /// <inheritdoc />
