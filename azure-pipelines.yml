@@ -16,62 +16,53 @@ jobs:
   pool:
     vmImage: 'ubuntu-latest'
   steps:
-  - task: DotNetCoreInstaller@0
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
     inputs:
-      version: '2.2.100'
-  - task: DotNetCoreInstaller@0
-    inputs:
-      version: '3.1.301'
+      version: 3.1.x
   - task: DotNetCoreCLI@2
     inputs:
       command: build
       projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
       arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
-      includePreviewVersions: true
   - task: DotNetCoreCLI@2
     inputs:
       command: test
       projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
       arguments: '-c $(buildConfiguration)'
-      includePreviewVersions: true
 - job: MacOS_Build_and_Test
   pool:
     vmImage: 'macOS-latest'
   steps:
-  - task: DotNetCoreInstaller@0
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
     inputs:
-      version: '2.2.100'
-  - task: DotNetCoreInstaller@0
-    inputs:
-      version: '3.1.301'
+      version: 3.1.x
   - task: DotNetCoreCLI@2
     inputs:
       command: build
       projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
       arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
-      includePreviewVersions: true
   - task: DotNetCoreCLI@2
     inputs:
       command: test
       projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
       arguments: '-c $(buildConfiguration)'
-      includePreviewVersions: true
 - job: Windows_Build_and_Test
   pool:
     vmImage: 'windows-latest'
   steps:
-    - task: DotNetCoreInstaller@0
-      inputs:
-        version: '3.1.301'
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: build
-        projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-        arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
-        includePreviewVersions: true
-    - task: DotNetCoreCLI@2
-      inputs:
-        command: test
-        projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
-        arguments: '-c $(buildConfiguration)'
-        includePreviewVersions: true
+  - task: UseDotNet@2
+    displayName: 'Use .NET Core sdk'
+    inputs:
+      version: 3.1.x
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: build
+      projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
+      arguments: '-c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True'
+  - task: DotNetCoreCLI@2
+    inputs:
+      command: test
+      projects: 'Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj'
+      arguments: '-c $(buildConfiguration)'
