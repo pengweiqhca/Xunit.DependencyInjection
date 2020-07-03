@@ -14,7 +14,7 @@ variables:
 jobs:
 - job: Linux_Build_and_Test
   pool:
-    vmImage: 'ubuntu-16.04'
+    vmImage: 'ubuntu-latest'
   steps:
   - task: DotNetCoreInstaller@0
     inputs:
@@ -36,7 +36,7 @@ jobs:
       includePreviewVersions: true
 - job: MacOS_Build_and_Test
   pool:
-    vmImage: 'macOS-10.14'
+    vmImage: 'macOS-latest'
   steps:
   - task: DotNetCoreInstaller@0
     inputs:
@@ -58,7 +58,7 @@ jobs:
       includePreviewVersions: true
 - job: Windows_Build_and_Test
   pool:
-    vmImage: 'windows-2019'
+    vmImage: 'windows-latest'
   steps:
     - task: DotNetCoreInstaller@0
       inputs:
