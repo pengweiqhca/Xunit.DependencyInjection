@@ -5,12 +5,10 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Xunit;
 using Xunit.Abstractions;
 using Xunit.DependencyInjection.Demystifier;
 using Xunit.DependencyInjection.Logging;
 
-//[assembly: TestFramework("Xunit.DependencyInjection.Test.Startup", "Xunit.DependencyInjection.Test")]
 namespace Xunit.DependencyInjection.Test
 {
     public class Startup : DependencyInjectionTestFramework

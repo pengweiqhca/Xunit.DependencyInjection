@@ -11,7 +11,7 @@ namespace Xunit.DependencyInjection
     {
         /// <inheritdoc />
         protected DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
-
+        //StartupLoader
         /// <inheritdoc />
         protected override ITestFrameworkDiscoverer CreateDiscoverer(
             IAssemblyInfo assemblyInfo) =>

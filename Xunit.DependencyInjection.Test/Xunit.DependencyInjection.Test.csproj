@@ -1,18 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
+
   <PropertyGroup>
     <TargetFrameworks>netcoreapp2.1;netcoreapp3.1</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net461;$(TargetFrameworks)</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
-    <XunitStartupFullName>$(AssemblyName).Startup</XunitStartupFullName>
   </PropertyGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="Xunit.TestFrameworkAttribute">
-      <_Parameter1>$(XunitStartupFullName)</_Parameter1>
-      <_Parameter2>$(AssemblyName)</_Parameter2>
-    </AssemblyAttribute>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.*"  Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" />
     <PackageReference Include="xunit" Version="2.*" />

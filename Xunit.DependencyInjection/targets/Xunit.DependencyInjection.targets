@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <XunitStartupFullName Condition="'$(XunitStartupFullName)'==''">$(AssemblyName).Startup</XunitStartupFullName>
+    <XunitStartupFullName Condition="'$(XunitStartupFullName)' == ''">$(AssemblyName).Startup</XunitStartupFullName>
   </PropertyGroup>
 
   <ItemGroup>

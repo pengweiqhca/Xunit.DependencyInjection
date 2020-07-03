@@ -22,5 +22,6 @@ Release notes:
     <None Include="targets\Xunit.DependencyInjection.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\Xunit.DependencyInjection.targets" />
     <None Include="targets\Xunit.DependencyInjection.targets" Pack="true" PackagePath="build\net461\Xunit.DependencyInjection.targets" />
     <None Include="targets\Xunit.DependencyInjection.targets" Pack="true" PackagePath="buildTransitive\net461\Xunit.DependencyInjection.targets" />
+    <None Include="targets\Xunit.DependencyInjection.targets" Pack="true" PackagePath="buildMultiTargeting\Xunit.DependencyInjection.targets" />
   </ItemGroup>
 </Project>
