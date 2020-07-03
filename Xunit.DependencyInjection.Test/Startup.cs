@@ -10,7 +10,7 @@ using Xunit.Abstractions;
 using Xunit.DependencyInjection.Demystifier;
 using Xunit.DependencyInjection.Logging;
 
-[assembly: TestFramework("Xunit.DependencyInjection.Test.Startup", "Xunit.DependencyInjection.Test")]
+//[assembly: TestFramework("Xunit.DependencyInjection.Test.Startup", "Xunit.DependencyInjection.Test")]
 namespace Xunit.DependencyInjection.Test
 {
     public class Startup : DependencyInjectionTestFramework

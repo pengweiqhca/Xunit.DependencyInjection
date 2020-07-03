@@ -17,4 +17,10 @@ Release notes:
     <PackageReference Include="xunit.extensibility.execution" Version="[2.2.0,3.0.0)" Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="targets\Xunit.DependencyInjection.targets" Pack="true" PackagePath="build\netstandard2.0\Xunit.DependencyInjection.targets" />
+    <None Include="targets\Xunit.DependencyInjection.targets" Pack="true" PackagePath="buildTransitive\netstandard2.0\Xunit.DependencyInjection.targets" />
+    <None Include="targets\Xunit.DependencyInjection.targets" Pack="true" PackagePath="build\net461\Xunit.DependencyInjection.targets" />
+    <None Include="targets\Xunit.DependencyInjection.targets" Pack="true" PackagePath="buildTransitive\net461\Xunit.DependencyInjection.targets" />
+  </ItemGroup>
 </Project>
