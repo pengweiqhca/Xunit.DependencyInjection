@@ -1,12 +1,18 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
-    <XunitStartupFullName Condition="'$(XunitStartupFullName)' == ''">$(AssemblyName).Startup</XunitStartupFullName>
+    <XunitStartupFullName Condition="'$(XunitStartupFullName)' == '' AND '$(XunitStartupAssembly)' == ''">$(AssemblyName).Startup</XunitStartupFullName>
+    <XunitStartupFullName Condition="'$(XunitStartupFullName)' == '' AND '$(XunitStartupAssembly)' != ''">$(XunitStartupAssembly).Startup</XunitStartupFullName>
   </PropertyGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="Xunit.TestFrameworkAttribute">
+    <AssemblyAttribute Include="Xunit.TestFramework">
+      <_Parameter1>Xunit.DependencyInjection.DependencyInjectionTestFramework</_Parameter1>
+      <_Parameter2>Xunit.DependencyInjection</_Parameter2>
+    </AssemblyAttribute>
+
+    <AssemblyAttribute Include="Xunit.DependencyInjection.StartupType">
       <_Parameter1>$(XunitStartupFullName)</_Parameter1>
-      <_Parameter2>$(AssemblyName)</_Parameter2>
+      <_Parameter2 Condition="'$(XunitStartupAssembly)' != ''">$(XunitStartupAssembly)</_Parameter2>
     </AssemblyAttribute>
   </ItemGroup>
 </Project>
