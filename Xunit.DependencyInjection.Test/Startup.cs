@@ -15,16 +15,15 @@ namespace Xunit.DependencyInjection.Test
 
         public Startup(AssemblyName assemblyName) => _assemblyName = assemblyName;
 
-        protected void ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
             services.AddLogging().AddScoped<IDependency, DependencyClass>();
 
             services.AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
         }
 
-        public void ConfigureServices(IHostBuilder hostBuilder) =>
+        public void ConfigureHost(IHostBuilder hostBuilder) =>
             hostBuilder
-                 .ConfigureServices(ConfigureServices)
                  .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, _assemblyName.Name! } }));
 
         public void Configure(ILoggerFactory loggerFactory, ITestOutputHelperAccessor accessor) =>

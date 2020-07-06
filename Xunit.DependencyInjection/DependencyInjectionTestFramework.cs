@@ -25,7 +25,7 @@ namespace Xunit.DependencyInjection
                 var startup = StartupLoader.CreateStartup(assemblyName);
                 if (startup == null) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
 
-                var hostBuilder = new HostBuilder();
+                var hostBuilder = StartupLoader.ConfigureHost(new HostBuilder(), startup);
 
                 StartupLoader.ConfigureServices(hostBuilder, startup);
 

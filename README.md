@@ -68,7 +68,7 @@ namespace Your.Test.Project
 +       public Startup(AssemblyName assemblyName) { }
 
 -       protected void ConfigureServices(IServiceCollection services)
--       public void ConfigureServices(IServiceCollection services)
++       public void ConfigureServices(IServiceCollection services)
         {
             services.AddTransient<IDependency, DependencyClass>();
         }
@@ -76,7 +76,10 @@ namespace Your.Test.Project
 -       protected override IHostBuilder CreateHostBuilder() =>
 -           base.CreateHostBuilder(assemblyName)
 -               .ConfigureServices(ConfigureServices);
++       public void ConfigureHost(IHostBuilder hostBuilder) { }
     }
+-       protected override void Configure(IServiceProvider provider)
++       public void ConfigureServices(IServiceProvider provider)
 }
 ```
 
@@ -90,14 +93,15 @@ public class Startup
 }
 ```
 
-* ConfigureServices method
+* ConfigureHost method
 ``` C#
 public class Startup
 {
-    public void ConfigureServices(IHostBuilder hostBuilder) { }
+    public void/IHostBuilder ConfigureHost(IHostBuilder hostBuilder) { }
 }
 ```
-or
+
+* ConfigureServices method
 ``` C#
 public class Startup
 {
@@ -174,7 +178,7 @@ internal class DependencyClass : IDependency
 ``` C#
     public class Startup
     {
-        public void ConfigureServices(IHostBuilder hostBuilder) =>
+        public void ConfigureHost(IHostBuilder hostBuilder) =>
             hostBuilder
                 .ConfigureServices((context, services) => { context.XXXX });
     }

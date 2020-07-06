@@ -39,27 +39,46 @@ namespace Xunit.DependencyInjection
             return Activator.CreateInstance(type, assemblyName);
         }
 
+        public static IHostBuilder ConfigureHost(IHostBuilder builder, object startup)
+        {
+            var method = FindMethod(startup.GetType(), nameof(ConfigureHost));
+            if (method == null) return builder;
+
+            var parameters = method.GetParameters();
+            if (parameters.Length != 1 || parameters[0].ParameterType != typeof(IHostBuilder))
+                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must have the only 'IHostBuilder' parameter.");
+
+            if (method.ReturnType == typeof(void))
+            {
+                method.Invoke(startup, new object[] { builder });
+
+                return builder;
+            }
+
+            if (typeof(IHostBuilder).IsAssignableFrom(method.ReturnType))
+                return method.Invoke(startup, new object[] { builder }) as IHostBuilder ?? builder;
+
+            throw new InvalidOperationException($"The '{method.Name}' method in the type '{startup.GetType().FullName}' must have no return type or return type must implement 'IHostBuilder'.");
+        }
+
         public static void ConfigureServices(IHostBuilder builder, object startup)
         {
             var method = FindMethod(startup.GetType(), nameof(ConfigureServices));
             if (method == null) return;
 
             var parameters = method.GetParameters();
-            if (parameters.Length == 1 && parameters[0].ParameterType == typeof(IHostBuilder))
-                method.Invoke(startup, new object[] { builder });
-            else
-                builder.ConfigureServices(parameters.Length switch
-                {
-                    1 when parameters[0].ParameterType == typeof(IServiceCollection) =>
-                    (context, services) => method.Invoke(startup, new object[] { services }),
-                    2 when parameters[0].ParameterType == typeof(IServiceCollection) &&
-                           parameters[1].ParameterType == typeof(HostBuilderContext) =>
-                    (context, services) => method.Invoke(startup, new object[] { services, context }),
-                    2 when parameters[1].ParameterType == typeof(IServiceCollection) &&
-                           parameters[0].ParameterType == typeof(HostBuilderContext) =>
-                    (context, services) => method.Invoke(startup, new object[] { context, services }),
-                    _ => throw new InvalidOperationException($"The '{method.Name}' method in the type '{startup.GetType().FullName}' must have a 'IServiceCollection' parameter and optional 'HostBuilderContext' parameter or have the only 'IHostBuilder' parameter.")
-                });
+            builder.ConfigureServices(parameters.Length switch
+            {
+                1 when parameters[0].ParameterType == typeof(IServiceCollection) =>
+                (context, services) => method.Invoke(startup, new object[] { services }),
+                2 when parameters[0].ParameterType == typeof(IServiceCollection) &&
+                       parameters[1].ParameterType == typeof(HostBuilderContext) =>
+                (context, services) => method.Invoke(startup, new object[] { services, context }),
+                2 when parameters[1].ParameterType == typeof(IServiceCollection) &&
+                       parameters[0].ParameterType == typeof(HostBuilderContext) =>
+                (context, services) => method.Invoke(startup, new object[] { context, services }),
+                _ => throw new InvalidOperationException($"The '{method.Name}' method in the type '{startup.GetType().FullName}' must have a 'IServiceCollection' parameter and optional 'HostBuilderContext' parameter.")
+            });
         }
 
         public static void Configure(IServiceProvider provider, object startup)
@@ -69,7 +88,7 @@ namespace Xunit.DependencyInjection
             method?.Invoke(startup, method.GetParameters().Select(p => provider.GetService(p.ParameterType)).ToArray());
         }
 
-        private static MethodInfo? FindMethod(Type startupType, string methodName)
+        private static MethodInfo? FindMethod(Type startupType, string methodName, bool validateReturnType = true)
         {
             var selectedMethods = startupType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
                 .Where(method => method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -79,7 +98,7 @@ namespace Xunit.DependencyInjection
 
             var methodInfo = selectedMethods.FirstOrDefault();
 
-            if (methodInfo != null && methodInfo.ReturnType != typeof(void))
+            if (methodInfo != null && validateReturnType && methodInfo.ReturnType != typeof(void))
                 throw new InvalidOperationException($"The '{methodInfo.Name}' method in the type '{startupType.FullName}' must have no return type.");
 
             return methodInfo;
