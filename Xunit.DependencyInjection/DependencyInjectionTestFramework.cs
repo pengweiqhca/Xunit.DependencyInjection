@@ -7,27 +7,27 @@ using Xunit.Sdk;
 
 namespace Xunit.DependencyInjection
 {
-    public abstract class DependencyInjectionTestFramework : TestFramework
+    public sealed class DependencyInjectionTestFramework : XunitTestFramework
     {
-        /// <inheritdoc />
-        protected DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
+        public DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
 
-        /// <inheritdoc />
-        protected override ITestFrameworkDiscoverer CreateDiscoverer(
-            IAssemblyInfo assemblyInfo) =>
-            new XunitTestFrameworkDiscoverer(assemblyInfo, SourceInformationProvider, DiagnosticMessageSink);
-
-        /// <inheritdoc />
-        protected sealed override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
+        protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
             IHost? host = null;
             try
             {
-                host = CreateHostBuilder(assemblyName)
+                var startup = StartupLoader.CreateStartup(assemblyName);
+                if (startup == null) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+
+                var hostBuilder = StartupLoader.ConfigureHost(new HostBuilder(), startup);
+
+                StartupLoader.ConfigureServices(hostBuilder, startup);
+
+                host = hostBuilder
                     .ConfigureServices(services => services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>())
                     .Build();
 
-                Configure(host.Services);
+                StartupLoader.Configure(host.Services, startup);
 
                 return new DependencyInjectionTestFrameworkExecutor(host, null,
                     assemblyName, SourceInformationProvider, DiagnosticMessageSink);
@@ -38,12 +38,5 @@ namespace Xunit.DependencyInjection
                     assemblyName, SourceInformationProvider, DiagnosticMessageSink);
             }
         }
-
-        /// <summary>Override this method to provide the implementation of <see cref="T:IHostBuilder" />.</summary>
-        /// <param name="assemblyName">The assembly that is being executed.</param>
-        /// <returns>Returns the host builder.</returns>
-        protected virtual IHostBuilder CreateHostBuilder(AssemblyName assemblyName) => new HostBuilder();
-
-        protected virtual void Configure(IServiceProvider provider) { }
     }
 }
