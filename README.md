@@ -59,6 +59,9 @@ public class MyAwesomeTests
 
 ## V6 to V7 break changes
 ``` diff
+
+-[assembly: TestFramework("Your.Test.Project.Startup", "Your.Test.Project")]
+
 namespace Your.Test.Project
 {
 -   public class Startup : DependencyInjectionTestFramework
@@ -79,7 +82,7 @@ namespace Your.Test.Project
 +       public void ConfigureHost(IHostBuilder hostBuilder) { }
     }
 -       protected override void Configure(IServiceProvider provider)
-+       public void ConfigureServices(IServiceProvider provider)
++       public void Configure(IServiceProvider provider)
 }
 ```
 

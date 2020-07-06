@@ -7,17 +7,11 @@ using Xunit.Sdk;
 
 namespace Xunit.DependencyInjection
 {
-    public class DependencyInjectionTestFramework : TestFramework
+    public sealed class DependencyInjectionTestFramework : XunitTestFramework
     {
-        /// <inheritdoc />
-        protected DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
+        public DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
 
-        /// <inheritdoc />
-        protected override ITestFrameworkDiscoverer CreateDiscoverer(IAssemblyInfo assemblyInfo) =>
-            new XunitTestFrameworkDiscoverer(assemblyInfo, SourceInformationProvider, DiagnosticMessageSink);
-
-        /// <inheritdoc />
-        protected sealed override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
+        protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
             IHost? host = null;
             try
