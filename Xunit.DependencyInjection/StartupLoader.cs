@@ -8,40 +8,40 @@ namespace Xunit.DependencyInjection
 {
     internal static class StartupLoader
     {
-        public static object? CreateStartup(AssemblyName assemblyName)
+        public static Type? GetStartupType(AssemblyName assemblyName)
         {
             var assembly = Assembly.Load(assemblyName);
             var attr = assembly.GetCustomAttribute<StartupTypeAttribute>();
 
-            Type type;
-            if (attr == null)
-            {
-                type = assembly.GetType($"{assemblyName.Name}.Startup");
-                if (type == null) return null;
-            }
-            else
-            {
-                if (attr.AssemblyName != null) assembly = Assembly.Load(attr.AssemblyName);
+            if (attr == null) return assembly.GetType($"{assemblyName.Name}.Startup");
 
-                type = assembly.GetType(attr.TypeName);
-                if (type == null) throw new InvalidOperationException($"Can't load type {attr.TypeName} in '{assembly.FullName}'");
-            }
+            if (attr.AssemblyName != null) assembly = Assembly.Load(attr.AssemblyName);
 
-            var ctors = type.GetConstructors();
+            return assembly.GetType(attr.TypeName) ?? throw new InvalidOperationException($"Can't load type {attr.TypeName} in '{assembly.FullName}'");
+        }
+
+        public static object? CreateStartup(Type? startupType, AssemblyName assemblyName)
+        {
+            if (startupType == null) return null;
+
+            var ctors = startupType.GetConstructors();
             if (ctors.Length > 1)
-                throw new InvalidOperationException($"Having multiple constructors of startup type '{type.AssemblyQualifiedName}'");
+                throw new InvalidOperationException($"Having multiple constructors of startup type '{startupType.AssemblyQualifiedName}'");
 
-            if (ctors.Length == 0) return Activator.CreateInstance(type);
+            if (ctors.Length == 0) return Activator.CreateInstance(startupType);
 
-            if (ctors.Length == 1 && ctors[0].GetParameters()[0].ParameterType != typeof(AssemblyName))
-                throw new InvalidOperationException($"The constructor of startup type '{type.AssemblyQualifiedName}' must have no parameter or have the only 'AssemblyName' parameter.");
+            var parameters = ctors[0].GetParameters();
+            if (parameters.Length == 0) return Activator.CreateInstance(startupType);
 
-            return Activator.CreateInstance(type, assemblyName);
+            if (parameters.Length > 1 || parameters[0].ParameterType != typeof(AssemblyName))
+                throw new InvalidOperationException($"The constructor of startup type '{startupType.AssemblyQualifiedName}' must have no parameter or have the only 'AssemblyName' parameter.");
+
+            return Activator.CreateInstance(startupType, assemblyName);
         }
 
         public static IHostBuilder ConfigureHost(IHostBuilder builder, object startup)
         {
-            var method = FindMethod(startup.GetType(), nameof(ConfigureHost));
+            var method = FindMethod(startup.GetType(), nameof(ConfigureHost), false);
             if (method == null) return builder;
 
             var parameters = method.GetParameters();

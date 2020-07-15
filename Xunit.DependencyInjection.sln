@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Demystifier", "Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj", "{17899397-D576-4DC1-A833-7E289A893A8B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.FakeTest", "Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj", "{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{17899397-D576-4DC1-A833-7E289A893A8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17899397-D576-4DC1-A833-7E289A893A8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{17899397-D576-4DC1-A833-7E289A893A8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

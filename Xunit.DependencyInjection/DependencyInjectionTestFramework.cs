@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
 using System.Reflection;
+using Microsoft.Extensions.Configuration;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -16,10 +18,11 @@ namespace Xunit.DependencyInjection
             IHost? host = null;
             try
             {
-                var startup = StartupLoader.CreateStartup(assemblyName);
+                var startup = StartupLoader.CreateStartup(StartupLoader.GetStartupType(assemblyName), assemblyName);
                 if (startup == null) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
 
-                var hostBuilder = StartupLoader.ConfigureHost(new HostBuilder(), startup);
+                var hostBuilder = StartupLoader.ConfigureHost(new HostBuilder()
+                    .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name! } })), startup);
 
                 StartupLoader.ConfigureServices(hostBuilder, startup);
 

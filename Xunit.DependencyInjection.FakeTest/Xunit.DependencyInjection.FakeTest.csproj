@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <XunitStartupAssembly>Xunit.DependencyInjection.Test</XunitStartupAssembly>
+  </PropertyGroup>
+
+  <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
+
+  <ItemGroup>
+    <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

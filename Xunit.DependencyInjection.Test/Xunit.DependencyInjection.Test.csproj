@@ -10,11 +10,12 @@
   <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.*"  Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="3.*" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" />
     <PackageReference Include="xunit" Version="2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
     <ProjectReference Include="..\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj" />
+    <ProjectReference Include="..\Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj" />
     <ProjectReference Include="..\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
   </ItemGroup>
 
