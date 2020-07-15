@@ -1,17 +1,12 @@
-using System;
+﻿using System;
 
 namespace Xunit.DependencyInjection.Test.ClassFixture
 {
     public class FixtureWithDisposableDependency : IDisposable
     {
-        private readonly IDependencyWithManagedLifetime _dependency;
+        public FixtureWithDisposableDependency(IDependencyWithManagedLifetime dependency) => Dependency = dependency;
 
-        public FixtureWithDisposableDependency(IDependencyWithManagedLifetime dependency)
-        {
-            _dependency = dependency;
-        }
-
-        public IDependencyWithManagedLifetime Dependency => _dependency;
+        public IDependencyWithManagedLifetime Dependency { get; }
 
         public bool IsDisposed { get; private set; }
 

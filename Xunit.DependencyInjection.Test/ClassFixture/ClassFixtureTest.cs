@@ -1,4 +1,4 @@
-namespace Xunit.DependencyInjection.Test
+﻿namespace Xunit.DependencyInjection.Test.ClassFixture
 {
     [TestCaseOrderer("Xunit.DependencyInjection.Test.TestCaseByMethodNameOrderer", "Xunit.DependencyInjection.Test")]
     public class ClassFixtureTest : IClassFixture<FixtureWithDependency>

@@ -1,4 +1,4 @@
-namespace Xunit.DependencyInjection.Test
+﻿namespace Xunit.DependencyInjection.Test.CollectionFixture
 {
     [CollectionDefinition(nameof(CollectionFixtureWithDependencyTestsCollection))]
     public class CollectionFixtureWithDependencyTestsCollection : ICollectionFixture<CollectionFixtureWithDependency>

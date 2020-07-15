@@ -1,3 +1,5 @@
+﻿using Xunit.DependencyInjection.Test.CollectionFixture;
+
 namespace Xunit.DependencyInjection.Test.ClassFixture
 {
     [CollectionDefinition(nameof(ClassFixtureAsyncLifetimeTestsUnderTestCollection))]
