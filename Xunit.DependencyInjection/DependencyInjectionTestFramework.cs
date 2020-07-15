@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Reflection;
@@ -24,7 +24,10 @@ namespace Xunit.DependencyInjection
                 StartupLoader.ConfigureServices(hostBuilder, startup);
 
                 host = hostBuilder
-                    .ConfigureServices(services => services.AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>())
+                   .ConfigureServices(services =>
+                        services
+                            .AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>()
+                            .AddSingleton<IMessageSink>(DiagnosticMessageSink))
                     .Build();
 
                 StartupLoader.Configure(host.Services, startup);

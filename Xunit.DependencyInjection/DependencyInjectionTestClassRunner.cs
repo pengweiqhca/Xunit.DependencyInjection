@@ -12,6 +12,7 @@ namespace Xunit.DependencyInjection
     public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     {
         private readonly IServiceProvider _provider;
+        private IServiceScope? _serviceScope;
 
         public DependencyInjectionTestClassRunner(IServiceProvider provider,
             ITestClass testClass,
@@ -71,6 +72,22 @@ namespace Xunit.DependencyInjection
             }
 
             return base.TryGetConstructorArgument(constructor, index, parameter, out argumentValue);
+        }
+
+        /// <inheritdoc />
+        protected override void CreateClassFixture(Type fixtureType)
+        {
+            _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
+            Aggregator.Run(() => ClassFixtureMappings[fixtureType] = ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, fixtureType));
+        }
+
+        /// <inheritdoc />
+        protected override async Task BeforeTestClassFinishedAsync()
+        {
+            await base.BeforeTestClassFinishedAsync();
+
+            _serviceScope?.Dispose();
         }
 
         internal class DelayArgument
