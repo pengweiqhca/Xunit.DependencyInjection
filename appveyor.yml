@@ -54,7 +54,7 @@ after_build:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - dotnet build
+  - dotnet build -v n /p:TreatWarningsAsErrors=True
 # to disable automatic builds
 #build: off
 
