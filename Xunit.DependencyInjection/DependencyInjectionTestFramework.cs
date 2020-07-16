@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Extensions.Configuration;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -11,7 +12,9 @@ namespace Xunit.DependencyInjection
 {
     public sealed class DependencyInjectionTestFramework : XunitTestFramework
     {
-        public DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
+        public DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink)
+        {
+        }
 
         protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
@@ -28,8 +31,9 @@ namespace Xunit.DependencyInjection
 
                 host = hostBuilder
                     .ConfigureServices(services => services
-                        .AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>()
-                        .AddSingleton(DiagnosticMessageSink))
+                        .AddSingleton(DiagnosticMessageSink)
+                        .TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>()
+                        )
                     .Build();
 
                 StartupLoader.Configure(host.Services, startup);
