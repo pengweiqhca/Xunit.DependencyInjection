@@ -26,6 +26,8 @@ namespace Xunit.DependencyInjection
                                   new HostBuilder()
                                       .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name! } }));
 
+                StartupLoader.ConfigureHost(hostBuilder, startup);
+
                 StartupLoader.ConfigureServices(hostBuilder, startup);
 
                 host = hostBuilder.ConfigureServices(services => services

@@ -200,7 +200,7 @@ or
 ``` C#
     public class Startup
     {
-        public void ConfigureServices(IHostBuilder hostBuilder) =>
+        public void ConfigureHost(IHostBuilder hostBuilder) =>
             hostBuilder
                 .ConfigureHostConfiguration(builder => { })
                 .ConfigureAppConfiguration((context, builder) => { });
