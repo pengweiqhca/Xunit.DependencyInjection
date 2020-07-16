@@ -20,45 +20,42 @@ namespace Xunit.DependencyInjection
             return assembly.GetType(attr.TypeName) ?? throw new InvalidOperationException($"Can't load type {attr.TypeName} in '{assembly.FullName}'");
         }
 
-        public static object? CreateStartup(Type? startupType, AssemblyName assemblyName)
+        public static object? CreateStartup(Type? startupType)
         {
             if (startupType == null) return null;
 
             var ctors = startupType.GetConstructors();
-            if (ctors.Length > 1)
-                throw new InvalidOperationException($"Having multiple constructors of startup type '{startupType.AssemblyQualifiedName}'");
+            if (ctors.Length != 1 || ctors[0].GetParameters().Length != 0)
+                throw new InvalidOperationException($"'{startupType.FullName}' must have a single public constructor and the constructor without parameters.");
 
-            if (ctors.Length == 0) return Activator.CreateInstance(startupType);
-
-            var parameters = ctors[0].GetParameters();
-            if (parameters.Length == 0) return Activator.CreateInstance(startupType);
-
-            if (parameters.Length > 1 || parameters[0].ParameterType != typeof(AssemblyName))
-                throw new InvalidOperationException($"The constructor of startup type '{startupType.AssemblyQualifiedName}' must have no parameter or have the only 'AssemblyName' parameter.");
-
-            return Activator.CreateInstance(startupType, assemblyName);
+            return Activator.CreateInstance(startupType);
         }
 
-        public static IHostBuilder ConfigureHost(IHostBuilder builder, object startup)
+        public static IHostBuilder? CreateHostBuilder(object startup, AssemblyName assemblyName)
         {
-            var method = FindMethod(startup.GetType(), nameof(ConfigureHost), false);
-            if (method == null) return builder;
+            var method = FindMethod(startup.GetType(), nameof(CreateHostBuilder), typeof(IHostBuilder));
+            if (method == null) return null;
+
+            var parameters = method.GetParameters();
+            if (parameters.Length == 0)
+                return (IHostBuilder)method.Invoke(startup, Array.Empty<object>());
+
+            if (parameters.Length > 1 || parameters[0].ParameterType != typeof(AssemblyName))
+                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must without parameters or have the single 'AssemblyName' parameter.");
+
+            return (IHostBuilder)method.Invoke(startup, new object[] { assemblyName });
+        }
+
+        public static void ConfigureHost(IHostBuilder builder, object startup)
+        {
+            var method = FindMethod(startup.GetType(), nameof(ConfigureHost));
+            if (method == null) return;
 
             var parameters = method.GetParameters();
             if (parameters.Length != 1 || parameters[0].ParameterType != typeof(IHostBuilder))
-                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must have the only 'IHostBuilder' parameter.");
+                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must have the single 'IHostBuilder' parameter.");
 
-            if (method.ReturnType == typeof(void))
-            {
-                method.Invoke(startup, new object[] { builder });
-
-                return builder;
-            }
-
-            if (typeof(IHostBuilder).IsAssignableFrom(method.ReturnType))
-                return method.Invoke(startup, new object[] { builder }) as IHostBuilder ?? builder;
-
-            throw new InvalidOperationException($"The '{method.Name}' method in the type '{startup.GetType().FullName}' must have no return type or return type must implement 'IHostBuilder'.");
+            method.Invoke(startup, new object[] { builder });
         }
 
         public static void ConfigureServices(IHostBuilder builder, object startup)
@@ -88,7 +85,10 @@ namespace Xunit.DependencyInjection
             method?.Invoke(startup, method.GetParameters().Select(p => provider.GetService(p.ParameterType)).ToArray());
         }
 
-        private static MethodInfo? FindMethod(Type startupType, string methodName, bool validateReturnType = true)
+        private static MethodInfo? FindMethod(Type startupType, string methodName) =>
+            FindMethod(startupType, methodName, typeof(void));
+
+        private static MethodInfo? FindMethod(Type startupType, string methodName, Type returnType)
         {
             var selectedMethods = startupType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
                 .Where(method => method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -97,9 +97,15 @@ namespace Xunit.DependencyInjection
                 throw new InvalidOperationException($"Having multiple overloads of method '{methodName}' is not supported.");
 
             var methodInfo = selectedMethods.FirstOrDefault();
+            if (methodInfo == null) return methodInfo;
 
-            if (methodInfo != null && validateReturnType && methodInfo.ReturnType != typeof(void))
-                throw new InvalidOperationException($"The '{methodInfo.Name}' method in the type '{startupType.FullName}' must have no return type.");
+            if (returnType == typeof(void))
+            {
+                if (methodInfo.ReturnType != returnType)
+                    throw new InvalidOperationException($"The '{methodInfo.Name}' method in the type '{startupType.FullName}' must have no return type.");
+            }
+            else if (!returnType.IsAssignableFrom(methodInfo.ReturnType))
+                throw new InvalidOperationException($"The '{methodInfo.Name}' method in the type '{startupType.FullName}' return type must assignable to '{returnType}'.");
 
             return methodInfo;
         }

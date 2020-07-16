@@ -23,33 +23,73 @@ namespace Xunit.DependencyInjection.Test
         public class CreateStartupTestStartup1 { public CreateStartupTestStartup1() { } }
         public class CreateStartupTestStartup2 { private CreateStartupTestStartup2() { } }
         public class CreateStartupTestStartup3 { public CreateStartupTestStartup3(AssemblyName name) { } }
-        public class CreateStartupTestStartup4 { public CreateStartupTestStartup4(Assembly assembly) { } }
-        public class CreateStartupTestStartup5 { public CreateStartupTestStartup5(AssemblyName name, Assembly assembly) { } }
 
-        public class CreateStartupTestStartup6
+        public class CreateStartupTestStartup4
         {
-            public CreateStartupTestStartup6(AssemblyName name) { }
-            public CreateStartupTestStartup6(Assembly assembly) { }
+            public CreateStartupTestStartup4() { }
+            public CreateStartupTestStartup4(Assembly assembly) { }
         }
 
         [Fact]
         public void CreateStartupTest()
         {
-            Assert.Null(StartupLoader.CreateStartup(null, Name));
+            Assert.Null(StartupLoader.CreateStartup(null));
 
-            Assert.NotNull(StartupLoader.CreateStartup(typeof(EmptyStartup), Name));
+            Assert.NotNull(StartupLoader.CreateStartup(typeof(EmptyStartup)));
 
-            Assert.NotNull(StartupLoader.CreateStartup(typeof(CreateStartupTestStartup1), Name));
+            Assert.NotNull(StartupLoader.CreateStartup(typeof(CreateStartupTestStartup1)));
 
-            Assert.Throws<MissingMethodException>(() => StartupLoader.CreateStartup(typeof(CreateStartupTestStartup2), Name));
+            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateStartup(typeof(CreateStartupTestStartup2)));
 
-            Assert.NotNull(StartupLoader.CreateStartup(typeof(CreateStartupTestStartup3), Name));
+            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateStartup(typeof(CreateStartupTestStartup3)));
 
-            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateStartup(typeof(CreateStartupTestStartup4), Name));
+            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateStartup(typeof(CreateStartupTestStartup4)));
+        }
+        #endregion
 
-            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateStartup(typeof(CreateStartupTestStartup5), Name));
+        #region CreateHostBuilderTest
 
-            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateStartup(typeof(CreateStartupTestStartup6), Name));
+        public class CreateHostBuilderTestStartup0 { public void CreateHostBuilder() { } }
+        public class CreateHostBuilderTestStartup1 { public IHostBuilder CreateHostBuilder() => new HostBuilder().ConfigureServices(services => services.AddSingleton(this)); }
+        public class CreateHostBuilderTestStartup2
+        {
+            public HostBuilder CreateHostBuilder()
+            {
+                var hostBuilder = new HostBuilder();
+
+                hostBuilder.ConfigureServices(services => services.AddSingleton(this));
+
+                return hostBuilder;
+            }
+        }
+        public class CreateHostBuilderTestStartup3 { public IHostBuilder CreateHostBuilder(IHostBuilder builder) => builder.ConfigureServices(services => services.AddSingleton(this)); }
+        public class CreateHostBuilderTestStartup4 { public IHostBuilder CreateHostBuilder(AssemblyName name) => new HostBuilder().ConfigureServices(services => services.AddSingleton(name)); }
+        public class CreateHostBuilderTestStartup5
+        {
+            public void CreateHostBuilder(IHostBuilder builder) { }
+            public void CreateHostBuilder(StringBuilder builder) { }
+        }
+
+        [Fact]
+        public void CreateHostBuilderTest()
+        {
+            Assert.Null(StartupLoader.CreateHostBuilder(new EmptyStartup(), Name));
+
+            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateHostBuilder(new CreateHostBuilderTestStartup0(), new AssemblyName()));
+
+            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateHostBuilder(new CreateHostBuilderTestStartup0(), Name));
+
+            object startup = new CreateHostBuilderTestStartup1();
+            Assert.Equal(startup, StartupLoader.CreateHostBuilder(startup, Name)?.Build().Services.GetService<CreateHostBuilderTestStartup1>());
+
+            startup = new CreateHostBuilderTestStartup2();
+            Assert.Equal(startup, StartupLoader.CreateHostBuilder(startup, Name)?.Build().Services.GetService<CreateHostBuilderTestStartup2>());
+
+            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateHostBuilder(new CreateHostBuilderTestStartup3(), Name));
+
+            Assert.Equal(Name, StartupLoader.CreateHostBuilder(new CreateHostBuilderTestStartup4(), Name)?.Build().Services.GetService<AssemblyName>());
+
+            Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateHostBuilder(new CreateHostBuilderTestStartup5(), Name));
         }
         #endregion
 
@@ -60,16 +100,6 @@ namespace Xunit.DependencyInjection.Test
         public class ConfigureHostTestStartup2 { public void ConfigureHost(StringBuilder builder) { } }
         public class ConfigureHostTestStartup3 { public void ConfigureHost(IHostBuilder builder, AssemblyName name) { } }
         public class ConfigureHostTestStartup4 { public IHostBuilder ConfigureHost(IHostBuilder builder) => builder.ConfigureServices(services => services.AddSingleton(this)); }
-        public class ConfigureHostTestStartup5
-        {
-            public HostBuilder ConfigureHost(IHostBuilder builder)
-            {
-                builder.ConfigureServices(services => services.AddSingleton(this));
-
-                return new HostBuilder();
-            }
-        }
-        public class ConfigureHostTestStartup6 { public object ConfigureHost(IHostBuilder builder) => builder; }
         public class ConfigureHostTestStartup7
         {
             public void ConfigureHost(IHostBuilder builder) { }
@@ -81,28 +111,22 @@ namespace Xunit.DependencyInjection.Test
         {
             var hostBuilder = new HostBuilder();
 
-            Assert.Equal(hostBuilder, StartupLoader.ConfigureHost(hostBuilder, new EmptyStartup()));
+            StartupLoader.ConfigureHost(hostBuilder, new EmptyStartup());
 
             Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup0()));
 
-            Assert.Equal(hostBuilder, StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup1()));
+            StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup1());
 
             Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup2()));
 
             Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup3()));
 
-            Assert.Equal(hostBuilder, StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup4()));
-
-            Assert.NotEqual(hostBuilder, StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup5()));
-
-            Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup6()));
+            Assert.Throws<InvalidOperationException>(() =>StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup4()));
 
             Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup7()));
 
             var services = hostBuilder.Build().Services;
             Assert.NotNull(services.GetService<ConfigureHostTestStartup1>());
-            Assert.NotNull(services.GetService<ConfigureHostTestStartup4>());
-            Assert.NotNull(services.GetService<ConfigureHostTestStartup5>());
         }
         #endregion
 

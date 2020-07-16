@@ -1,9 +1,10 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Microsoft.Extensions.Configuration;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -18,18 +19,18 @@ namespace Xunit.DependencyInjection
             IHost? host = null;
             try
             {
-                var startup = StartupLoader.CreateStartup(StartupLoader.GetStartupType(assemblyName), assemblyName);
+                var startup = StartupLoader.CreateStartup(StartupLoader.GetStartupType(assemblyName));
                 if (startup == null) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
 
-                var hostBuilder = StartupLoader.ConfigureHost(new HostBuilder()
-                    .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name! } })), startup);
+                var hostBuilder = StartupLoader.CreateHostBuilder(startup, assemblyName) ??
+                                  new HostBuilder()
+                                      .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name! } }));
 
                 StartupLoader.ConfigureServices(hostBuilder, startup);
 
-                host = hostBuilder
-                    .ConfigureServices(services => services
-                        .AddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>()
-                        .AddSingleton(DiagnosticMessageSink))
+                host = hostBuilder.ConfigureServices(services => services
+                        .AddSingleton(DiagnosticMessageSink)
+                        .TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>())
                     .Build();
 
                 StartupLoader.Configure(host.Services, startup);

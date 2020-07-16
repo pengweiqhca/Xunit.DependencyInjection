@@ -68,7 +68,6 @@ namespace Your.Test.Project
 +   public class Startup
     {
 -       public Startup(IMessageSink messageSink) : base(messageSink) { }
-+       public Startup(AssemblyName assemblyName) { }
 
 -       protected void ConfigureServices(IServiceCollection services)
 +       public void ConfigureServices(IServiceCollection services)
@@ -79,20 +78,20 @@ namespace Your.Test.Project
 -       protected override IHostBuilder CreateHostBuilder() =>
 -           base.CreateHostBuilder(assemblyName)
 -               .ConfigureServices(ConfigureServices);
-+       public void ConfigureHost(IHostBuilder hostBuilder) { }
-    }
+
 -       protected override void Configure(IServiceProvider provider)
 +       public void Configure(IServiceProvider provider)
+    }
 }
 ```
 
 ## `Startup` limitation
 
-* Constructor
+* CreateHostBuilder method
 ``` C#
 public class Startup
 {
-    public Startup([AssemblyName assemblyName]) { }
+    public IHostBuilder CreateHostBuilder([AssemblyName assemblyName]) { }
 }
 ```
 
@@ -100,7 +99,7 @@ public class Startup
 ``` C#
 public class Startup
 {
-    public void/IHostBuilder ConfigureHost(IHostBuilder hostBuilder) { }
+    public void ConfigureHost(IHostBuilder hostBuilder) { }
 }
 ```
 
