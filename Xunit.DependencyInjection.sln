@@ -9,6 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.T
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D15D255-B53C-4579-8F15-2CFDBEAD101A}"
 	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
 		Directory.Build.props = Directory.Build.props
 		README.md = README.md
 	EndProjectSection
@@ -17,7 +18,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.L
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Demystifier", "Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj", "{17899397-D576-4DC1-A833-7E289A893A8B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.FakeTest", "Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj", "{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.FakeTest", "Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj", "{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

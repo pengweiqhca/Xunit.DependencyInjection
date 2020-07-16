@@ -1,4 +1,4 @@
-# Notes:
+﻿# Notes:
 #   - Minimal appveyor.yml file is an empty file. All sections are optional.
 #   - Indent each level of configuration with 2 spaces. Do not use tabs!
 #   - All section names are case-sensitive.
@@ -54,7 +54,7 @@ after_build:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - dotnet build
+  - dotnet build -v n /p:TreatWarningsAsErrors=True
 # to disable automatic builds
 #build: off
 
