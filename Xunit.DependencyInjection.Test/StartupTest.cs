@@ -75,6 +75,10 @@ namespace Xunit.DependencyInjection.Test
             public void ConfigureHost(IHostBuilder builder) { }
             public void ConfigureHost(StringBuilder builder) { }
         }
+        public class ConfigureHostTestStartup8
+        {
+            public HostBuilder ConfigureHost() => new HostBuilder();
+        }
 
         [Fact]
         public void ConfigureHostTest()
@@ -98,6 +102,8 @@ namespace Xunit.DependencyInjection.Test
             Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup6()));
 
             Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup7()));
+
+            Assert.NotEqual(hostBuilder, StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup8()));
 
             var services = hostBuilder.Build().Services;
             Assert.NotNull(services.GetService<ConfigureHostTestStartup1>());

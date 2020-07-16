@@ -45,6 +45,15 @@ namespace Xunit.DependencyInjection
             if (method == null) return builder;
 
             var parameters = method.GetParameters();
+            if (parameters.Length == 0)
+            {
+                if (typeof(IHostBuilder).IsAssignableFrom(method.ReturnType))
+                {
+                    return method.Invoke(startup, Array.Empty<object>()) as IHostBuilder ?? builder;
+                }
+                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must have the only 'IHostBuilder' parameter or return a 'IHostBuilder' instance.");
+            }
+
             if (parameters.Length != 1 || parameters[0].ParameterType != typeof(IHostBuilder))
                 throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must have the only 'IHostBuilder' parameter.");
 
