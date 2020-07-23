@@ -23,8 +23,8 @@ namespace Xunit.DependencyInjection
                 if (startup == null) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
 
                 var hostBuilder = StartupLoader.CreateHostBuilder(startup, assemblyName) ??
-                                  new HostBuilder()
-                                      .ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name! } }));
+                                  new HostBuilder().ConfigureHostConfiguration(builder =>
+                                      builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
 
                 StartupLoader.ConfigureHost(hostBuilder, startup);
 
