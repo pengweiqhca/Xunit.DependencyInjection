@@ -5,12 +5,14 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <AssemblyAttribute Include="Xunit.TestFramework">
+    <AssemblyAttribute Include="Xunit.TestFramework"
+                       Condition="'$(EnableXunitDependencyInjectionDefaultTestFrameworkAttribute)' == '' OR '$(EnableXunitDependencyInjectionDefaultTestFrameworkAttribute)' == 'true'">
       <_Parameter1>Xunit.DependencyInjection.DependencyInjectionTestFramework</_Parameter1>
       <_Parameter2>Xunit.DependencyInjection</_Parameter2>
     </AssemblyAttribute>
 
-    <AssemblyAttribute Include="Xunit.DependencyInjection.StartupType">
+    <AssemblyAttribute Include="Xunit.DependencyInjection.StartupType"
+                       Condition="'$(EnableXunitDependencyInjectionDefaultStartupTypeAttribute)' == '' OR '$(EnableXunitDependencyInjectionDefaultStartupTypeAttribute)' == 'true'">
       <_Parameter1>$(XunitStartupFullName)</_Parameter1>
       <_Parameter2 Condition="'$(XunitStartupAssembly)' != ''">$(XunitStartupAssembly)</_Parameter2>
     </AssemblyAttribute>
