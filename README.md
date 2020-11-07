@@ -50,9 +50,25 @@ public class MyAwesomeTests
 }
 ```
 
-## Integration asp.net core TestHost
+## Integration asp.net core TestHost(3.0+)
 
-Please view [this commit](https://github.com/pengweiqhca/Xunit.DependencyInjection/commit/f2ca76b7609c0bb8e17536d27ca9edc3ae6a2880)
+``` PS
+Install-Package Microsoft.AspNetCore.TestHost
+```
+
+``` C#
+public class Startup
+{
+    public void ConfigureHost(IHostBuilder hostBuilder) =>
+        hostBuilder.ConfigureWebHost(webHostBuilder => webHostBuilder
+            .UseTestServer()
+            .Configure(Configure)
+            .ConfigureServices(services => services.AddRouting()));
+
+    private void Configure(IApplicationBuilder app) =>
+        app.UseRouting().UseEndpoints(endpoints => xxx);
+}
+```
 
 ## V7 new features
 
