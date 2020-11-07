@@ -26,7 +26,7 @@ namespace Xunit.DependencyInjection
 
             var ctors = startupType.GetConstructors();
             if (ctors.Length != 1 || ctors[0].GetParameters().Length != 0)
-                throw new InvalidOperationException($"'{startupType.FullName}' must have a single public constructor and the constructor without parameters.");
+                throw new InvalidOperationException($"'{startupType.FullName}' must have a single parameterless public constructor.");
 
             return Activator.CreateInstance(startupType);
         }
@@ -41,7 +41,7 @@ namespace Xunit.DependencyInjection
                 return (IHostBuilder)method.Invoke(startup, Array.Empty<object>());
 
             if (parameters.Length > 1 || parameters[0].ParameterType != typeof(AssemblyName))
-                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must without parameters or have the single 'AssemblyName' parameter.");
+                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must parameterless or have the single 'AssemblyName' parameter.");
 
             return (IHostBuilder)method.Invoke(startup, new object[] { assemblyName });
         }
