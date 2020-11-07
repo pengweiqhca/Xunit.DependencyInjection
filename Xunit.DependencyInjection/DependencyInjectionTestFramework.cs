@@ -17,6 +17,7 @@ namespace Xunit.DependencyInjection
         protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
             IHost? host = null;
+            Exception? ex = null;
             try
             {
                 var startup = StartupLoader.CreateStartup(StartupLoader.GetStartupType(assemblyName));
@@ -36,15 +37,14 @@ namespace Xunit.DependencyInjection
                     .Build();
 
                 StartupLoader.Configure(host.Services, startup);
-
-                return new DependencyInjectionTestFrameworkExecutor(host, null,
-                    assemblyName, SourceInformationProvider, DiagnosticMessageSink);
             }
             catch (Exception e)
             {
-                return new DependencyInjectionTestFrameworkExecutor(host, e,
-                    assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+                ex = e;
             }
+
+            return new DependencyInjectionTestFrameworkExecutor(host, ex,
+                assemblyName, SourceInformationProvider, DiagnosticMessageSink);
         }
     }
 }
