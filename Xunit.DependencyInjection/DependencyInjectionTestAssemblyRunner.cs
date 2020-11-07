@@ -12,18 +12,18 @@ namespace Xunit.DependencyInjection
         private readonly IServiceProvider? _provider;
 
         public DependencyInjectionTestAssemblyRunner(IServiceProvider? provider,
-            Exception? exception,
             ITestAssembly testAssembly,
             IEnumerable<IXunitTestCase> testCases,
             IMessageSink diagnosticMessageSink,
             IMessageSink executionMessageSink,
-            ITestFrameworkExecutionOptions executionOptions)
+            ITestFrameworkExecutionOptions executionOptions,
+            params Exception?[] exceptions)
             : base(testAssembly, testCases, diagnosticMessageSink,
                 executionMessageSink, executionOptions)
         {
             _provider = provider;
 
-            if (exception != null) Aggregator.Add(exception);
+            foreach (var exception in exceptions) if (exception != null) Aggregator.Add(exception);
         }
 
         /// <inheritdoc />
