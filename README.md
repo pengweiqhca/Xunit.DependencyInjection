@@ -50,6 +50,9 @@ public class MyAwesomeTests
 }
 ```
 
+## Integration asp.net core TestHost
+
+Please view [this commit](https://github.com/pengweiqhca/Xunit.DependencyInjection/commit/f2ca76b7609c0bb8e17536d27ca9edc3ae6a2880)
 
 ## V7 new features
 
