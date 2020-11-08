@@ -1,11 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 using Xunit.Abstractions;
+using Xunit.DependencyInjection.Test;
 
-[assembly: TestCollectionOrderer("Xunit.DependencyInjection.Test.RunMonitorCollectionLastOrderer", "Xunit.DependencyInjection.Test")]
+[assembly: TestCollectionOrderer("Xunit.DependencyInjection.Test." + nameof(RunMonitorCollectionLastOrderer), "Xunit.DependencyInjection.Test")]
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
-
 namespace Xunit.DependencyInjection.Test
 {
     public class RunMonitorCollectionLastOrderer : ITestCollectionOrderer

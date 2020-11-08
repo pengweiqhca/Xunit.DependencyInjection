@@ -1,6 +1,7 @@
-﻿using Microsoft.Extensions.Hosting;
-#if NETCOREAPP3_1
+﻿#if NETCOREAPP3_1
 using IHostingEnvironment = Microsoft.Extensions.Hosting.IHostEnvironment;
+#else
+using Microsoft.Extensions.Hosting;
 #endif
 
 namespace Xunit.DependencyInjection.Test
