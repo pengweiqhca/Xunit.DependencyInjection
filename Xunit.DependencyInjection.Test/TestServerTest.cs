@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.TestHost;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -6,10 +8,12 @@ namespace Xunit.DependencyInjection.Test
 {
     public class TestServerTest
     {
+        public static string Key { get; } = Guid.NewGuid().ToString("N");
+
         private readonly HttpClient _httpClient;
 
-        public TestServerTest(HttpClient httpClient) => _httpClient = httpClient;
-#if NETCOREAPP3_1
+        public TestServerTest(IServer server) => _httpClient = ((TestServer)server).CreateClient();
+
         [Fact]
         public async Task HttpTest()
         {
@@ -17,8 +21,7 @@ namespace Xunit.DependencyInjection.Test
 
             response.EnsureSuccessStatusCode();
 
-            Assert.True(Math.Abs(long.Parse(await response.Content.ReadAsStringAsync().ConfigureAwait(false)) - DateTimeOffset.Now.ToUnixTimeMilliseconds()) < 20);
+            Assert.Equal(Key, await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
-#endif
     }
 }

@@ -9,6 +9,11 @@
 
   <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
 
+  <ItemGroup Condition="'$(TargetFramework)' != 'netcoreapp3.1'">
+    <Compile Remove="Startup.TestHost.cs" />
+    <Compile Remove="TestServerTest.cs" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.*" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" />
