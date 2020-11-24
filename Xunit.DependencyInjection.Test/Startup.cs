@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Autofac.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Xunit.DependencyInjection.Demystifier;
 using Xunit.DependencyInjection.Logging;
@@ -7,6 +9,9 @@ namespace Xunit.DependencyInjection.Test
 {
     public partial class Startup
     {
+        public void ConfigureHost(IHostBuilder hostBuilder) =>
+            hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+
         public void ConfigureServices(IServiceCollection services) =>
             services.AddLogging()
                 .AddScoped<IDependency, DependencyClass>()
