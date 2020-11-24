@@ -4,7 +4,7 @@ using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Xunit.DependencyInjection.Test
+namespace Xunit.DependencyInjection.Test.AspNetCore
 {
     public class TestServerTest
     {

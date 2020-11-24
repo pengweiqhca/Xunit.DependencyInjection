@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Hosting;
 
-namespace Xunit.DependencyInjection.Test
+namespace Xunit.DependencyInjection.Test.AspNetCore
 {
     public partial class Startup
     {
