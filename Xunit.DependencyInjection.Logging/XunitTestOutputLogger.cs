@@ -6,7 +6,7 @@ namespace Xunit.DependencyInjection.Logging
 {
     public class XunitTestOutputLogger : ILogger
     {
-        private static readonly string LoglevelPadding = ": ";
+        private const string LogLevelPadding = ": ";
         private static readonly string MessagePadding;
         private static readonly string NewLineWithMessagePadding;
 
@@ -16,7 +16,7 @@ namespace Xunit.DependencyInjection.Logging
         static XunitTestOutputLogger()
         {
             var logLevelString = GetLogLevelString(LogLevel.Information);
-            MessagePadding = new string(' ', logLevelString.Length + LoglevelPadding.Length);
+            MessagePadding = new string(' ', logLevelString.Length + LogLevelPadding.Length);
             NewLineWithMessagePadding = Environment.NewLine + MessagePadding;
         }
 
@@ -35,13 +35,11 @@ namespace Xunit.DependencyInjection.Logging
 
         public IDisposable BeginScope<TState>(TState state) => NullScope.Instance;
 
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
         {
-            if (!_filter(_categoryName, logLevel))
-                return;
+            if (!_filter(_categoryName, logLevel)) return;
 
-            if (formatter == null)
-                throw new ArgumentNullException(nameof(formatter));
+            if (formatter == null) throw new ArgumentNullException(nameof(formatter));
 
             var message = formatter(state, exception);
 
@@ -49,17 +47,16 @@ namespace Xunit.DependencyInjection.Logging
                 WriteMessage(logLevel, _categoryName, eventId.Id, message, exception);
         }
 
-        public virtual void WriteMessage(LogLevel logLevel, string logName, int eventId, string message, Exception exception)
+        public virtual void WriteMessage(LogLevel logLevel, string logName, int eventId, string message, Exception? exception)
         {
             var logBuilder = _logBuilder;
             _logBuilder = null;
 
-            if (logBuilder == null)
-                logBuilder = new StringBuilder();
+            logBuilder ??= new StringBuilder();
 
             var logLevelString = GetLogLevelString(logLevel);
             // category and event id
-            logBuilder.Append(LoglevelPadding);
+            logBuilder.Append(LogLevelPadding);
             logBuilder.Append(logName);
             logBuilder.Append("[");
             logBuilder.Append(eventId);
@@ -75,14 +72,7 @@ namespace Xunit.DependencyInjection.Logging
                 logBuilder.Replace(Environment.NewLine, NewLineWithMessagePadding, len, message.Length);
             }
 
-            // Example:
-            // System.InvalidOperationException
-            //    at Namespace.Class.Function() in File:line X
-            if (exception != null)
-            {
-                // exception message
-                logBuilder.AppendLine(exception.ToString());
-            }
+            if (exception != null) logBuilder.AppendLine(exception.ToString());
 
             if (logBuilder.Length > 0)
             {
@@ -100,25 +90,21 @@ namespace Xunit.DependencyInjection.Logging
 
             logBuilder.Clear();
 
-            if (logBuilder.Capacity > 1024)
-                logBuilder.Capacity = 1024;
+            if (logBuilder.Capacity > 1024) logBuilder.Capacity = 1024;
 
             _logBuilder = logBuilder;
         }
 
-        private static string GetLogLevelString(LogLevel logLevel)
+        private static string GetLogLevelString(LogLevel logLevel) => logLevel switch
         {
-            return logLevel switch
-            {
-                LogLevel.Trace => "trce",
-                LogLevel.Debug => "dbug",
-                LogLevel.Information => "info",
-                LogLevel.Warning => "warn",
-                LogLevel.Error => "fail",
-                LogLevel.Critical => "crit",
-                _ => throw new ArgumentOutOfRangeException(nameof(logLevel))
-            };
-        }
+            LogLevel.Trace => "trce",
+            LogLevel.Debug => "dbug",
+            LogLevel.Information => "info",
+            LogLevel.Warning => "warn",
+            LogLevel.Error => "fail",
+            LogLevel.Critical => "crit",
+            _ => throw new ArgumentOutOfRangeException(nameof(logLevel))
+        };
 
         private class NullScope : IDisposable
         {

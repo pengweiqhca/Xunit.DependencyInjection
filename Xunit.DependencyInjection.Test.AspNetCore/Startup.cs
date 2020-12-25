@@ -6,7 +6,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace Xunit.DependencyInjection.Test.AspNetCore
 {
-    public partial class Startup
+    public class Startup
     {
         public void ConfigureHost(IHostBuilder hostBuilder) =>
             hostBuilder.ConfigureWebHost(webHostBuilder => webHostBuilder
