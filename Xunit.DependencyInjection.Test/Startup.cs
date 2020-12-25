@@ -13,13 +13,13 @@ namespace Xunit.DependencyInjection.Test
             hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
         public void ConfigureServices(IServiceCollection services) =>
-            services.AddLogging()
+            services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug))
                 .AddScoped<IDependency, DependencyClass>()
                 .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
                 .AddHostedService<HostServiceTest>()
                 .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
         public void Configure(ILoggerFactory loggerFactory, ITestOutputHelperAccessor accessor) =>
-            loggerFactory.AddProvider(new XunitTestOutputLoggerProvider(accessor));
+            loggerFactory.AddProvider(new XunitTestOutputLoggerProvider(accessor, delegate { return true; }));
     }
 }
