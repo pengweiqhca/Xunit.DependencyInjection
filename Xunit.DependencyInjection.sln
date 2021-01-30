@@ -20,7 +20,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.FakeTest", "Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj", "{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.Test.AspNetCore", "Xunit.DependencyInjection.Test.AspNetCore\Xunit.DependencyInjection.Test.AspNetCore.csproj", "{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Test.AspNetCore", "Xunit.DependencyInjection.Test.AspNetCore\Xunit.DependencyInjection.Test.AspNetCore.csproj", "{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.Analyzer", "Xunit.DependencyInjection.Analyzer\Xunit.DependencyInjection.Analyzer.csproj", "{7896DD7C-CFB1-430A-8664-C8ECCD1CED16}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.Analyzer.Test", "Xunit.DependencyInjection.Analyzer.Test\Xunit.DependencyInjection.Analyzer.Test.csproj", "{EE91A816-AE5C-42D6-9E0F-5E02E6C68250}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +56,14 @@ Global
 		{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7896DD7C-CFB1-430A-8664-C8ECCD1CED16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7896DD7C-CFB1-430A-8664-C8ECCD1CED16}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7896DD7C-CFB1-430A-8664-C8ECCD1CED16}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7896DD7C-CFB1-430A-8664-C8ECCD1CED16}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE91A816-AE5C-42D6-9E0F-5E02E6C68250}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE91A816-AE5C-42D6-9E0F-5E02E6C68250}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE91A816-AE5C-42D6-9E0F-5E02E6C68250}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE91A816-AE5C-42D6-9E0F-5E02E6C68250}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
