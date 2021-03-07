@@ -135,4 +135,49 @@
   <data name="MultipleConstructorTitle" xml:space="preserve">
     <value>Startup must has public multiple constructors.</value>
   </data>
+  <data name="MultipleOverloadsDescription" xml:space="preserve">
+    <value>Having multiple overloads is not supported.</value>
+  </data>
+  <data name="MultipleOverloadsMessageFormat" xml:space="preserve">
+    <value>Having multiple overloads of method '{methodName}' is not supported.</value>
+  </data>
+  <data name="MultipleOverloadsTitle" xml:space="preserve">
+    <value>Method not supported multiple overloads.</value>
+  </data>
+  <data name="NotStaticMethodDescription" xml:space="preserve">
+    <value>Method should not be static.</value>
+  </data>
+  <data name="NotStaticMethodMessageFormat" xml:space="preserve">
+    <value>Method '{0}' should not be static.</value>
+  </data>
+  <data name="NotStaticMethodTitle" xml:space="preserve">
+    <value>Method is static.</value>
+  </data>
+  <data name="NoReturnTypeDescription" xml:space="preserve">
+    <value>Method must have no return type.</value>
+  </data>
+  <data name="NoReturnTypeMessageFormat" xml:space="preserve">
+    <value>The '{0}' method must have no return type.</value>
+  </data>
+  <data name="NoReturnTypeTitle" xml:space="preserve">
+    <value>Method must return type is not void.</value>
+  </data>
+  <data name="ReturnTypeAssignableToDescription" xml:space="preserve">
+    <value>Method must return type must be a sub type of a specific type.</value>
+  </data>
+  <data name="ReturnTypeAssignableToMessageFormat" xml:space="preserve">
+    <value>The '{0}' method return type must assignable to '{1}'.</value>
+  </data>
+  <data name="ReturnTypeAssignableToTitle" xml:space="preserve">
+    <value>Method must return type is invalid.</value>
+  </data>
+  <data name="ParameterlessOrSingleParameterDescription" xml:space="preserve">
+    <value>Method must parameterless or have the single parameter.</value>
+  </data>
+  <data name="ParameterlessOrSingleParameterMessageFormat" xml:space="preserve">
+    <value>The '{0}' method must parameterless or have the single '{1}' parameter.</value>
+  </data>
+  <data name="ParameterlessOrSingleParameterTitle" xml:space="preserve">
+    <value>Method parameters is to much.</value>
+  </data>
 </root>

@@ -88,6 +88,87 @@ namespace Xunit.DependencyInjection.Analyzer {
         }
         
         /// <summary>
+        ///   查找类似 Having multiple overloads is not supported. 的本地化字符串。
+        /// </summary>
+        internal static string MultipleOverloadsDescription {
+            get {
+                return ResourceManager.GetString("MultipleOverloadsDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Having multiple overloads of method &apos;{methodName}&apos; is not supported. 的本地化字符串。
+        /// </summary>
+        internal static string MultipleOverloadsMessageFormat {
+            get {
+                return ResourceManager.GetString("MultipleOverloadsMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method not supported multiple overloads. 的本地化字符串。
+        /// </summary>
+        internal static string MultipleOverloadsTitle {
+            get {
+                return ResourceManager.GetString("MultipleOverloadsTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method must have no return type. 的本地化字符串。
+        /// </summary>
+        internal static string NoReturnTypeDescription {
+            get {
+                return ResourceManager.GetString("NoReturnTypeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 The &apos;{0}&apos; method must have no return type. 的本地化字符串。
+        /// </summary>
+        internal static string NoReturnTypeMessageFormat {
+            get {
+                return ResourceManager.GetString("NoReturnTypeMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method must return type is not void. 的本地化字符串。
+        /// </summary>
+        internal static string NoReturnTypeTitle {
+            get {
+                return ResourceManager.GetString("NoReturnTypeTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method should not be static. 的本地化字符串。
+        /// </summary>
+        internal static string NotStaticMethodDescription {
+            get {
+                return ResourceManager.GetString("NotStaticMethodDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method &apos;{0}&apos; should not be static. 的本地化字符串。
+        /// </summary>
+        internal static string NotStaticMethodMessageFormat {
+            get {
+                return ResourceManager.GetString("NotStaticMethodMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method is static. 的本地化字符串。
+        /// </summary>
+        internal static string NotStaticMethodTitle {
+            get {
+                return ResourceManager.GetString("NotStaticMethodTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Startup must have a single parameterless public constructor. 的本地化字符串。
         /// </summary>
         internal static string ParameterlessConstructorDescription {
@@ -111,6 +192,60 @@ namespace Xunit.DependencyInjection.Analyzer {
         internal static string ParameterlessConstructorTitle {
             get {
                 return ResourceManager.GetString("ParameterlessConstructorTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method must parameterless or have the single parameter. 的本地化字符串。
+        /// </summary>
+        internal static string ParameterlessOrSingleParameterDescription {
+            get {
+                return ResourceManager.GetString("ParameterlessOrSingleParameterDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 The &apos;{0}&apos; method must parameterless or have the single &apos;{1}&apos; parameter. 的本地化字符串。
+        /// </summary>
+        internal static string ParameterlessOrSingleParameterMessageFormat {
+            get {
+                return ResourceManager.GetString("ParameterlessOrSingleParameterMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method parameters is to much. 的本地化字符串。
+        /// </summary>
+        internal static string ParameterlessOrSingleParameterTitle {
+            get {
+                return ResourceManager.GetString("ParameterlessOrSingleParameterTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method must return type must be a sub type of a specific type. 的本地化字符串。
+        /// </summary>
+        internal static string ReturnTypeAssignableToDescription {
+            get {
+                return ResourceManager.GetString("ReturnTypeAssignableToDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 The &apos;{0}&apos; method return type must assignable to &apos;{1}&apos;. 的本地化字符串。
+        /// </summary>
+        internal static string ReturnTypeAssignableToMessageFormat {
+            get {
+                return ResourceManager.GetString("ReturnTypeAssignableToMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method must return type is invalid. 的本地化字符串。
+        /// </summary>
+        internal static string ReturnTypeAssignableToTitle {
+            get {
+                return ResourceManager.GetString("ReturnTypeAssignableToTitle", resourceCulture);
             }
         }
     }

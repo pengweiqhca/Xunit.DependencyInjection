@@ -4,6 +4,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -18,6 +19,11 @@ namespace Xunit.DependencyInjection.Analyzer.Test
             var test = new Test<XunitDependencyInjectionAnalyzerAnalyzer>
             {
                 TestCode = File.ReadAllText(Path.Combine("Startup", source)),
+                ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
+                    ImmutableArray.Create(
+                        new PackageIdentity("Microsoft.Extensions.DependencyInjection.Abstractions", "2.1.0"),
+                        new PackageIdentity("Microsoft.Extensions.Hosting", "2.1.0"),
+                        new PackageIdentity("Microsoft.Extensions.Hosting.Abstractions", "2.1.0")))
             };
 
             test.ExpectedDiagnostics.AddRange(expected);
@@ -27,6 +33,13 @@ namespace Xunit.DependencyInjection.Analyzer.Test
 
         public static IEnumerable<object[]> ReadFile()
         {
+            yield return new object[]
+            {
+                "CreateHostBuilderTestStartup0.cs", new[]
+                {
+                    new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 38).WithArguments("CreateHostBuilder", "Microsoft.Extensions.Hosting.IHostBuilder")
+                }
+            };
             yield return new object[]
             {
                 "CtorError.cs", new[]
