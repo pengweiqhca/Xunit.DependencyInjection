@@ -99,6 +99,9 @@ namespace Xunit.DependencyInjection
             var methodInfo = selectedMethods.FirstOrDefault();
             if (methodInfo == null) return methodInfo;
 
+            if (methodInfo.IsStatic)
+                throw new InvalidOperationException($"Method '{methodName}' should not be static.");
+
             if (returnType == typeof(void))
             {
                 if (methodInfo.ReturnType != returnType)

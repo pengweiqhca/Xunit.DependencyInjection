@@ -105,6 +105,10 @@ namespace Xunit.DependencyInjection.Test
             public void ConfigureHost(IHostBuilder builder) { }
             public void ConfigureHost(StringBuilder builder) { }
         }
+        public class ConfigureHostTestStartup8
+        {
+            public static void ConfigureHost(IHostBuilder builder) { }
+        }
 
         [Fact]
         public void ConfigureHostTest()
