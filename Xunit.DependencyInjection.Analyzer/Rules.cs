@@ -1,5 +1,5 @@
-﻿using System;
-using Microsoft.CodeAnalysis;
+﻿using Microsoft.CodeAnalysis;
+using System;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
@@ -47,8 +47,20 @@ namespace Xunit.DependencyInjection.Analyzer
         public static DiagnosticDescriptor ParameterlessOrSingleParameter { get; } = new("XD007",
             CreateLocalizableString(nameof(Resources.ParameterlessOrSingleParameterTitle)),
            CreateLocalizableString(nameof(Resources.ParameterlessOrSingleParameterMessageFormat)),
-            "ReturnType", DiagnosticSeverity.Error, true,
+            "Parameter", DiagnosticSeverity.Error, true,
            CreateLocalizableString(nameof(Resources.ParameterlessOrSingleParameterDescription)));
+
+        public static DiagnosticDescriptor SingleParameter { get; } = new("XD008",
+            CreateLocalizableString(nameof(Resources.SingleParameterTitle)),
+            CreateLocalizableString(nameof(Resources.SingleParameterMessageFormat)),
+            "Parameter", DiagnosticSeverity.Error, true,
+            CreateLocalizableString(nameof(Resources.SingleParameterDescription)));
+
+        public static DiagnosticDescriptor ConfigureServices { get; } = new("XD009",
+            CreateLocalizableString(nameof(Resources.ConfigureServicesTitle)),
+            CreateLocalizableString(nameof(Resources.ConfigureServicesMessageFormat)),
+            "Parameter", DiagnosticSeverity.Error, true,
+            CreateLocalizableString(nameof(Resources.ConfigureServicesDescription)));
 
         private static LocalizableString CreateLocalizableString(string key) => new LocalizableResourceString(key, Resources.ResourceManager, typeof(Resources));
 

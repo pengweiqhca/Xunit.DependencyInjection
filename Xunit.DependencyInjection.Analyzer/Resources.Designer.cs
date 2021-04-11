@@ -61,6 +61,33 @@ namespace Xunit.DependencyInjection.Analyzer {
         }
         
         /// <summary>
+        ///   查找类似 Method must have a single or tow parameter(s). 的本地化字符串。
+        /// </summary>
+        internal static string ConfigureServicesDescription {
+            get {
+                return ResourceManager.GetString("ConfigureServicesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 The &apos;{0}&apos; method must have a &apos;IServiceCollection&apos; parameter and optional &apos;HostBuilderContext&apos; parameter. 的本地化字符串。
+        /// </summary>
+        internal static string ConfigureServicesMessageFormat {
+            get {
+                return ResourceManager.GetString("ConfigureServicesMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method parameters is to much, parameterless or parameters type not support. 的本地化字符串。
+        /// </summary>
+        internal static string ConfigureServicesTitle {
+            get {
+                return ResourceManager.GetString("ConfigureServicesTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   查找类似 Startup must not more than one public constructor. 的本地化字符串。
         /// </summary>
         internal static string MultipleConstructorDescription {
@@ -196,7 +223,7 @@ namespace Xunit.DependencyInjection.Analyzer {
         }
         
         /// <summary>
-        ///   查找类似 Method must parameterless or have the single parameter. 的本地化字符串。
+        ///   查找类似 Method must parameterless or have a single parameter. 的本地化字符串。
         /// </summary>
         internal static string ParameterlessOrSingleParameterDescription {
             get {
@@ -246,6 +273,33 @@ namespace Xunit.DependencyInjection.Analyzer {
         internal static string ReturnTypeAssignableToTitle {
             get {
                 return ResourceManager.GetString("ReturnTypeAssignableToTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method must have a single parameter. 的本地化字符串。
+        /// </summary>
+        internal static string SingleParameterDescription {
+            get {
+                return ResourceManager.GetString("SingleParameterDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 The &apos;{0}&apos; method must have a single {1} parameter. 的本地化字符串。
+        /// </summary>
+        internal static string SingleParameterMessageFormat {
+            get {
+                return ResourceManager.GetString("SingleParameterMessageFormat", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 Method must have a single parameter. 的本地化字符串。
+        /// </summary>
+        internal static string SingleParameterTitle {
+            get {
+                return ResourceManager.GetString("SingleParameterTitle", resourceCulture);
             }
         }
     }

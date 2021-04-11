@@ -8,13 +8,16 @@ using System.Reflection;
 namespace Xunit.DependencyInjection.Analyzer
 {
     [DiagnosticAnalyzer(LanguageNames.CSharp)]
-    public class XunitDependencyInjectionAnalyzerAnalyzer : DiagnosticAnalyzer
+    public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
     {
+        private static readonly SymbolEqualityComparer SymbolComparer = SymbolEqualityComparer.Default;
+
         public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => Rules.SupportedDiagnostics;
 
         public override void Initialize(AnalysisContext context)
         {
             context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
+
             context.EnableConcurrentExecution();
 
             context.RegisterCompilationStartAction(SymbolAnalyzer.RegisterCompilationStartAction);
@@ -96,7 +99,7 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private static bool IsStartup(ISymbol type)
             {
-                //TODO Should get by other methods, default hard code.
+                //TODO Should get by other way, default hard code.
                 return type.Name == "Startup" && type.ContainingNamespace.Name == type.ContainingAssembly.Name;
             }
 
@@ -125,14 +128,14 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private static bool IsAssignableFrom(ITypeSymbol returnType, ITypeSymbol type)
             {
-                if (SymbolEqualityComparer.Default.Equals(returnType, type)) return true;
+                if (SymbolComparer.Equals(returnType, type)) return true;
 
                 if (returnType.TypeKind == TypeKind.Interface)
-                    return type.AllInterfaces.Any(i => SymbolEqualityComparer.Default.Equals(returnType, i));
+                    return type.AllInterfaces.Any(i => SymbolComparer.Equals(returnType, i));
 
                 do
                 {
-                    if (SymbolEqualityComparer.Default.Equals(type, returnType)) return true;
+                    if (SymbolComparer.Equals(type, returnType)) return true;
                 } while ((type = type.BaseType!) != null);
 
                 return false;
@@ -152,35 +155,32 @@ namespace Xunit.DependencyInjection.Analyzer
 
                 if (method.Parameters.Length == 0) return;
 
-                if (method.Parameters.Length > 1 || !SymbolEqualityComparer.Default.Equals(_assemblyName, method.Parameters[0].Type))
-                    context.ReportDiagnostic(Diagnostic.Create(Rules.ParameterlessOrSingleParameter, method.Locations[0], method.Name, _hostBuilder.Name));
+                if (method.Parameters.Length > 1 || !SymbolComparer.Equals(_assemblyName, method.Parameters[0].Type))
+                    context.ReportDiagnostic(Diagnostic.Create(Rules.ParameterlessOrSingleParameter, method.Locations[0], method.Name, _assemblyName.Name));
             }
 
-            private static void AnalyzeConfigureHost(SymbolAnalysisContext context, IMethodSymbol method)
-            {
-                AnalyzeReturnType(context, method, null);
-                //var parameters = method.GetParameters();
-                //if (parameters.Length != 1 || parameters[0].ParameterType != typeof(IHostBuilder))
-                //    throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must have the single 'IHostBuilder' parameter.");
-            }
-
-            private static void AnalyzeConfigureServices(SymbolAnalysisContext context, IMethodSymbol method)
+            private void AnalyzeConfigureHost(SymbolAnalysisContext context, IMethodSymbol method)
             {
                 AnalyzeReturnType(context, method, null);
 
-                //var parameters = method.GetParameters();
-                //builder.ConfigureServices(parameters.Length switch
-                //{
-                //    1 when parameters[0].ParameterType == typeof(IServiceCollection) =>
-                //        (context, services) => method.Invoke(startup, new object[] { services }),
-                //    2 when parameters[0].ParameterType == typeof(IServiceCollection) &&
-                //           parameters[1].ParameterType == typeof(HostBuilderContext) =>
-                //        (context, services) => method.Invoke(startup, new object[] { services, context }),
-                //    2 when parameters[1].ParameterType == typeof(IServiceCollection) &&
-                //           parameters[0].ParameterType == typeof(HostBuilderContext) =>
-                //        (context, services) => method.Invoke(startup, new object[] { context, services }),
-                //    _ => throw new InvalidOperationException($"The '{method.Name}' method in the type '{startup.GetType().FullName}' must have a 'IServiceCollection' parameter and optional 'HostBuilderContext' parameter.")
-                //});
+                var parameters = method.Parameters;
+                if (parameters.Length != 1 || !SymbolComparer.Equals(parameters[0].Type, _hostBuilder))
+                    context.ReportDiagnostic(Diagnostic.Create(Rules.SingleParameter, method.Locations[0], method.Name, _hostBuilder.Name));
+            }
+
+            private void AnalyzeConfigureServices(SymbolAnalysisContext context, IMethodSymbol method)
+            {
+                AnalyzeReturnType(context, method, null);
+
+                var parameters = method.Parameters;
+
+                if (parameters.Length == 1 && SymbolComparer.Equals(parameters[0].Type, _serviceCollection)) return;
+
+                if (parameters.Length == 2 && SymbolComparer.Equals(parameters[0].Type, _serviceCollection) && SymbolComparer.Equals(parameters[1].Type, _hostBuilderContext)) return;
+
+                if (parameters.Length == 2 && SymbolComparer.Equals(parameters[1].Type, _serviceCollection) && SymbolComparer.Equals(parameters[0].Type, _hostBuilderContext)) return;
+
+                context.ReportDiagnostic(Diagnostic.Create(Rules.ConfigureServices, method.Locations[0], method.Name));
             }
 
             private static void AnalyzeConfigure(SymbolAnalysisContext context, IMethodSymbol method)
