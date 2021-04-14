@@ -64,7 +64,7 @@ namespace Xunit.DependencyInjection
         {
             if (testCase is ExecutionErrorTestCase)
                 return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
-                    _constructorArguments, new ExceptionAggregator(Aggregator), CancellationTokenSource);
+                    _constructorArguments, new ExceptionAggregator(Aggregator), CancellationTokenSource).ConfigureAwait(false);
 
             using var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
             XunitTestCaseRunner runner;
@@ -79,7 +79,7 @@ namespace Xunit.DependencyInjection
                     CreateTestClassConstructorArguments(scope.ServiceProvider), testCase.TestMethodArguments,
                     MessageBus, new ExceptionAggregator(Aggregator), CancellationTokenSource);
 
-            return await runner.RunAsync();
+            return await runner.RunAsync().ConfigureAwait(false);
         }
     }
 }

@@ -42,7 +42,7 @@ namespace Xunit.DependencyInjection
                     : _provider.GetService(kv.Value);
             }
 
-            var item = await InvokeTestMethodAsync(aggregator);
+            var item = await InvokeTestMethodAsync(aggregator).ConfigureAwait(false);
 
             foreach (var kv in raw)
                 TestMethodArguments[kv.Key] = kv.Value;

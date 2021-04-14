@@ -55,7 +55,7 @@ namespace Xunit.DependencyInjection
         /// <inheritdoc />
         protected override async Task AfterTestCaseStartingAsync()
         {
-            await base.AfterTestCaseStartingAsync();
+            await base.AfterTestCaseStartingAsync().ConfigureAwait(false);
 
             var fromServices = FromServicesAttribute.CreateFromServices(TestMethod);
             var runners = GetTestRunners(this);

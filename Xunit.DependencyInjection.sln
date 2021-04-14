@@ -27,7 +27,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer.Test", "Xunit.DependencyInjection.Analyzer.Test\Xunit.DependencyInjection.Analyzer.Test.csproj", "{EE91A816-AE5C-42D6-9E0F-5E02E6C68250}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.Analyzer.Vsix", "Xunit.DependencyInjection.Analyzer.Vsix\Xunit.DependencyInjection.Analyzer.Vsix.csproj", "{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer.Vsix", "Xunit.DependencyInjection.Analyzer.Vsix\Xunit.DependencyInjection.Analyzer.Vsix.csproj", "{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

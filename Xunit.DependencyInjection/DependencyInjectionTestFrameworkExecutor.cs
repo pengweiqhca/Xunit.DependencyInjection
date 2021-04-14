@@ -36,14 +36,14 @@ namespace Xunit.DependencyInjection
                 using var runner = new DependencyInjectionTestAssemblyRunner(null, TestAssembly,
                     testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _exception);
 
-                await runner.RunAsync();
+                await runner.RunAsync().ConfigureAwait(false);
             }
             else
             {
                 Exception? ex = null;
                 try
                 {
-                    await _host.StartAsync();
+                    await _host.StartAsync().ConfigureAwait(false);
                 }
                 catch (Exception e)
                 {
@@ -53,9 +53,9 @@ namespace Xunit.DependencyInjection
                 using var runner = new DependencyInjectionTestAssemblyRunner(_host.Services, TestAssembly,
                     testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _exception, ex);
 
-                await runner.RunAsync();
+                await runner.RunAsync().ConfigureAwait(false);
 
-                await _host.StopAsync();
+                await _host.StopAsync().ConfigureAwait(false);
             }
         }
     }
