@@ -85,7 +85,7 @@ namespace Xunit.DependencyInjection
         /// <inheritdoc />
         protected override async Task BeforeTestClassFinishedAsync()
         {
-            await base.BeforeTestClassFinishedAsync();
+            await base.BeforeTestClassFinishedAsync().ConfigureAwait(false);
 
             _serviceScope?.Dispose();
         }

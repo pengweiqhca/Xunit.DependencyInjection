@@ -9,7 +9,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
     <IncludeSymbols>True</IncludeSymbols>
-    <LangVersion>8.0</LangVersion>
+    <LangVersion>9.0</LangVersion>
     <NoWarn>1591</NoWarn>
     <Nullable>enable</Nullable>
     <RepositoryUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</RepositoryUrl>
@@ -19,9 +19,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="ConfigureAwaitChecker.Analyzer" Version="5.*" PrivateAssets="All" />
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.*" PrivateAssets="All" Condition="'$(OS)' != 'Windows_NT'" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.*" PrivateAssets="All"/>
-    <PackageReference Include="Nullable" Version="1.*" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.*" PrivateAssets="All" />
+    <PackageReference Include="Nullable" Version="1.*" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

@@ -32,7 +32,7 @@ namespace Xunit.DependencyInjection
             {
                 try
                 {
-                    await t;
+                    await t.ConfigureAwait(false);
                 }
                 catch (Exception ex)
                 {

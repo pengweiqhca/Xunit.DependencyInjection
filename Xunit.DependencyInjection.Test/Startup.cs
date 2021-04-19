@@ -7,7 +7,7 @@ using Xunit.DependencyInjection.Logging;
 
 namespace Xunit.DependencyInjection.Test
 {
-    public partial class Startup
+    public class Startup
     {
         public void ConfigureHost(IHostBuilder hostBuilder) =>
             hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
