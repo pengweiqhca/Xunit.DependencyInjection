@@ -3,7 +3,7 @@ using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Immutable;
 
-namespace Xunit.DependencyInjection.Analyzer.Test
+namespace Xunit.DependencyInjection.Analyzer.Test.Verifiers
 {
     internal static class CSharpVerifierHelper
     {
@@ -19,7 +19,7 @@ namespace Xunit.DependencyInjection.Analyzer.Test
         private static ImmutableDictionary<string, ReportDiagnostic> GetNullableWarningsFromCompiler()
         {
             string[] args = { "/warnaserror:nullable" };
-            var commandLineArguments = CSharpCommandLineParser.Default.Parse(args, Environment.CurrentDirectory, Environment.CurrentDirectory);
+            var commandLineArguments = CSharpCommandLineParser.Default.Parse(args, baseDirectory: Environment.CurrentDirectory, sdkDirectory: Environment.CurrentDirectory);
             var nullableWarnings = commandLineArguments.CompilationOptions.SpecificDiagnosticOptions;
 
             // Workaround for https://github.com/dotnet/roslyn/issues/41610

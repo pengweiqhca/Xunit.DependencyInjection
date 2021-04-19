@@ -97,7 +97,7 @@ namespace Xunit.DependencyInjection.Analyzer {
         }
         
         /// <summary>
-        ///   查找类似 Startup &apos;{0}&apos; must has public multiple constructors. 的本地化字符串。
+        ///   查找类似 Startup has multiple public constructors. 的本地化字符串。
         /// </summary>
         internal static string MultipleConstructorMessageFormat {
             get {
@@ -106,7 +106,7 @@ namespace Xunit.DependencyInjection.Analyzer {
         }
         
         /// <summary>
-        ///   查找类似 Startup must has public multiple constructors. 的本地化字符串。
+        ///   查找类似 Startup must not more than one public constructor. 的本地化字符串。
         /// </summary>
         internal static string MultipleConstructorTitle {
             get {
@@ -196,7 +196,7 @@ namespace Xunit.DependencyInjection.Analyzer {
         }
         
         /// <summary>
-        ///   查找类似 Startup must have a single parameterless public constructor. 的本地化字符串。
+        ///   查找类似 Constructor must have no parameter. 的本地化字符串。
         /// </summary>
         internal static string ParameterlessConstructorDescription {
             get {
@@ -205,7 +205,7 @@ namespace Xunit.DependencyInjection.Analyzer {
         }
         
         /// <summary>
-        ///   查找类似 Constructor has parameter(s). 的本地化字符串。
+        ///   查找类似 Constructor must have no parameter. 的本地化字符串。
         /// </summary>
         internal static string ParameterlessConstructorMessageFormat {
             get {
@@ -214,7 +214,7 @@ namespace Xunit.DependencyInjection.Analyzer {
         }
         
         /// <summary>
-        ///   查找类似 Constructor has parameter(s). 的本地化字符串。
+        ///   查找类似 Constructor must have no parameter. 的本地化字符串。
         /// </summary>
         internal static string ParameterlessConstructorTitle {
             get {

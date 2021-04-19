@@ -117,23 +117,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ParameterlessConstructorDescription" xml:space="preserve">
-    <value>Startup must have a single parameterless public constructor.</value>
-  </data>
-  <data name="ParameterlessConstructorMessageFormat" xml:space="preserve">
-    <value>Constructor has parameter(s).</value>
-  </data>
-  <data name="ParameterlessConstructorTitle" xml:space="preserve">
-    <value>Constructor has parameter(s).</value>
-  </data>
   <data name="MultipleConstructorDescription" xml:space="preserve">
     <value>Startup must not more than one public constructor.</value>
   </data>
   <data name="MultipleConstructorMessageFormat" xml:space="preserve">
-    <value>Startup '{0}' must has public multiple constructors.</value>
+    <value>Startup has multiple public constructors.</value>
   </data>
   <data name="MultipleConstructorTitle" xml:space="preserve">
-    <value>Startup must has public multiple constructors.</value>
+    <value>Startup must not more than one public constructor.</value>
+  </data>
+  <data name="ParameterlessConstructorDescription" xml:space="preserve">
+    <value>Constructor must have no parameter.</value>
+  </data>
+  <data name="ParameterlessConstructorMessageFormat" xml:space="preserve">
+    <value>Constructor must have no parameter.</value>
+  </data>
+  <data name="ParameterlessConstructorTitle" xml:space="preserve">
+    <value>Constructor must have no parameter.</value>
   </data>
   <data name="MultipleOverloadsDescription" xml:space="preserve">
     <value>Having multiple overloads is not supported.</value>

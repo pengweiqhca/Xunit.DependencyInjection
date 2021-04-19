@@ -1,8 +1,11 @@
-﻿namespace TestProject
+﻿using Xunit.DependencyInjection;
+
+[assembly: StartupType("TestProject.Startup2")]
+namespace TestProject
 {
-    public class Startup
+    public class Startup2
     {
-        public Startup() { }
-        public Startup(string abc) { }
+        public Startup2() { }
+        public Startup2(string abc) { }
     }
 }

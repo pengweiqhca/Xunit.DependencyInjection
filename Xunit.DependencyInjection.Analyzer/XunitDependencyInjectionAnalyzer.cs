@@ -29,27 +29,63 @@ namespace Xunit.DependencyInjection.Analyzer
             private readonly INamedTypeSymbol _assemblyName;
             private readonly INamedTypeSymbol _serviceCollection;
             private readonly INamedTypeSymbol _hostBuilderContext;
+            private readonly string _startupName;
 
-            private SymbolAnalyzer(Compilation compilation)
+            private SymbolAnalyzer(INamedTypeSymbol type1, INamedTypeSymbol type2, INamedTypeSymbol type3, INamedTypeSymbol type4, string startupName)
+            {
+                _hostBuilder = type1;
+                _assemblyName = type2;
+                _serviceCollection = type3;
+                _hostBuilderContext = type4;
+                _startupName = startupName;
+            }
+
+            public static void RegisterCompilationStartAction(CompilationStartAnalysisContext csac)
+            {
+                var item = GetTypeSymbol(csac.Compilation);
+                if (item.Item1 == null || item.Item2 == null || item.Item3 == null || item.Item4 == null || item.Item5 == null) return;
+
+                var sta = csac.Compilation.Assembly.GetAttributes().FirstOrDefault(attr => SymbolComparer.Equals(attr.AttributeClass, item.Item5));
+
+                string startupName;
+#if DEBUG
+                if (sta == null) startupName = $"{csac.Compilation.Assembly.Name}.Startup";
+#else
+                if (sta == null) return;
+#endif
+                else if (sta.ConstructorArguments.Length == 1)
+                {
+                    if (sta.ConstructorArguments[0].Value is INamedTypeSymbol st &&
+                        SymbolComparer.Equals(st.ContainingAssembly, csac.Compilation.Assembly))
+                        startupName = $"{st.ContainingNamespace.Name}.{st.Name}";
+                    else return;
+                }
+                else if (sta.ConstructorArguments.Length == 2 &&
+                         sta.ConstructorArguments[0].Value is string name &&
+                         (sta.ConstructorArguments[1].Value == null ||
+                         sta.ConstructorArguments[1].Value is string ns &&
+                         ns == csac.Compilation.AssemblyName))
+                    startupName = name;
+                else return;
+
+                // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
+                csac.RegisterSymbolAction(new SymbolAnalyzer(item.Item1, item.Item2, item.Item3, item.Item4, startupName).AnalyzeSymbol, SymbolKind.Method, SymbolKind.NamedType);
+            }
+
+            private static (INamedTypeSymbol, INamedTypeSymbol, INamedTypeSymbol, INamedTypeSymbol, INamedTypeSymbol) GetTypeSymbol(Compilation compilation)
             {
                 var ass = compilation.References
                     .Select(compilation.GetAssemblyOrModuleSymbol)
                     .OfType<IAssemblySymbol>()
                     .ToArray();
 
-                INamedTypeSymbol GetTypeSymbol(string name) => ass.Select(assemblySymbol => assemblySymbol.GetTypeByMetadataName(name)).First(t => t != null)!;
+                INamedTypeSymbol GetTypeSymbol0(string name) => ass.Select(assemblySymbol => assemblySymbol.GetTypeByMetadataName(name)).FirstOrDefault(t => t != null)!;
 
-                _hostBuilder = GetTypeSymbol("Microsoft.Extensions.Hosting.IHostBuilder");
-                _assemblyName = GetTypeSymbol(typeof(AssemblyName).FullName);
-                _serviceCollection = GetTypeSymbol("Microsoft.Extensions.DependencyInjection.IServiceCollection");
-                _hostBuilderContext = GetTypeSymbol("Microsoft.Extensions.Hosting.HostBuilderContext");
-            }
-
-            public static void RegisterCompilationStartAction(CompilationStartAnalysisContext csac)
-            {
-                // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-                csac.RegisterSymbolAction(new SymbolAnalyzer(csac.Compilation).AnalyzeSymbol, SymbolKind.Method, SymbolKind.NamedType);
-
+                return (GetTypeSymbol0("Microsoft.Extensions.Hosting.IHostBuilder"),
+                 GetTypeSymbol0(typeof(AssemblyName).FullName),
+                 GetTypeSymbol0("Microsoft.Extensions.DependencyInjection.IServiceCollection"),
+                 GetTypeSymbol0("Microsoft.Extensions.Hosting.HostBuilderContext"),
+                 GetTypeSymbol0("Xunit.DependencyInjection.StartupTypeAttribute"));
             }
 
             private void AnalyzeSymbol(SymbolAnalysisContext context)
@@ -59,8 +95,10 @@ namespace Xunit.DependencyInjection.Analyzer
                     case INamedTypeSymbol type:
                         if (!IsStartup(type)) return;
 
-                        if (type.InstanceConstructors.Count(ctor => ctor.DeclaredAccessibility == Accessibility.Public) > 1)
-                            context.ReportDiagnostic(Diagnostic.Create(Rules.MultipleConstructor, type.Locations[0], type.Name));
+                        var ctors = type.InstanceConstructors.Where(ctor => ctor.DeclaredAccessibility == Accessibility.Public).ToArray();
+                        if (ctors.Length > 1)
+                            foreach (var ctor in ctors)
+                                context.ReportDiagnostic(Diagnostic.Create(Rules.MultipleConstructor, ctor.Locations[0], ctor.Name));
 
                         AnalyzeOverride(context, type, "CreateHostBuilder");
                         AnalyzeOverride(context, type, "ConfigureHost");
@@ -70,9 +108,6 @@ namespace Xunit.DependencyInjection.Analyzer
                         return;
                     case IMethodSymbol method:
                         if (!IsStartup(method.ContainingType) || method.DeclaredAccessibility != Accessibility.Public) return;
-
-                        if (method.IsStatic)
-                            context.ReportDiagnostic(Diagnostic.Create(Rules.NotStaticMethod, method.Locations[0], method.Name));
 
                         switch (method.MethodKind)
                         {
@@ -97,13 +132,9 @@ namespace Xunit.DependencyInjection.Analyzer
                 }
             }
 
-            private static bool IsStartup(ISymbol type)
-            {
-                //TODO Should get by other way, default hard code.
-                return type.Name == "Startup" && type.ContainingNamespace.Name == type.ContainingAssembly.Name;
-            }
+            private bool IsStartup(ISymbol type) => $"{type.ContainingNamespace.Name}.{type.Name}" == _startupName;
 
-            private static void AnalyzeOverride(SymbolAnalysisContext context, ITypeSymbol type, string methodName)
+            private static void AnalyzeOverride(SymbolAnalysisContext context, INamespaceOrTypeSymbol type, string methodName)
             {
                 var methods = type.GetMembers().OfType<IMethodSymbol>()
                     .Where(m => m.MethodKind == MethodKind.Ordinary &&
@@ -111,8 +142,16 @@ namespace Xunit.DependencyInjection.Analyzer
                                 methodName.Equals(m.Name, StringComparison.OrdinalIgnoreCase))
                     .ToArray();
 
-                if (methods.Length > 1)
-                    context.ReportDiagnostic(Diagnostic.Create(Rules.MultipleOverloads, methods[0].Locations[0], methods[0].Name));
+                if (methods.Length < 2) return;
+
+                foreach (var method in methods)
+                    context.ReportDiagnostic(Diagnostic.Create(Rules.MultipleOverloads, method.Locations[0], method.Name));
+            }
+
+            private static void AnalyzeStatic(SymbolAnalysisContext context, IMethodSymbol method)
+            {
+                if (method.IsStatic)
+                    context.ReportDiagnostic(Diagnostic.Create(Rules.NotStaticMethod, method.Locations[0], method.Name));
             }
 
             private static void AnalyzeReturnType(SymbolAnalysisContext context, IMethodSymbol method, ITypeSymbol? returnType)
@@ -151,6 +190,8 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private void AnalyzeCreateHostBuilder(SymbolAnalysisContext context, IMethodSymbol method)
             {
+                AnalyzeStatic(context, method);
+
                 AnalyzeReturnType(context, method, _hostBuilder);
 
                 if (method.Parameters.Length == 0) return;
@@ -161,6 +202,8 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private void AnalyzeConfigureHost(SymbolAnalysisContext context, IMethodSymbol method)
             {
+                AnalyzeStatic(context, method);
+
                 AnalyzeReturnType(context, method, null);
 
                 var parameters = method.Parameters;
@@ -170,6 +213,8 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private void AnalyzeConfigureServices(SymbolAnalysisContext context, IMethodSymbol method)
             {
+                AnalyzeStatic(context, method);
+
                 AnalyzeReturnType(context, method, null);
 
                 var parameters = method.Parameters;
@@ -185,6 +230,8 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private static void AnalyzeConfigure(SymbolAnalysisContext context, IMethodSymbol method)
             {
+                AnalyzeStatic(context, method);
+
                 AnalyzeReturnType(context, method, null);
             }
         }
