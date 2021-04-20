@@ -72,14 +72,14 @@ namespace Xunit.DependencyInjection.Analyzer
                 csac.RegisterSymbolAction(new SymbolAnalyzer(item.Item1, item.Item2, item.Item3, item.Item4, startupName).AnalyzeSymbol, SymbolKind.Method, SymbolKind.NamedType);
             }
 
-            private static (INamedTypeSymbol, INamedTypeSymbol, INamedTypeSymbol, INamedTypeSymbol, INamedTypeSymbol) GetTypeSymbol(Compilation compilation)
+            private static (INamedTypeSymbol?, INamedTypeSymbol?, INamedTypeSymbol?, INamedTypeSymbol?, INamedTypeSymbol?) GetTypeSymbol(Compilation compilation)
             {
                 var ass = compilation.References
                     .Select(compilation.GetAssemblyOrModuleSymbol)
                     .OfType<IAssemblySymbol>()
                     .ToArray();
 
-                INamedTypeSymbol GetTypeSymbol0(string name) => ass.Select(assemblySymbol => assemblySymbol.GetTypeByMetadataName(name)).FirstOrDefault(t => t != null)!;
+                INamedTypeSymbol? GetTypeSymbol0(string name) => ass.Select(assemblySymbol => assemblySymbol.GetTypeByMetadataName(name)).FirstOrDefault(t => t != null);
 
                 return (GetTypeSymbol0("Microsoft.Extensions.Hosting.IHostBuilder"),
                  GetTypeSymbol0(typeof(AssemblyName).FullName),
