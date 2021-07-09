@@ -32,16 +32,16 @@ namespace Xunit.DependencyInjection
         /// <inheritdoc />
         protected override object?[] CreateTestClassConstructorArguments()
         {
+            _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
+
             if ((!Class.Type.GetTypeInfo().IsAbstract ? 0 : (Class.Type.GetTypeInfo().IsSealed ? 1 : 0)) != 0)
-                return new object?[0];
+                return Array.Empty<object?>();
 
             var constructor = SelectTestClassConstructor();
             if (constructor == null)
-                return new object?[0];
+                return Array.Empty<object?>();
 
             var parameters = constructor.GetParameters();
-            if (parameters.Length > 0)
-                _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
 
             var objArray = new object?[parameters.Length];
             for (var index = 0; index < parameters.Length; ++index)
