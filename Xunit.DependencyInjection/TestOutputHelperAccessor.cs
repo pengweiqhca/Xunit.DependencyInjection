@@ -10,7 +10,7 @@ namespace Xunit.DependencyInjection
 
     public class TestOutputHelperAccessor : ITestOutputHelperAccessor
     {
-        private readonly AsyncLocal<ITestOutputHelper?> _output = new AsyncLocal<ITestOutputHelper?>();
+        private readonly AsyncLocal<ITestOutputHelper?> _output = new();
 
         public ITestOutputHelper? Output
         {

@@ -6,7 +6,7 @@ namespace Xunit.DependencyInjection.Logging
 {
     public class XunitTestOutputLoggerProvider : ILoggerProvider
     {
-        private readonly ConcurrentDictionary<string, ILogger> _loggers = new ConcurrentDictionary<string, ILogger>();
+        private readonly ConcurrentDictionary<string, ILogger> _loggers = new();
         private readonly ITestOutputHelperAccessor _accessor;
         private readonly Func<string, LogLevel, bool> _filter;
 

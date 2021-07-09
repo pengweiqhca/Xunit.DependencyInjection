@@ -108,7 +108,7 @@ namespace Xunit.DependencyInjection.Logging
 
         private class NullScope : IDisposable
         {
-            public static NullScope Instance { get; } = new NullScope();
+            public static NullScope Instance { get; } = new();
 
             private NullScope() { }
 
