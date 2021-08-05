@@ -1,4 +1,5 @@
 ﻿using Autofac.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -10,7 +11,8 @@ namespace Xunit.DependencyInjection.Test
     public class Startup
     {
         public void ConfigureHost(IHostBuilder hostBuilder) =>
-            hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            hostBuilder.ConfigureAppConfiguration(lb => lb.AddJsonFile("appsettings.json", false, true))
+                .UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
         public void ConfigureServices(IServiceCollection services) =>
             services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug))

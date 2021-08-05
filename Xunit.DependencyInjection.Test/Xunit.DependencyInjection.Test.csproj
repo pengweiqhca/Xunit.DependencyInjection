@@ -10,7 +10,10 @@
   <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
+    <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
+
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.*" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" />
     <PackageReference Include="xunit" Version="2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
