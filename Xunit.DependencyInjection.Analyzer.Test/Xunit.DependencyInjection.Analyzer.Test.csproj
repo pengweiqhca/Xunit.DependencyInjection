@@ -21,9 +21,9 @@
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
 
     <!--https://github.com/dotnet/roslyn-sdk/blob/main/src/Microsoft.CodeAnalysis.Testing/README.md-->
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit" Version="1.0.1-*" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit" Version="1.0.1-*" />
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.XUnit" Version="1.0.1-*" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit" Version="1.*" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing.XUnit" Version="1.*" />
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing.XUnit" Version="1.*" />
   </ItemGroup>
 
   <ItemGroup>
