@@ -4,7 +4,7 @@
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
-7.3: Fix #41, activate ITestOutputHelperAccessor on tests without a constructor..
+7.3: Fix #41, activate ITestOutputHelperAccessor on tests without a constructor.
 7.2: Add Startup analyzer.
 7.1: Fix can't run test case when host.StartAsync() throw exception.
 7.0: Add fixture injection and refactor DependencyInjectionTestFramework, you don't have to declare the [assembly: TestFrameworkAttribute] on normal case.</Description>
