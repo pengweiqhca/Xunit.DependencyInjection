@@ -15,7 +15,7 @@
   </PropertyGroup>
 
   <ItemGroup Condition="'$(MSBuildRuntimeType)' != 'Core'">
-    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="15.1.192" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.VSSDK.BuildTools" Version="16.10.1055" PrivateAssets="all" />
   </ItemGroup>
 
   <PropertyGroup>
