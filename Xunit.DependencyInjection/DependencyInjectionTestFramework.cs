@@ -23,9 +23,10 @@ namespace Xunit.DependencyInjection
                 var startup = StartupLoader.CreateStartup(StartupLoader.GetStartupType(assemblyName));
                 if (startup == null) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
 
-                var hostBuilder = StartupLoader.CreateHostBuilder(startup, assemblyName) ??
-                                  new HostBuilder().ConfigureHostConfiguration(builder =>
-                                      builder.AddInMemoryCollection(new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
+                var hostBuilder = StartupLoader.CreateHostBuilder(startup, assemblyName) ?? new HostBuilder();
+
+                hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(
+                    new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
 
                 StartupLoader.ConfigureHost(hostBuilder, startup);
 
@@ -37,6 +38,10 @@ namespace Xunit.DependencyInjection
                     .Build();
 
                 StartupLoader.Configure(host.Services, startup);
+            }
+            catch (TargetInvocationException tie)
+            {
+                ex = tie.InnerException;
             }
             catch (Exception e)
             {
