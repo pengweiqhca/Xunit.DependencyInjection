@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Xunit.DependencyInjection.Logging
 {
@@ -22,5 +23,8 @@ namespace Xunit.DependencyInjection.Logging
         public void Dispose() { }
 
         public ILogger CreateLogger(string categoryName) => _loggers.GetOrAdd(categoryName, name => new XunitTestOutputLogger(_accessor, name, _filter));
+
+        public static void Register(IServiceProvider provider) =>
+            provider.GetRequiredService<ILoggerFactory>().AddProvider(ActivatorUtilities.CreateInstance<XunitTestOutputLoggerProvider>(provider));
     }
 }

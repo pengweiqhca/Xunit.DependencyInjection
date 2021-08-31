@@ -4,13 +4,13 @@
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Use Ben.Demystifier Formate Exception.
 
-protected override IServiceProvider ConfigureServices(IServiceCollection services)
+public void ConfigureServices(IServiceCollection services)
 {{
-    services.AddSingleton&lt;IAsyncExceptionFilter, DemystifyExceptionFilter&gt;();
+    services.UseDemystifyExceptionFilter();
 }}</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>2.1.0</Version>
-    <PackageReleaseNotes></PackageReleaseNotes>
+    <Version>7.5.0</Version>
+    <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
