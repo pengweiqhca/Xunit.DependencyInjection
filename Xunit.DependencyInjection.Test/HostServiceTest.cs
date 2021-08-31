@@ -11,7 +11,7 @@ namespace Xunit.DependencyInjection.Test
         public Task StartAsync(CancellationToken cancellationToken)
         {
             HostedServiceInvoked = true;
-
+            
             return Task.CompletedTask;
         }
 

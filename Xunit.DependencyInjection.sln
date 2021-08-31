@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection", "Xunit.DependencyInjection\Xunit.DependencyInjection.csproj", "{3D2ED524-0543-4349-B171-70EC032F82D6}"
 EndProject
@@ -28,6 +28,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer.Test", "Xunit.DependencyInjection.Analyzer.Test\Xunit.DependencyInjection.Analyzer.Test.csproj", "{EE91A816-AE5C-42D6-9E0F-5E02E6C68250}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer.Vsix", "Xunit.DependencyInjection.Analyzer.Vsix\Xunit.DependencyInjection.Analyzer.Vsix.csproj", "{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.SkippableFact", "Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj", "{C92E88E0-9CED-4DE1-AF5F-69990D3B8872}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,10 @@ Global
 		{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C92E88E0-9CED-4DE1-AF5F-69990D3B8872}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C92E88E0-9CED-4DE1-AF5F-69990D3B8872}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C92E88E0-9CED-4DE1-AF5F-69990D3B8872}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C92E88E0-9CED-4DE1-AF5F-69990D3B8872}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

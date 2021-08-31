@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
@@ -60,26 +61,28 @@ namespace Xunit.DependencyInjection
         }
 
         /// <inheritdoc />
-        protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
+        protected override Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
         {
             if (testCase is ExecutionErrorTestCase)
-                return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
-                    _constructorArguments, new ExceptionAggregator(Aggregator), CancellationTokenSource).ConfigureAwait(false);
+                return testCase.RunAsync(_diagnosticMessageSink, MessageBus,
+                    _constructorArguments, new ExceptionAggregator(Aggregator), CancellationTokenSource);
 
             using var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-            XunitTestCaseRunner runner;
-            if (testCase is XunitTheoryTestCase)
-                runner = new DependencyInjectionTheoryTestCaseRunner(scope.ServiceProvider, testCase,
-                    testCase.DisplayName, testCase.SkipReason,
-                    CreateTestClassConstructorArguments(scope.ServiceProvider),
-                    _diagnosticMessageSink, MessageBus, new ExceptionAggregator(Aggregator), CancellationTokenSource);
-            else
-                runner = new DependencyInjectionTestCaseRunner(scope.ServiceProvider, testCase,
-                    testCase.DisplayName, testCase.SkipReason,
-                    CreateTestClassConstructorArguments(scope.ServiceProvider), testCase.TestMethodArguments,
-                    MessageBus, new ExceptionAggregator(Aggregator), CancellationTokenSource);
 
-            return await runner.RunAsync().ConfigureAwait(false);
+            var wrappers = scope.ServiceProvider.GetServices<IXunitTestCaseRunnerWrapper>().ToArray();
+
+            var type = testCase.GetType();
+            do
+            {
+                var wrapper = wrappers.FirstOrDefault(w => w.TestCaseType == type);
+                if (wrapper != null)
+                    return wrapper.RunAsync(testCase, scope.ServiceProvider, _diagnosticMessageSink,
+                        MessageBus, CreateTestClassConstructorArguments(scope.ServiceProvider),
+                        new ExceptionAggregator(Aggregator), CancellationTokenSource);
+            } while ((type = type.BaseType) != null);
+
+            return testCase.RunAsync(_diagnosticMessageSink, MessageBus,
+                _constructorArguments, new ExceptionAggregator(Aggregator), CancellationTokenSource);
         }
     }
 }

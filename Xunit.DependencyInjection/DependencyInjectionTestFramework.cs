@@ -18,26 +18,12 @@ namespace Xunit.DependencyInjection
         {
             IHost? host = null;
             Exception? ex = null;
+
             try
             {
-                var startup = StartupLoader.CreateStartup(StartupLoader.GetStartupType(assemblyName));
-                if (startup == null) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+                host = CreateHost(assemblyName);
 
-                var hostBuilder = StartupLoader.CreateHostBuilder(startup, assemblyName) ?? new HostBuilder();
-
-                hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(
-                    new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
-
-                StartupLoader.ConfigureHost(hostBuilder, startup);
-
-                StartupLoader.ConfigureServices(hostBuilder, startup);
-
-                host = hostBuilder.ConfigureServices(services => services
-                        .AddSingleton(DiagnosticMessageSink)
-                        .TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>())
-                    .Build();
-
-                StartupLoader.Configure(host.Services, startup);
+                if (host == null) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
             }
             catch (TargetInvocationException tie)
             {
@@ -50,6 +36,36 @@ namespace Xunit.DependencyInjection
 
             return new DependencyInjectionTestFrameworkExecutor(host, ex,
                 assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+        }
+
+        private IHost? CreateHost(AssemblyName assemblyName)
+        {
+            var startup = StartupLoader.CreateStartup(StartupLoader.GetStartupType(assemblyName));
+            if (startup == null) return null;
+
+            var hostBuilder = StartupLoader.CreateHostBuilder(startup, assemblyName) ?? new HostBuilder();
+
+            hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(
+                new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
+
+            StartupLoader.ConfigureHost(hostBuilder, startup);
+
+            StartupLoader.ConfigureServices(hostBuilder, startup);
+
+            var host = hostBuilder.ConfigureServices(services =>
+                {
+                    services
+                        .AddSingleton(DiagnosticMessageSink)
+                        .TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
+
+                    services.TryAddEnumerable(ServiceDescriptor.Scoped<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
+                    services.TryAddEnumerable(ServiceDescriptor.Scoped<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
+                })
+                .Build();
+
+            StartupLoader.Configure(host.Services, startup);
+
+            return host;
         }
     }
 }

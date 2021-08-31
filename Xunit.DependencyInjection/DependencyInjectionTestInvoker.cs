@@ -36,7 +36,7 @@ namespace Xunit.DependencyInjection
                 }
                 catch (Exception ex)
                 {
-                    while (ex is TargetInvocationException tie)
+                    while (ex is TargetInvocationException { InnerException: { } } tie)
                     {
                         ex = tie.InnerException;
                     }

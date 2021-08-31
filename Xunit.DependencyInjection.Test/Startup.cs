@@ -19,6 +19,7 @@ namespace Xunit.DependencyInjection.Test
                 .AddScoped<IDependency, DependencyClass>()
                 .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
                 .AddHostedService<HostServiceTest>()
+                .AddSkippableFactSupport()
                 .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
         public void Configure(ILoggerFactory loggerFactory, ITestOutputHelperAccessor accessor) =>
