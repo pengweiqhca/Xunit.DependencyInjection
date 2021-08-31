@@ -1,4 +1,5 @@
-﻿using Autofac.Extensions.DependencyInjection;
+﻿using System;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -22,7 +23,11 @@ namespace Xunit.DependencyInjection.Test
                 .AddSkippableFactSupport()
                 .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
-        public void Configure(ILoggerFactory loggerFactory, ITestOutputHelperAccessor accessor) =>
-            loggerFactory.AddProvider(new XunitTestOutputLoggerProvider(accessor, delegate { return true; }));
+        public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)
+        {
+            Assert.NotNull(accessor);
+
+            XunitTestOutputLoggerProvider.Register(provider);
+        }
     }
 }

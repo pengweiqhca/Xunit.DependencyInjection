@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Support Microsoft.Extensions.Logging to ITestOutputHelper.
-protected override void Configure(IServiceProvider provider)
+
+public void Configure(IServiceProvider provider)
 {{
-    provider.GetRequiredService&lt;ILoggerFactory&gt;()
-        .AddProvider(new XunitTestOutputLoggerProvider(provider.GetRequiredService&lt;ITestOutputHelperAccessor&gt;()));
+      XunitTestOutputLoggerProvider.Register(provider);
 }}</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
     <Version>7.5.0</Version>
