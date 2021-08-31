@@ -64,7 +64,8 @@ build_script:
 
 # to run your custom scripts instead of automatic tests
 test_script:
-  - dotnet test
+  - dotnet test Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+  - dotnet test Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
 
 # to disable automatic tests
 #test: off
