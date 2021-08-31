@@ -11,7 +11,7 @@ Release notes:
 7.1: Fix can't run test case when host.StartAsync() throw exception.
 7.0: Add fixture injection and refactor DependencyInjectionTestFramework, you don't have to declare the [assembly: TestFrameworkAttribute] on normal case.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>7.5.0</Version>
+    <Version>7.5.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 

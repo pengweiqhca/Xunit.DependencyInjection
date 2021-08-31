@@ -5,11 +5,11 @@
     <Description>Use Ben.Demystifier Formate Exception.
 
 public void ConfigureServices(IServiceCollection services)
-{{
+{
     services.UseDemystifyExceptionFilter();
-}}</Description>
+}</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>7.5.0</Version>
+    <Version>7.5.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 

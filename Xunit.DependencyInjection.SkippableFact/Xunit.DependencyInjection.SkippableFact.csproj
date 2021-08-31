@@ -5,17 +5,17 @@
     <Description>Support Xunit.SkippableFact.
 
 public void ConfigureServices(IServiceCollection services)
-{{
+{
     services.AddSkippableFactSupport();
-}}</Description>
+}</Description>
     <PackageTags>xunit ioc di DependencyInjection test skipping</PackageTags>
-    <Version>7.5.0</Version>
+    <Version>7.5.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
-    
+
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
 
