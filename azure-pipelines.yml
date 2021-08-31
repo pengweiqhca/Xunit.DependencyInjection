@@ -30,8 +30,10 @@ jobs:
       version: 5.0.x
   - script: dotnet build -c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True
     displayName: 'dotnet build'
-  - script: dotnet test -c $(buildConfiguration)
+  - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
     displayName: 'dotnet test'
+  - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+    displayName: 'dotnet test aspnetcore'
 
 - job: MacOS_Build_and_Test
   pool:
@@ -51,8 +53,10 @@ jobs:
       version: 5.0.x
   - script: dotnet build -c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True
     displayName: 'dotnet build'
-  - script: dotnet test -c $(buildConfiguration)
+  - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
     displayName: 'dotnet test'
+  - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+    displayName: 'dotnet test aspnetcore'
 
 - job: Windows_Build_and_Test
   pool:
@@ -72,5 +76,7 @@ jobs:
       version: 5.0.x
   - script: dotnet build -c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True
     displayName: 'dotnet build'
-  - script: dotnet test -c $(buildConfiguration)
+  - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
     displayName: 'dotnet test'
+  - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+    displayName: 'dotnet test aspnetcore'
