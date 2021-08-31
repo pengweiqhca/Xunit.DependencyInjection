@@ -64,42 +64,28 @@ namespace Xunit.DependencyInjection
         protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
         {
             if (testCase is ExecutionErrorTestCase)
-                return await testCase
-                    .RunAsync(
-                        _diagnosticMessageSink,
-                        MessageBus, _constructorArguments,
-                        new ExceptionAggregator(Aggregator),
-                        CancellationTokenSource)
+                return await testCase.RunAsync(_diagnosticMessageSink, MessageBus, _constructorArguments,
+                        new ExceptionAggregator(Aggregator), CancellationTokenSource)
                     .ConfigureAwait(false);
 
             using var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
-            var wrappers = scope.ServiceProvider.GetServices<IXunitTestCaseRunnerWrapper>().ToArray();
+            var wrappers = scope.ServiceProvider.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
 
             var type = testCase.GetType();
             do
             {
                 var wrapper = wrappers.FirstOrDefault(w => w.TestCaseType == type);
                 if (wrapper != null)
-                    return await wrapper
-                        .RunAsync(
-                            testCase,
-                            scope.ServiceProvider,
-                            _diagnosticMessageSink,
-                            MessageBus,
-                            CreateTestClassConstructorArguments(scope.ServiceProvider),
-                            new ExceptionAggregator(Aggregator),
-                            CancellationTokenSource)
+                    return await wrapper.RunAsync(testCase, scope.ServiceProvider, _diagnosticMessageSink,
+                            MessageBus, CreateTestClassConstructorArguments(scope.ServiceProvider),
+                            new ExceptionAggregator(Aggregator), CancellationTokenSource)
                         .ConfigureAwait(false);
             } while ((type = type.BaseType) != null);
 
-            return await testCase
-                .RunAsync(
-                    _diagnosticMessageSink,
-                    MessageBus,
-                    _constructorArguments,
-                    new ExceptionAggregator(Aggregator),
-                    CancellationTokenSource)
+            return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
+                    CreateTestClassConstructorArguments(scope.ServiceProvider),
+                    new ExceptionAggregator(Aggregator), CancellationTokenSource)
                 .ConfigureAwait(false);
         }
     }
