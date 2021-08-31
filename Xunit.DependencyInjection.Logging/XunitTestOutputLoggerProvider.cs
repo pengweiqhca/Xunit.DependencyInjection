@@ -12,7 +12,7 @@ namespace Xunit.DependencyInjection.Logging
         private readonly Func<string, LogLevel, bool> _filter;
 
         /// <summary>Log minLevel LogLevel.Information</summary>
-        public XunitTestOutputLoggerProvider(ITestOutputHelperAccessor accessor) : this(accessor, (name, level) => level >= LogLevel.Information && level < LogLevel.None) { }
+        public XunitTestOutputLoggerProvider(ITestOutputHelperAccessor accessor) : this(accessor, (name, level) => level is >= LogLevel.Information and < LogLevel.None) { }
 
         public XunitTestOutputLoggerProvider(ITestOutputHelperAccessor accessor, Func<string, LogLevel, bool> filter)
         {
