@@ -6,7 +6,7 @@ How to use
 Install the [Nuget](https://www.nuget.org/packages/Xunit.DependencyInjection) package.
 
 ``` PS
-Install-Package Xunit.DependencyInjection
+dotnet add package Xunit.DependencyInjection
 ```
 In your testing project, add the following framework
 
@@ -52,8 +52,8 @@ public class MyAwesomeTests
 
 ## Integration asp.net core TestHost(3.0+)
 
-``` PS
-Install-Package Microsoft.AspNetCore.TestHost
+``` bash
+dotnet add package Microsoft.AspNetCore.TestHost
 ```
 
 ``` C#
@@ -150,28 +150,6 @@ If you want use a special `Startup`, you can defined `XunitStartupAssembly` and 
 | Abc |   | Abc.Startup, Abc |
 |   | Xyz | Xyz, Your.Test.Project |
 | Abc | Xyz | Xyz, Abc |
-
-## V5 to V6 break changes
-``` diff
-namespace Your.Test.Project
-{
-    public class Startup : DependencyInjectionTestFramework
-    {
-        public Startup(IMessageSink messageSink) : base(messageSink) { }
-
--       protected override void ConfigureServices(IServiceCollection services)
-+       protected void ConfigureServices(IServiceCollection services)
-        {
-            services.AddTransient<IDependency, DependencyClass>();
-        }
-
-+       protected override IHostBuilder CreateHostBuilder(AssemblyName assemblyName) =>
-+           base.CreateHostBuilder(assemblyName)
-+               .ConfigureServices(ConfigureServices);
-    }
-}
-```
-
 
 ## How to inject ITestOutputHelper
 ``` C#
