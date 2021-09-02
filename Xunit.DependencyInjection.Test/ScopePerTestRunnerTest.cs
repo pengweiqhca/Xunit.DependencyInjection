@@ -19,6 +19,8 @@
         [InlineData(0)]
         [InlineData(1)]
         [InlineData(2)]
+#pragma warning disable xUnit1026 // Theory methods should use all of their parameters
         public void Test4(int _) => Assert.Equal(0, _d.Value++);
+#pragma warning restore xUnit1026 // Theory methods should use all of their parameters
     }
 }
