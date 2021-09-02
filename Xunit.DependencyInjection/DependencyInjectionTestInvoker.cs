@@ -14,7 +14,7 @@ namespace Xunit.DependencyInjection
         private readonly IServiceProvider _provider;
 
         public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus,
-            Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
+            Type testClass, object?[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
             IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator,
             CancellationTokenSource cancellationTokenSource)
             : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,

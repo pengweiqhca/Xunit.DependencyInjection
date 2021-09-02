@@ -43,9 +43,19 @@ namespace Xunit.DependencyInjection
             for (var index = 0; index < runners.Count; index++)
             {
                 if (runners[index] is TestRunner<IXunitTestCase> runner)
-                    runners[index] = new DependencyInjectionTestRunner(_provider, GetTest(runner),
-                        MessageBus, fromServices, TestClass, ConstructorArguments, TestMethod, GetTestMethodArguments(runner),
+                    runners[index] = new DependencyInjectionTestRunner(_provider, GetTest(runner), MessageBus,
+                        fromServices, TestClass, index == 0 ? ConstructorArguments : Copy(ConstructorArguments),
+                        TestMethod, GetTestMethodArguments(runner),
                         SkipReason, BeforeAfterAttributes, Aggregator, CancellationTokenSource);
+            }
+
+            static object[] Copy(object[] source)
+            {
+                var array = new object[source.Length];
+
+                source.CopyTo(array, 0);
+
+                return array;
             }
         }
     }

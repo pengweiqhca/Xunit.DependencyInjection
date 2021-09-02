@@ -33,29 +33,30 @@ namespace Xunit.DependencyInjection
             _constructorArguments = constructorArguments;
         }
 
-        protected object?[] CreateTestClassConstructorArguments(IServiceProvider provider)
+        protected internal static object?[] CreateTestClassConstructorArguments(IServiceProvider provider,
+            object[] constructorArguments, ExceptionAggregator aggregator)
         {
             var unusedArguments = new List<Tuple<int, ParameterInfo>>();
             Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string>? formatConstructorArgsMissingMessage = null;
 
-            var args = new object?[_constructorArguments.Length];
-            for (var index = 0; index < _constructorArguments.Length; index++)
+            var args = new object?[constructorArguments.Length];
+            for (var index = 0; index < constructorArguments.Length; index++)
             {
-                if (_constructorArguments[index] is DependencyInjectionTestClassRunner.DelayArgument delay)
+                if (constructorArguments[index] is DependencyInjectionTestClassRunner.DelayArgument delay)
                 {
                     formatConstructorArgsMissingMessage = delay.FormatConstructorArgsMissingMessage;
 
-                    if (delay.TryGetConstructorArgument(provider, Aggregator, out var arg))
+                    if (delay.TryGetConstructorArgument(provider, aggregator, out var arg))
                         args[index] = arg;
                     else
                         unusedArguments.Add(Tuple.Create(index, delay.Parameter));
                 }
                 else
-                    args[index] = _constructorArguments[index];
+                    args[index] = constructorArguments[index];
             }
 
             if (unusedArguments.Count > 0 && formatConstructorArgsMissingMessage != null)
-                Aggregator.Add(new TestClassException(formatConstructorArgsMissingMessage(unusedArguments)));
+                aggregator.Add(new TestClassException(formatConstructorArgsMissingMessage(unusedArguments)));
 
             return args;
         }
@@ -68,23 +69,22 @@ namespace Xunit.DependencyInjection
                         new ExceptionAggregator(Aggregator), CancellationTokenSource)
                     .ConfigureAwait(false);
 
-            using var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-
-            var wrappers = scope.ServiceProvider.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
+            var wrappers = _provider.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
 
             var type = testCase.GetType();
             do
             {
-                var wrapper = wrappers.FirstOrDefault(w => w.TestCaseType == type);
-                if (wrapper != null)
-                    return await wrapper.RunAsync(testCase, scope.ServiceProvider, _diagnosticMessageSink,
-                            MessageBus, CreateTestClassConstructorArguments(scope.ServiceProvider),
-                            new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                var adapter = wrappers.FirstOrDefault(w => w.TestCaseType == type);
+                if (adapter != null)
+                    return await adapter.RunAsync(testCase, _provider, _diagnosticMessageSink, MessageBus,
+                            _constructorArguments, new ExceptionAggregator(Aggregator), CancellationTokenSource)
                         .ConfigureAwait(false);
             } while ((type = type.BaseType) != null);
 
+            using var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
             return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
-                    CreateTestClassConstructorArguments(scope.ServiceProvider),
+                    CreateTestClassConstructorArguments(scope.ServiceProvider, _constructorArguments, Aggregator),
                     new ExceptionAggregator(Aggregator), CancellationTokenSource)
                 .ConfigureAwait(false);
         }

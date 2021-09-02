@@ -29,6 +29,8 @@ namespace Xunit.DependencyInjection
         /// <inheritdoc />
         protected override async Task<Tuple<decimal, string>> InvokeTestAsync(ExceptionAggregator aggregator)
         {
+            using var scope = _provider.CreateScope();
+
             var testOutputHelper = _provider.GetRequiredService<ITestOutputHelperAccessor>().Output as TestOutputHelper;
             testOutputHelper?.Initialize(MessageBus, Test);
 
@@ -38,11 +40,14 @@ namespace Xunit.DependencyInjection
                 raw[kv.Key] = TestMethodArguments[kv.Key];
 
                 TestMethodArguments[kv.Key] = kv.Value == typeof(ITestOutputHelper)
-                    ? _provider.GetRequiredService<ITestOutputHelperAccessor>().Output
-                    : _provider.GetService(kv.Value);
+                    ? testOutputHelper
+                    : scope.ServiceProvider.GetService(kv.Value);
             }
 
-            var item = await InvokeTestMethodAsync(aggregator).ConfigureAwait(false);
+            var item = await new DependencyInjectionTestInvoker(scope.ServiceProvider, Test, MessageBus, TestClass,
+                        DependencyInjectionTestMethodRunner.CreateTestClassConstructorArguments(scope.ServiceProvider, ConstructorArguments, aggregator),
+                        TestMethod, TestMethodArguments, BeforeAfterAttributes, aggregator, CancellationTokenSource)
+                    .RunAsync().ConfigureAwait(false);
 
             foreach (var kv in raw)
                 TestMethodArguments[kv.Key] = kv.Value;
@@ -53,13 +58,8 @@ namespace Xunit.DependencyInjection
                 output = testOutputHelper.Output;
                 testOutputHelper.Uninitialize();
             }
+
             return Tuple.Create(item, output);
         }
-
-        /// <inheritdoc />
-        protected override Task<decimal> InvokeTestMethodAsync(ExceptionAggregator aggregator) =>
-            new DependencyInjectionTestInvoker(_provider, Test, MessageBus, TestClass,
-                    ConstructorArguments, TestMethod, TestMethodArguments, BeforeAfterAttributes, aggregator, CancellationTokenSource)
-                .RunAsync();
     }
 }

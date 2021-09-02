@@ -58,8 +58,8 @@ namespace Xunit.DependencyInjection
                         .AddSingleton(DiagnosticMessageSink)
                         .TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
 
-                    services.TryAddEnumerable(ServiceDescriptor.Scoped<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
-                    services.TryAddEnumerable(ServiceDescriptor.Scoped<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
+                    services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
+                    services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
                 })
                 .Build();
 

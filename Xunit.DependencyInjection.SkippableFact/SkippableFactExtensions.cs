@@ -9,8 +9,9 @@ namespace Xunit.DependencyInjection
     {
         public static IServiceCollection AddSkippableFactSupport(this IServiceCollection services)
         {
-            services.TryAddEnumerable(ServiceDescriptor.Scoped<IXunitTestCaseRunnerWrapper, SkippableFactTestCaseRunnerWrapper>());
-            services.TryAddEnumerable(ServiceDescriptor.Scoped<IXunitTestCaseRunnerWrapper, SkippableTheoryTestCaseRunnerWrapper>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, SkippableFactTestCaseRunnerWrapper>());
+
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, SkippableTheoryTestCaseRunnerWrapper>());
 
             return services;
         }
