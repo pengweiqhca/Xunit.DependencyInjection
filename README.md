@@ -5,7 +5,7 @@ How to use
 
 Install the [Nuget](https://www.nuget.org/packages/Xunit.DependencyInjection) package.
 
-``` PS
+``` bash
 dotnet add package Xunit.DependencyInjection
 ```
 In your testing project, add the following framework
