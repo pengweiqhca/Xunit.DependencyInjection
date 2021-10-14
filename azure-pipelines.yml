@@ -1,4 +1,4 @@
-# ASP.NET Core
+﻿# ASP.NET Core
 # Build and test ASP.NET Core projects targeting .NET Core.
 # Add steps that run tests, create a NuGet package, deploy, and more:
 # https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
@@ -17,17 +17,13 @@ jobs:
     vmImage: 'ubuntu-latest'
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk 2.1'
-    inputs:
-      version: 2.1.x
-  - task: UseDotNet@2
     displayName: 'Use .NET Core sdk 3.1'
     inputs:
       version: 3.1.x
   - task: UseDotNet@2
-    displayName: 'Use .NET sdk 5.0'
+    displayName: 'Use .NET sdk 6.0'
     inputs:
-      version: 5.0.x
+      version: 6.0.x
   - script: dotnet build -c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True
     displayName: 'dotnet build'
   - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
@@ -40,17 +36,13 @@ jobs:
     vmImage: 'macOS-latest'
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk 2.1'
-    inputs:
-      version: 2.1.x
-  - task: UseDotNet@2
     displayName: 'Use .NET Core sdk 3.1'
     inputs:
       version: 3.1.x
   - task: UseDotNet@2
-    displayName: 'Use .NET sdk 5.0'
+    displayName: 'Use .NET sdk 6.0'
     inputs:
-      version: 5.0.x
+      version: 6.0.x
   - script: dotnet build -c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True
     displayName: 'dotnet build'
   - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
@@ -63,17 +55,13 @@ jobs:
     vmImage: 'windows-latest'
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET Core sdk 2.1'
-    inputs:
-      version: 2.1.x
-  - task: UseDotNet@2
     displayName: 'Use .NET Core sdk 3.1'
     inputs:
       version: 3.1.x
   - task: UseDotNet@2
-    displayName: 'Use .NET sdk 5.0'
+    displayName: 'Use .NET sdk 6.0'
     inputs:
-      version: 5.0.x
+      version: 6.0.x
   - script: dotnet build -c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True
     displayName: 'dotnet build'
   - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
