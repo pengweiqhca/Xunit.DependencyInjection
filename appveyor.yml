@@ -14,7 +14,7 @@
 # you can use {branch} name in version format too
 version: 1.0.{build}-{branch}
 
-image: Visual Studio 2019
+image: Visual Studio 2022
 
 # branches to build
 branches:
