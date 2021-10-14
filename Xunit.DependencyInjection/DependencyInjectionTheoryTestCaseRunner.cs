@@ -58,5 +58,11 @@ namespace Xunit.DependencyInjection
                 return array;
             }
         }
+
+        public new async Task<RunSummary> RunAsync()
+        {
+            using (TheoryTestCaseDataContext.BeginContext(_provider))
+                return await base.RunAsync().ConfigureAwait(false);
+        }
     }
 }

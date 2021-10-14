@@ -70,40 +70,6 @@ public class Startup
 }
 ```
 
-## V7 new features
-
-* Don't need to add the assembly attribute `TestFramework`.
-* `Startup` does not need to inherit `DependencyInjectionTestFramework`.
-* `Configure` method support multiple parameters, like asp.net core Startup.
-
-## V6 to V7 break changes
-``` diff
-
--[assembly: TestFramework("Your.Test.Project.Startup", "Your.Test.Project")]
-
-namespace Your.Test.Project
-{
--   public class Startup : DependencyInjectionTestFramework
-+   public class Startup
-    {
--       public Startup(IMessageSink messageSink) : base(messageSink) { }
-
--       protected void ConfigureServices(IServiceCollection services)
-+       public void ConfigureServices(IServiceCollection services)
-        {
-            services.AddTransient<IDependency, DependencyClass>();
-        }
-
--       protected override IHostBuilder CreateHostBuilder() =>
--           base.CreateHostBuilder(assemblyName)
--               .ConfigureServices(ConfigureServices);
-
--       protected override void Configure(IServiceProvider provider)
-+       public void Configure(IServiceProvider provider)
-    }
-}
-```
-
 ## `Startup` limitation
 
 * CreateHostBuilder method
@@ -134,8 +100,11 @@ public class Startup
 Anything defined in ConfigureServices, can be specified in the Configure method signature. These services are injected if they're available.
 
 ## How to find `Startup`?
+
 Default is find `Your.Test.Project.Startup, Your.Test.Project`.
+
 If you want use a special `Startup`, you can defined `XunitStartupAssembly` and `XunitStartupFullName` in `PropertyGroup` section
+
 ``` xml
 <Project>
   <PropertyGroup>
@@ -144,6 +113,7 @@ If you want use a special `Startup`, you can defined `XunitStartupAssembly` and 
   </PropertyGroup>
 </Project>
 ```
+
 | XunitStartupAssembly | XunitStartupFullName | Startup |
 | ------- | ------ | ------ |
 |   |   | Your.Test.Project.Startup, Your.Test.Project |
@@ -152,6 +122,7 @@ If you want use a special `Startup`, you can defined `XunitStartupAssembly` and 
 | Abc | Xyz | Xyz, Abc |
 
 ## How to inject ITestOutputHelper
+
 ``` C#
 internal class DependencyClass : IDependency
 {
@@ -165,41 +136,47 @@ internal class DependencyClass : IDependency
 ```
 
 ## Write Microsoft.Extensions.Logging to ITestOutputHelper
+
 ``` C#
-    public class Startup
-    {
-        public void Configure(ILoggerFactory loggerFactory, ITestOutputHelperAccessor accessor) =>
-            loggerFactory.AddProvider(new XunitTestOutputLoggerProvider(accessor));
-    }
+public class Startup
+{
+    public void Configure(ILoggerFactory loggerFactory, ITestOutputHelperAccessor accessor) =>
+        loggerFactory.AddProvider(new XunitTestOutputLoggerProvider(accessor));
+}
 ```
 
 ## How to inject `IConfiguration` or `IHostingEnvironment` into `Startup`?
+
 ``` C#
-    public class Startup
-    {
-        public void ConfigureHost(IHostBuilder hostBuilder) =>
-            hostBuilder
-                .ConfigureServices((context, services) => { context.XXXX });
-    }
+public class Startup
+{
+    public void ConfigureHost(IHostBuilder hostBuilder) =>
+        hostBuilder
+            .ConfigureServices((context, services) => { context.XXXX });
+}
 ```
 or
 ``` C#
-    public class Startup
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services, HostBuilderContext context)
     {
-        public void ConfigureServices(IServiceCollection services, HostBuilderContext context)
-        {
-            context.XXXX;
-        }
+        context.XXXX;
     }
+}
 ```
 
 ## How to configure `IConfiguration`?
+
 ``` C#
-    public class Startup
-    {
-        public void ConfigureHost(IHostBuilder hostBuilder) =>
-            hostBuilder
-                .ConfigureHostConfiguration(builder => { })
-                .ConfigureAppConfiguration((context, builder) => { });
-    }
+public class Startup
+{
+    public void ConfigureHost(IHostBuilder hostBuilder) =>
+        hostBuilder
+            .ConfigureHostConfiguration(builder => { })
+            .ConfigureAppConfiguration((context, builder) => { });
+}
 ```
+
+## [MemberData] how to inject?
+Use **[MethodData]**
