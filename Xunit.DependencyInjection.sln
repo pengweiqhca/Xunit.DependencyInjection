@@ -33,7 +33,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer.Vsix", "Xunit.DependencyInjection.Analyzer.Vsix\Xunit.DependencyInjection.Analyzer.Vsix.csproj", "{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.SkippableFact", "Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj", "{C92E88E0-9CED-4DE1-AF5F-69990D3B8872}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.SkippableFact", "Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj", "{C92E88E0-9CED-4DE1-AF5F-69990D3B8872}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
