@@ -24,6 +24,7 @@ jobs:
     displayName: 'Use .NET sdk 6.0'
     inputs:
       version: 6.0.x
+      includePreviewVersions: true # Required for preview versions
   - script: dotnet build -c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True
     displayName: 'dotnet build'
   - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
@@ -43,6 +44,7 @@ jobs:
     displayName: 'Use .NET sdk 6.0'
     inputs:
       version: 6.0.x
+      includePreviewVersions: true # Required for preview versions
   - script: dotnet build -c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True
     displayName: 'dotnet build'
   - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
@@ -62,6 +64,7 @@ jobs:
     displayName: 'Use .NET sdk 6.0'
     inputs:
       version: 6.0.x
+      includePreviewVersions: true # Required for preview versions
   - script: dotnet build -c $(buildConfiguration) -v n /p:TreatWarningsAsErrors=True
     displayName: 'dotnet build'
   - script: dotnet test -c $(buildConfiguration) Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
