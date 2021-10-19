@@ -23,15 +23,27 @@ namespace Xunit.DependencyInjection
         }
     }
 
+    public sealed class HostAndTestCase
+    {
+        public IHost? Host { get; }
+        public List<IXunitTestCase> TestCases { get; }
+
+        public HostAndTestCase(IHost? host,List<IXunitTestCase> testCases)
+        {
+            Host = host;
+            TestCases = testCases;
+        }
+    }
+
     public sealed class HostData
     {
         public IHost? AssemblyStartupHost { get; }
-        public HostAndModule[] ModuleHosts { get; }
+        public HostAndModule[] HostsAndModules { get; }
 
-        public HostData(IHost? assemblyStartupHost, HostAndModule[] moduleHosts)
+        public HostData(IHost? assemblyStartupHost, HostAndModule[] hostsAndModules)
         {
             AssemblyStartupHost = assemblyStartupHost;
-            ModuleHosts = moduleHosts;
+            HostsAndModules = hostsAndModules;
         }
     }
 
@@ -48,7 +60,7 @@ namespace Xunit.DependencyInjection
             {
                 hostData = CreateHost(assemblyName);
 
-                if (hostData.AssemblyStartupHost is null && hostData.ModuleHosts.Length == 0) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+                if (hostData.AssemblyStartupHost is null && hostData.HostsAndModules.Length == 0) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
             }
             catch (TargetInvocationException tie)
             {

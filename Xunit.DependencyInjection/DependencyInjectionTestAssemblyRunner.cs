@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
@@ -9,19 +10,18 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
     {
-        private readonly IServiceProvider? _provider;
+        private readonly HostAndTestCase[] _hostsAndTestCases;
 
-        public DependencyInjectionTestAssemblyRunner(IServiceProvider? provider,
+        public DependencyInjectionTestAssemblyRunner(HostAndTestCase[] hostsAndTestCases,
             ITestAssembly testAssembly,
-            IEnumerable<IXunitTestCase> testCases,
             IMessageSink diagnosticMessageSink,
             IMessageSink executionMessageSink,
             ITestFrameworkExecutionOptions executionOptions,
             params Exception?[] exceptions)
-            : base(testAssembly, testCases, diagnosticMessageSink,
+            : base(testAssembly, hostsAndTestCases.SelectMany(x => x.TestCases), diagnosticMessageSink,
                 executionMessageSink, executionOptions)
         {
-            _provider = provider;
+            _hostsAndTestCases = hostsAndTestCases;
 
             foreach (var exception in exceptions) if (exception != null) Aggregator.Add(exception);
         }
@@ -32,11 +32,10 @@ namespace Xunit.DependencyInjection
             IEnumerable<IXunitTestCase> testCases,
             CancellationTokenSource cancellationTokenSource)
         {
-            if (_provider == null)
+            if (_hostsAndTestCases.Length == 1 && _hostsAndTestCases[0].Host is null)
                 return base.RunTestCollectionAsync(messageBus, testCollection, testCases, cancellationTokenSource);
 
-            return new DependencyInjectionTestCollectionRunner(_provider, testCollection,
-                    testCases, DiagnosticMessageSink, messageBus, TestCaseOrderer,
+            return new DependencyInjectionTestCollectionRunner(_hostsAndTestCases, testCollection, DiagnosticMessageSink, messageBus, TestCaseOrderer,
                     new ExceptionAggregator(Aggregator), cancellationTokenSource)
                 .RunAsync();
         }

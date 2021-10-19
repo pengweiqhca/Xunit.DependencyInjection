@@ -30,7 +30,7 @@ namespace Xunit.DependencyInjection
                 DisposalTracker.Add(_hostData.AssemblyStartupHost);
             }
 
-            foreach (var hostAndModule in _hostData.ModuleHosts)
+            foreach (var hostAndModule in _hostData.HostsAndModules)
             {
                 DisposalTracker.Add(hostAndModule.Host);
             }
@@ -42,7 +42,7 @@ namespace Xunit.DependencyInjection
             IMessageSink executionMessageSink,
             ITestFrameworkExecutionOptions executionOptions)
         {
-            if (_hostData.AssemblyStartupHost is null && _hostData.ModuleHosts.Length == 0)
+            if (_hostData.AssemblyStartupHost is null && _hostData.HostsAndModules.Length == 0)
             {
                 using var runner = new DependencyInjectionTestAssemblyRunner(null, TestAssembly,
                     testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _exception);
@@ -51,14 +51,14 @@ namespace Xunit.DependencyInjection
             }
             else
             {
-                var testCasesGroups = Enumerable.Range(0, _hostData.ModuleHosts.Length + 1).Select(_ => new List<IXunitTestCase>()).ToArray();
+                var testCasesGroups = Enumerable.Range(0, _hostData.HostsAndModules.Length + 1).Select(_ => new List<IXunitTestCase>()).ToArray();
 
                 int FindIndexOfTypeInTestCaseGroup(Type type)
                 {
                     if (!type.IsNested) return 0;
-                    for (int i = 0; i < _hostData.ModuleHosts.Length; i++)
+                    for (int i = 0; i < _hostData.HostsAndModules.Length; i++)
                     {
-                        if (type.DeclaringType == _hostData.ModuleHosts[i].ModuleType)
+                        if (type.DeclaringType == _hostData.HostsAndModules[i].ModuleType)
                             return i + 1;
                     }
 
@@ -72,45 +72,65 @@ namespace Xunit.DependencyInjection
                     testCasesGroups[groupIndex].Add(testCase);
                 }
 
+                var hostsAndTestCases = new HostAndTestCase[testCasesGroups.Length];
+                hostsAndTestCases[0] = new HostAndTestCase(_hostData.AssemblyStartupHost, testCasesGroups[0]);
+
+                for (int i = 1; i < testCasesGroups.Length; i++)
+                {
+                    hostsAndTestCases[i] = new HostAndTestCase(_hostData.HostsAndModules[i - 1].Host, testCasesGroups[i]);
+                }
+
                 var tasks = new Task[testCasesGroups.Length];
 
                 tasks[0] = RunTestCasesWithModuleScope(_hostData.AssemblyStartupHost, testCasesGroups[0]);
 
                 for (int i = 1; i < testCasesGroups.Length; i++)
                 {
-                    tasks[i] = RunTestCasesWithModuleScope(_hostData.ModuleHosts[i - 1].Host, testCasesGroups[i]);
+                    tasks[i] = RunTestCasesWithModuleScope(_hostData.HostsAndModules[i - 1].Host, testCasesGroups[i]);
                 }
 
                 await Task.WhenAll(tasks).ConfigureAwait(false);
 
-                async Task RunTestCasesWithModuleScope(IHost? host, List<IXunitTestCase> testCasesByHost)
+                async Task RunTestCasesWithModuleScope(HostAndTestCase[] hostAndTestCases)
                 {
-                    if (host is null)
-                    {
-                        using var runner = new DependencyInjectionTestAssemblyRunner(null, TestAssembly,
-                            testCasesByHost, DiagnosticMessageSink, executionMessageSink, executionOptions, _exception);
+                    List<Exception> hostExceptions = new();
 
-                        await runner.RunAsync().ConfigureAwait(false);
-                    }
-                    else
+                    foreach (var hostAndTestCase in hostAndTestCases)
                     {
-                        Exception? ex = null;
                         try
                         {
-                            await host.StartAsync().ConfigureAwait(false);
+                            if (hostAndTestCase.Host is not null)
+                                await hostAndTestCase.Host.StartAsync().ConfigureAwait(false);
                         }
                         catch (Exception e)
                         {
-                            ex = e;
+                            hostExceptions.Add(e);
                         }
-
-                        using var runner = new DependencyInjectionTestAssemblyRunner(host.Services, TestAssembly,
-                            testCasesByHost, DiagnosticMessageSink, executionMessageSink, executionOptions, _exception, ex);
-
-                        await runner.RunAsync().ConfigureAwait(false);
-
-                        await host.StopAsync().ConfigureAwait(false);
                     }
+
+                    Exception? ex = hostExceptions.Count == 0 ? null : new AggregateException(hostExceptions);
+
+                    using var runner = new DependencyInjectionTestAssemblyRunner(host.Services, TestAssembly,
+                        testCasesByHost, DiagnosticMessageSink, executionMessageSink, executionOptions, _exception, ex);
+
+                    await runner.RunAsync().ConfigureAwait(false);
+
+
+                    foreach (var hostAndTestCase in hostAndTestCases)
+                    {
+                        try
+                        {
+                            if (hostAndTestCase.Host is not null)
+                                await hostAndTestCase.Host.StopAsync().ConfigureAwait(false);
+                        }
+                        catch (Exception e)
+                        {
+                            hostExceptions.Add(e);
+                        }
+                    }
+
+                    if (hostExceptions.Count > 0)
+                        throw new AggregateException(hostExceptions);
                 }
             }
         }

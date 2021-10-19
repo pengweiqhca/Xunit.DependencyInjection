@@ -10,11 +10,11 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
     {
-        private readonly IServiceProvider _provider;
+        private readonly HostAndTestCase[] _hostAndTestCases;
         private IServiceScope? _serviceScope;
         private readonly IMessageSink _diagnosticMessageSink;
 
-        public DependencyInjectionTestCollectionRunner(IServiceProvider provider,
+        public DependencyInjectionTestCollectionRunner(HostAndTestCase[] hostAndTestCases,
             ITestCollection testCollection,
             IEnumerable<IXunitTestCase> testCases,
             IMessageSink diagnosticMessageSink,
@@ -25,7 +25,7 @@ namespace Xunit.DependencyInjection
             : base(testCollection, testCases, diagnosticMessageSink,
                   messageBus, testCaseOrderer, aggregator, cancellationTokenSource)
         {
-            _provider = provider;
+            _hostAndTestCases = hostAndTestCases;
             _diagnosticMessageSink = diagnosticMessageSink;
         }
 
