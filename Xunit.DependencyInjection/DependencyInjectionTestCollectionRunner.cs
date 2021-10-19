@@ -10,11 +10,11 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
     {
-        private readonly HostAndTestCase[] _hostAndTestCases;
-        private IServiceScope? _serviceScope;
+        private readonly HostFinder _hostFinder;
+        private readonly HashSet<IServiceScope> _serviceScopes = new();
         private readonly IMessageSink _diagnosticMessageSink;
 
-        public DependencyInjectionTestCollectionRunner(HostAndTestCase[] hostAndTestCases,
+        public DependencyInjectionTestCollectionRunner(HostFinder hostFinder,
             ITestCollection testCollection,
             IEnumerable<IXunitTestCase> testCases,
             IMessageSink diagnosticMessageSink,
@@ -25,17 +25,23 @@ namespace Xunit.DependencyInjection
             : base(testCollection, testCases, diagnosticMessageSink,
                   messageBus, testCaseOrderer, aggregator, cancellationTokenSource)
         {
-            _hostAndTestCases = hostAndTestCases;
+            _hostFinder = hostFinder;
             _diagnosticMessageSink = diagnosticMessageSink;
         }
 
         /// <inheritdoc />
         protected override void CreateCollectionFixture(Type fixtureType)
         {
-            _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var host = _hostFinder.GetHostForTestFixture(fixtureType);
+            if (host is not null)
+            {
+                var serviceScope = host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
-            Aggregator.Run(() => CollectionFixtureMappings[fixtureType] =
-                ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, fixtureType));
+                _serviceScopes.Add(serviceScope);
+
+                Aggregator.Run(() => CollectionFixtureMappings[fixtureType] =
+                    ActivatorUtilities.GetServiceOrCreateInstance(serviceScope.ServiceProvider, fixtureType));
+            }
         }
 
         /// <inheritdoc/>
@@ -43,13 +49,15 @@ namespace Xunit.DependencyInjection
         {
             await base.BeforeTestCollectionFinishedAsync().ConfigureAwait(false);
 
-             _serviceScope?.Dispose();
+            foreach (var serviceScope in _serviceScopes)
+                serviceScope.Dispose();
+            _serviceScopes.Clear();
         }
 
         /// <inheritdoc />
         protected override Task<RunSummary> RunTestClassAsync(ITestClass testClass,
             IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases) =>
-            new DependencyInjectionTestClassRunner(_provider, testClass, @class, testCases,
+            new DependencyInjectionTestClassRunner(_hostFinder, testClass, @class, testCases,
                     _diagnosticMessageSink, MessageBus, TestCaseOrderer,
                     new ExceptionAggregator(Aggregator), CancellationTokenSource, CollectionFixtureMappings)
                 .RunAsync();

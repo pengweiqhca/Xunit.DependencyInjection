@@ -3,14 +3,6 @@
 open Microsoft.Extensions.DependencyInjection
 open Xunit
 
-type Dependency1 = {
-    Value: string
-}
-
-type Dependency2 = {
-    Value: Dependency1
-}
-
 let mutable private StartupThatWasUsed = null
 
 type Startup() =

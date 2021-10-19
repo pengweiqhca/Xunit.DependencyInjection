@@ -12,6 +12,10 @@ type Dependency2 = {
     Value: Dependency1
 }
 
+type Dependency3 = {
+    Value: Dependency2
+}
+
 module private StartupValue =
     let mutable StartupThatWasUsed: Type = null
 

@@ -37,8 +37,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.S
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "XUnit.DependencyInjection.Test.FSharp", "XUnit.DependencyInjection.Test.FSharp\XUnit.DependencyInjection.Test.FSharp.fsproj", "{479EB212-AB62-4482-BFF4-3D3AC0E252EA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XUnit.DependencyInjection.Test.CSharp", "XUnit.DependencyInjection.Test.CSharp\XUnit.DependencyInjection.Test.CSharp.csproj", "{46A98FFD-A252-4764-82AC-91F84E7803DA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,10 +87,6 @@ Global
 		{479EB212-AB62-4482-BFF4-3D3AC0E252EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{479EB212-AB62-4482-BFF4-3D3AC0E252EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{479EB212-AB62-4482-BFF4-3D3AC0E252EA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{46A98FFD-A252-4764-82AC-91F84E7803DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{46A98FFD-A252-4764-82AC-91F84E7803DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{46A98FFD-A252-4764-82AC-91F84E7803DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{46A98FFD-A252-4764-82AC-91F84E7803DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

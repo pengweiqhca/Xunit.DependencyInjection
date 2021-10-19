@@ -12,11 +12,11 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCase>
     {
-        private readonly IServiceProvider _provider;
+        private readonly HostFinder _HostFinder;
         private readonly IMessageSink _diagnosticMessageSink;
         private readonly object[] _constructorArguments;
 
-        public DependencyInjectionTestMethodRunner(IServiceProvider provider,
+        public DependencyInjectionTestMethodRunner(HostFinder HostFinder,
             ITestMethod testMethod,
             IReflectionTypeInfo @class,
             IReflectionMethodInfo method,
@@ -28,7 +28,7 @@ namespace Xunit.DependencyInjection
             object[] constructorArguments)
             : base(testMethod, @class, method, testCases, messageBus, aggregator, cancellationTokenSource)
         {
-            _provider = provider;
+            _HostFinder = HostFinder;
             _diagnosticMessageSink = diagnosticMessageSink;
             _constructorArguments = constructorArguments;
         }
@@ -66,27 +66,37 @@ namespace Xunit.DependencyInjection
         {
             if (testCase is ExecutionErrorTestCase)
                 return await testCase.RunAsync(_diagnosticMessageSink, MessageBus, _constructorArguments,
-                        new ExceptionAggregator(Aggregator), CancellationTokenSource)
-                    .ConfigureAwait(false);
+                                          new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                                     .ConfigureAwait(false);
 
-            var wrappers = _provider.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
+            var host = _HostFinder.GetHostForTestCase(testCase);
+
+            if (host is null)
+            {
+                return await testCase.RunAsync(_diagnosticMessageSink, MessageBus, _constructorArguments,
+                                          new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                                     .ConfigureAwait(false);
+            }
+
+            var wrappers = host.Services.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
 
             var type = testCase.GetType();
             do
             {
                 var adapter = wrappers.FirstOrDefault(w => w.TestCaseType == type);
                 if (adapter != null)
-                    return await adapter.RunAsync(testCase, _provider, _diagnosticMessageSink, MessageBus,
-                            _constructorArguments, new ExceptionAggregator(Aggregator), CancellationTokenSource)
-                        .ConfigureAwait(false);
-            } while ((type = type.BaseType) != null);
+                    return await adapter.RunAsync(testCase, host.Services, _diagnosticMessageSink, MessageBus,
+                                             _constructorArguments, new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                                        .ConfigureAwait(false);
+            }
+            while ((type = type.BaseType) != null);
 
-            using var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            using var scope = host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
             return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
-                    CreateTestClassConstructorArguments(scope.ServiceProvider, _constructorArguments, Aggregator),
-                    new ExceptionAggregator(Aggregator), CancellationTokenSource)
-                .ConfigureAwait(false);
+                                      CreateTestClassConstructorArguments(scope.ServiceProvider, _constructorArguments, Aggregator),
+                                      new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                                 .ConfigureAwait(false);
         }
     }
 }

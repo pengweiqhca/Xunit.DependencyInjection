@@ -11,56 +11,21 @@ using Xunit.Sdk;
 
 namespace Xunit.DependencyInjection
 {
-    public sealed class HostAndModule
-    {
-        public IHost Host { get; }
-        public Type? ModuleType { get; }
-
-        public HostAndModule(IHost host, Type? moduleType)
-        {
-            Host = host;
-            ModuleType = moduleType;
-        }
-    }
-
-    public sealed class HostAndTestCase
-    {
-        public IHost? Host { get; }
-        public List<IXunitTestCase> TestCases { get; }
-
-        public HostAndTestCase(IHost? host,List<IXunitTestCase> testCases)
-        {
-            Host = host;
-            TestCases = testCases;
-        }
-    }
-
-    public sealed class HostData
-    {
-        public IHost? AssemblyStartupHost { get; }
-        public HostAndModule[] HostsAndModules { get; }
-
-        public HostData(IHost? assemblyStartupHost, HostAndModule[] hostsAndModules)
-        {
-            AssemblyStartupHost = assemblyStartupHost;
-            HostsAndModules = hostsAndModules;
-        }
-    }
-
     public sealed class DependencyInjectionTestFramework : XunitTestFramework
     {
         public DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
 
         protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
-            HostData hostData = new HostData(null, Array.Empty<HostAndModule>());
+            HostFinder hostFinder = new(null, Array.Empty<HostAndModule>());
             Exception? ex = null;
 
             try
             {
-                hostData = CreateHost(assemblyName);
+                hostFinder = CreateHost(assemblyName);
 
-                if (hostData.AssemblyStartupHost is null && hostData.HostsAndModules.Length == 0) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+                if (hostFinder.AssemblyStartupHost is null && hostFinder.HostsAndModules.Length == 0)
+                    return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
             }
             catch (TargetInvocationException tie)
             {
@@ -71,11 +36,11 @@ namespace Xunit.DependencyInjection
                 ex = e;
             }
 
-            return new DependencyInjectionTestFrameworkExecutor(hostData, ex,
+            return new DependencyInjectionTestFrameworkExecutor(hostFinder, ex,
                 assemblyName, SourceInformationProvider, DiagnosticMessageSink);
         }
 
-        private HostData CreateHost(AssemblyName assemblyName)
+        private HostFinder CreateHost(AssemblyName assemblyName)
         {
             IHost CreateStartupHost(object startupType)
             {
@@ -117,10 +82,10 @@ namespace Xunit.DependencyInjection
                                   .ToArray();
 
             if (assemblyStartup is null)
-                return new HostData(null, moduleHosts);
+                return new HostFinder(null, moduleHosts);
 
             var assemblyHost = CreateStartupHost(assemblyStartup);
-            return new HostData(assemblyHost, moduleHosts);
+            return new HostFinder(assemblyHost, moduleHosts);
         }
     }
 }

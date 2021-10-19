@@ -11,10 +11,10 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     {
-        private readonly IServiceProvider _provider;
-        private IServiceScope? _serviceScope;
+        private readonly HostFinder _hostFinder;
+        private readonly HashSet<IServiceScope> _serviceScopes = new();
 
-        public DependencyInjectionTestClassRunner(IServiceProvider provider,
+        public DependencyInjectionTestClassRunner(HostFinder hostFinder,
             ITestClass testClass,
             IReflectionTypeInfo @class,
             IEnumerable<IXunitTestCase> testCases,
@@ -27,12 +27,15 @@ namespace Xunit.DependencyInjection
             : base(testClass, @class, testCases, diagnosticMessageSink,
                 messageBus, testCaseOrderer, aggregator,
                 cancellationTokenSource, collectionFixtureMappings) =>
-            _provider = provider;
+            _hostFinder = hostFinder;
 
         /// <inheritdoc />
         protected override object?[] CreateTestClassConstructorArguments()
         {
-            _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
+            if (_hostFinder.AssemblyStartupHost is {} assemblyStartupHost)
+                assemblyStartupHost.Services.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
+            foreach (var hostAndModule in _hostFinder.HostsAndModules)
+                hostAndModule.Host.Services.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
 
             if ((!Class.Type.GetTypeInfo().IsAbstract ? 0 : (Class.Type.GetTypeInfo().IsSealed ? 1 : 0)) != 0)
                 return Array.Empty<object?>();
@@ -61,7 +64,7 @@ namespace Xunit.DependencyInjection
         {
             if (parameter.ParameterType == typeof(ITestOutputHelper))
             {
-                argumentValue = _provider.GetRequiredService<ITestOutputHelperAccessor>().Output;
+                argumentValue = _hostFinder.AssemblyStartupHost!.Services.GetRequiredService<ITestOutputHelperAccessor>().Output;
                 return true;
             }
 
@@ -77,17 +80,28 @@ namespace Xunit.DependencyInjection
         /// <inheritdoc />
         protected override void CreateClassFixture(Type fixtureType)
         {
-            _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-
-            Aggregator.Run(() => ClassFixtureMappings[fixtureType] = ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, fixtureType));
+            var host = _hostFinder.GetHostForTestFixture(fixtureType);
+            if (host is not null)
+            {
+                var serviceScope = host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();
+                _serviceScopes.Add(serviceScope);
+                Aggregator.Run(() => ClassFixtureMappings[fixtureType] = ActivatorUtilities.GetServiceOrCreateInstance(serviceScope.ServiceProvider, fixtureType));
+            }
+            else
+            {
+                Aggregator.Run(() => ClassFixtureMappings[fixtureType] = Activator.CreateInstance(fixtureType));
+            }
         }
 
         /// <inheritdoc />
         protected override async Task BeforeTestClassFinishedAsync()
         {
             await base.BeforeTestClassFinishedAsync().ConfigureAwait(false);
-
-            _serviceScope?.Dispose();
+            foreach (var serviceScope in _serviceScopes)
+            {
+                serviceScope.Dispose();
+            }
+            _serviceScopes.Clear();
         }
 
         internal class DelayArgument
@@ -139,7 +153,7 @@ namespace Xunit.DependencyInjection
         /// <inheritdoc />
         protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod,
             IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object[] constructorArguments) =>
-            new DependencyInjectionTestMethodRunner(_provider, testMethod, Class, method,
+            new DependencyInjectionTestMethodRunner(_hostFinder, testMethod, Class, method,
                     testCases, DiagnosticMessageSink, MessageBus, new ExceptionAggregator(Aggregator),
                     CancellationTokenSource, constructorArguments)
                 .RunAsync();

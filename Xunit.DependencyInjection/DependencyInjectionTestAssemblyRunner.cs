@@ -10,18 +10,19 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
     {
-        private readonly HostAndTestCase[] _hostsAndTestCases;
+        private readonly HostFinder _hostFinder;
 
-        public DependencyInjectionTestAssemblyRunner(HostAndTestCase[] hostsAndTestCases,
+        public DependencyInjectionTestAssemblyRunner(HostFinder hostFinder,
+            IEnumerable<IXunitTestCase> testCases,
             ITestAssembly testAssembly,
             IMessageSink diagnosticMessageSink,
             IMessageSink executionMessageSink,
             ITestFrameworkExecutionOptions executionOptions,
             params Exception?[] exceptions)
-            : base(testAssembly, hostsAndTestCases.SelectMany(x => x.TestCases), diagnosticMessageSink,
+            : base(testAssembly, testCases, diagnosticMessageSink,
                 executionMessageSink, executionOptions)
         {
-            _hostsAndTestCases = hostsAndTestCases;
+            _hostFinder = hostFinder;
 
             foreach (var exception in exceptions) if (exception != null) Aggregator.Add(exception);
         }
@@ -32,10 +33,10 @@ namespace Xunit.DependencyInjection
             IEnumerable<IXunitTestCase> testCases,
             CancellationTokenSource cancellationTokenSource)
         {
-            if (_hostsAndTestCases.Length == 1 && _hostsAndTestCases[0].Host is null)
+            if (_hostFinder.AssemblyStartupHost is null && _hostFinder.HostsAndModules.Length == 0)
                 return base.RunTestCollectionAsync(messageBus, testCollection, testCases, cancellationTokenSource);
 
-            return new DependencyInjectionTestCollectionRunner(_hostsAndTestCases, testCollection, DiagnosticMessageSink, messageBus, TestCaseOrderer,
+            return new DependencyInjectionTestCollectionRunner(_hostFinder, testCollection, testCases, DiagnosticMessageSink, messageBus, TestCaseOrderer,
                     new ExceptionAggregator(Aggregator), cancellationTokenSource)
                 .RunAsync();
         }
