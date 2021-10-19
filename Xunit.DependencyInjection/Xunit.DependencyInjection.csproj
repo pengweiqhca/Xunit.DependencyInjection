@@ -15,10 +15,6 @@ Release notes:
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
     <Version>7.7.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
-    <PackageId>Xunit.DependencyInjection</PackageId>
-    <PackageVersion>7.7.0</PackageVersion>
-    <Authors>Wei Peng</Authors>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>
