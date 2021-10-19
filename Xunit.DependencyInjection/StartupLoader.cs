@@ -23,15 +23,10 @@ namespace Xunit.DependencyInjection
 
                     var methods = startupType.GetMethods().Where(x => !(x.Name.Equals("GetHashCode") || x.Name.Equals("GetType") || x.Name.Equals("ToString") || x.Name.Equals("Equals"))).ToArray();
 
-                    var createHostBuilderMethod = FindMethod(startupType, nameof(CreateHostBuilder), typeof(IHostBuilder));
-                    var configureHostMethod = FindMethod(startupType, nameof(ConfigureHost));
-                    var configureServicesMethod = FindMethod(startupType, nameof(ConfigureServices));
-                    var configureMethod = FindMethod(startupType, nameof(Configure));
-
-                    if (createHostBuilderMethod is not null) counter++;
-                    if (configureHostMethod is not null) counter++;
-                    if (configureServicesMethod is not null) counter++;
-                    if (configureMethod is not null) counter++;
+                    if (FindMethod(startupType, nameof(CreateHostBuilder), typeof(IHostBuilder)) is not null) counter++;
+                    if (FindMethod(startupType, nameof(ConfigureHost)) is not null) counter++;
+                    if (FindMethod(startupType, nameof(ConfigureServices)) is not null) counter++;
+                    if (FindMethod(startupType, nameof(Configure)) is not null) counter++;
 
                     if (counter > 0 && methods.Length == counter)
                         return true;
@@ -48,9 +43,9 @@ namespace Xunit.DependencyInjection
 
             return
                 types
-                  .Where(x => x.Name.Equals("Startup") && IsValidModuleStartup(x))
-                  .Select(x => (x, x.DeclaringType))
-                  .ToArray();
+                   .Where(x => x.Name.Equals("Startup") && IsValidModuleStartup(x))
+                   .Select(x => (x, x.DeclaringType))
+                   .ToArray();
         }
 
         public static Type GetAssemblyStartupType(AssemblyName assemblyName)
@@ -112,14 +107,15 @@ namespace Xunit.DependencyInjection
             builder.ConfigureServices(parameters.Length switch
             {
                 1 when parameters[0].ParameterType == typeof(IServiceCollection) =>
-                (context, services) => method.Invoke(startup, new object[] { services }),
+                    (context, services) => method.Invoke(startup, new object[] { services }),
                 2 when parameters[0].ParameterType == typeof(IServiceCollection) &&
                        parameters[1].ParameterType == typeof(HostBuilderContext) =>
-                (context, services) => method.Invoke(startup, new object[] { services, context }),
+                    (context, services) => method.Invoke(startup, new object[] { services, context }),
                 2 when parameters[1].ParameterType == typeof(IServiceCollection) &&
                        parameters[0].ParameterType == typeof(HostBuilderContext) =>
-                (context, services) => method.Invoke(startup, new object[] { context, services }),
-                _ => throw new InvalidOperationException($"The '{method.Name}' method in the type '{startup.GetType().FullName}' must have a 'IServiceCollection' parameter and optional 'HostBuilderContext' parameter.")
+                    (context, services) => method.Invoke(startup, new object[] { context, services }),
+                _ => throw new InvalidOperationException(
+                    $"The '{method.Name}' method in the type '{startup.GetType().FullName}' must have a 'IServiceCollection' parameter and optional 'HostBuilderContext' parameter.")
             });
         }
 
@@ -136,7 +132,7 @@ namespace Xunit.DependencyInjection
         private static MethodInfo? FindMethod(Type startupType, string methodName, Type returnType)
         {
             var selectedMethods = startupType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
-                .Where(method => method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)).ToList();
+                                             .Where(method => method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)).ToList();
 
             if (selectedMethods.Count > 1)
                 throw new InvalidOperationException($"Having multiple overloads of method '{methodName}' is not supported.");
