@@ -16,10 +16,8 @@ Release notes:
     <Version>7.7.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PackageId>Xunit.DependencyInjection</PackageId>
-    <PackageVersion>7.7.0.1</PackageVersion>
-    <Authors>Wei Peng, Igor Badmyan</Authors>
-    <AssemblyVersion>7.7.0.1</AssemblyVersion>
-    <FileVersion>7.7.0.1</FileVersion>
+    <PackageVersion>7.7.0</PackageVersion>
+    <Authors>Wei Peng</Authors>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
