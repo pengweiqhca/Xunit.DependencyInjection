@@ -1,11 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net6</TargetFrameworks>
+    <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
-
-    <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
   <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />

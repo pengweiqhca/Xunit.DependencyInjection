@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
 
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
     <LangVersion>preview</LangVersion>
+    <TargetFrameworks>net461;netcoreapp3.1</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -13,7 +13,6 @@
     <Compile Include="ScopedModuleTest.fs" />
     <Compile Include="ScopedModuleTest2.fs" />
     <Compile Include="ScopedModuleTest3.fs" />
-    <Compile Include="Program.fs" />
   </ItemGroup>
 
   <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
