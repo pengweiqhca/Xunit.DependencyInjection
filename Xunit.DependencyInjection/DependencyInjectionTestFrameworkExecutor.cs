@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -12,19 +13,24 @@ namespace Xunit.DependencyInjection
     public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecutor
     {
         private readonly Exception? _exception;
-        private readonly HostAndModule[] _hostAndModules;
+        private readonly HostData _hostData;
 
-        public DependencyInjectionTestFrameworkExecutor(HostAndModule[] hostAndModules,
+        public DependencyInjectionTestFrameworkExecutor(HostData hostData,
             Exception? exception,
             AssemblyName assemblyName,
             ISourceInformationProvider sourceInformationProvider,
             IMessageSink diagnosticMessageSink)
             : base(assemblyName, sourceInformationProvider, diagnosticMessageSink)
         {
-            _hostAndModules = hostAndModules;
+            _hostData = hostData;
             _exception = exception;
 
-            foreach (var hostAndModule in _hostAndModules)
+            if (_hostData.AssemblyStartupHost is not null)
+            {
+                DisposalTracker.Add(_hostData.AssemblyStartupHost);
+            }
+
+            foreach (var hostAndModule in _hostData.ModuleHosts)
             {
                 DisposalTracker.Add(hostAndModule.Host);
             }
@@ -36,7 +42,7 @@ namespace Xunit.DependencyInjection
             IMessageSink executionMessageSink,
             ITestFrameworkExecutionOptions executionOptions)
         {
-            if (_hostAndModules.Length == 0)
+            if (_hostData.AssemblyStartupHost is null && _hostData.ModuleHosts.Length == 0)
             {
                 using var runner = new DependencyInjectionTestAssemblyRunner(null, TestAssembly,
                     testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _exception);
@@ -45,24 +51,15 @@ namespace Xunit.DependencyInjection
             }
             else
             {
-
-                var moduleTestCases = _hostAndModules.Select(_ => new List<IXunitTestCase>());
-                var offset = 0;
-                if (_hostAndModules[0].ModuleType is not null)
-                {
-                    offset = 1;
-                    moduleTestCases = new[]{ new List<IXunitTestCase>() }.Concat(moduleTestCases);
-                }
-
-                var testCasesGroups = moduleTestCases.ToArray();
+                var testCasesGroups = Enumerable.Range(0, _hostData.ModuleHosts.Length + 1).Select(_ => new List<IXunitTestCase>()).ToArray();
 
                 int FindIndexOfTypeInTestCaseGroup(Type type)
                 {
                     if (!type.IsNested) return 0;
-                    for (int i = 0; i < _hostAndModules.Length; i++)
+                    for (int i = 0; i < _hostData.ModuleHosts.Length; i++)
                     {
-                        if (type.DeclaringType == _hostAndModules[i].ModuleType)
-                            return i + offset;
+                        if (type.DeclaringType == _hostData.ModuleHosts[i].ModuleType)
+                            return i + 1;
                     }
 
                     return 0;
@@ -75,21 +72,16 @@ namespace Xunit.DependencyInjection
                     testCasesGroups[groupIndex].Add(testCase);
                 }
 
-                if (testCasesGroups.Length != _hostAndModules.Length)
+                var tasks = new Task[testCasesGroups.Length];
+
+                tasks[0] = RunTestCasesWithModuleScope(_hostData.AssemblyStartupHost, testCasesGroups[0]);
+
+                for (int i = 1; i < testCasesGroups.Length; i++)
                 {
-                    await RunTestCasesWithModuleScope(null, testCasesGroups[0]).ConfigureAwait(false);
-                    for (int i = 1; i < testCasesGroups.Length; i++)
-                    {
-                        await RunTestCasesWithModuleScope(_hostAndModules[i].Host, testCasesGroups[i]).ConfigureAwait(false);
-                    }
+                    tasks[i] = RunTestCasesWithModuleScope(_hostData.ModuleHosts[i - 1].Host, testCasesGroups[i]);
                 }
-                else
-                {
-                    for (int i = 0; i < testCasesGroups.Length; i++)
-                    {
-                        await RunTestCasesWithModuleScope(_hostAndModules[i].Host, testCasesGroups[i]).ConfigureAwait(false);
-                    }
-                }
+
+                await Task.WhenAll(tasks).ConfigureAwait(false);
 
                 async Task RunTestCasesWithModuleScope(IHost? host, List<IXunitTestCase> testCasesByHost)
                 {

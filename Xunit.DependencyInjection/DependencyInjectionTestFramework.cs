@@ -23,20 +23,32 @@ namespace Xunit.DependencyInjection
         }
     }
 
+    public sealed class HostData
+    {
+        public IHost? AssemblyStartupHost { get; }
+        public HostAndModule[] ModuleHosts { get; }
+
+        public HostData(IHost? assemblyStartupHost, HostAndModule[] moduleHosts)
+        {
+            AssemblyStartupHost = assemblyStartupHost;
+            ModuleHosts = moduleHosts;
+        }
+    }
+
     public sealed class DependencyInjectionTestFramework : XunitTestFramework
     {
         public DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
 
         protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
-            HostAndModule[] hostAndModules = Array.Empty<HostAndModule>();
+            HostData hostData = new HostData(null, Array.Empty<HostAndModule>());
             Exception? ex = null;
 
             try
             {
-                hostAndModules = CreateHost(assemblyName);
+                hostData = CreateHost(assemblyName);
 
-                if (hostAndModules.Length == 0) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
+                if (hostData.AssemblyStartupHost is null && hostData.ModuleHosts.Length == 0) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
             }
             catch (TargetInvocationException tie)
             {
@@ -47,11 +59,11 @@ namespace Xunit.DependencyInjection
                 ex = e;
             }
 
-            return new DependencyInjectionTestFrameworkExecutor(hostAndModules, ex,
+            return new DependencyInjectionTestFrameworkExecutor(hostData, ex,
                 assemblyName, SourceInformationProvider, DiagnosticMessageSink);
         }
 
-        private HostAndModule[] CreateHost(AssemblyName assemblyName)
+        private HostData CreateHost(AssemblyName assemblyName)
         {
             IHost CreateStartupHost(object startupType)
             {
@@ -89,12 +101,14 @@ namespace Xunit.DependencyInjection
                 moduleStartupTypes.Select(x => (StartupLoader.CreateStartup(x.StartupType), x.ModuleType))
                                   .Where(x => x.Item1 is not null)
                                   .Select(x => (CreateStartupHost(x.Item1!), x.ModuleType))
-                                  .Select(x => new HostAndModule(x.Item1, x.ModuleType));
+                                  .Select(x => new HostAndModule(x.Item1, x.ModuleType))
+                                  .ToArray();
 
             if (assemblyStartup is null)
-                return moduleHosts.ToArray();
+                return new HostData(null, moduleHosts);
 
-            return new[] { new HostAndModule(CreateStartupHost(assemblyStartup), null) }.Concat(moduleHosts).ToArray();
+            var assemblyHost = CreateStartupHost(assemblyStartup);
+            return new HostData(assemblyHost, moduleHosts);
         }
     }
 }
