@@ -19,19 +19,11 @@ namespace Xunit.DependencyInjection
 
                 try
                 {
-                    var counter = 0;
-
-                    var methods = startupType.GetMethods().Where(x => !(x.Name.Equals("GetHashCode") || x.Name.Equals("GetType") || x.Name.Equals("ToString") || x.Name.Equals("Equals"))).ToArray();
-
-                    if (FindMethod(startupType, nameof(CreateHostBuilder), typeof(IHostBuilder)) is not null) counter++;
-                    if (FindMethod(startupType, nameof(ConfigureHost)) is not null) counter++;
-                    if (FindMethod(startupType, nameof(ConfigureServices)) is not null) counter++;
-                    if (FindMethod(startupType, nameof(Configure)) is not null) counter++;
-
-                    if (counter > 0 && methods.Length == counter)
-                        return true;
-
-                    throw new InvalidOperationException($"Startup type is found but does not match signature of startup: {startupType.FullName}");
+                    return
+                        FindMethod(startupType, nameof(CreateHostBuilder), typeof(IHostBuilder)) is not null
+                     || FindMethod(startupType, nameof(ConfigureHost)) is not null
+                     || FindMethod(startupType, nameof(ConfigureServices)) is not null
+                     || FindMethod(startupType, nameof(Configure)) is not null;
                 }
                 catch
                 {
