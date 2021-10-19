@@ -8,7 +8,52 @@ namespace Xunit.DependencyInjection
 {
     internal static class StartupLoader
     {
-        public static Type? GetStartupType(AssemblyName assemblyName)
+        public static (Type StartupType, Type ModuleType)[] GetModuleStartupTypes(Type mainAssemblyStartupType)
+        {
+            bool IsValidModuleStartup(Type startupType)
+            {
+                if (startupType == mainAssemblyStartupType) return false;
+
+                if (!(startupType.IsNested && startupType.DeclaringType is { IsAbstract: true, IsSealed: true, IsNested: false }))
+                    return false;
+
+                try
+                {
+                    var counter = 0;
+
+                    var methods = startupType.GetMethods().Where(x => !(x.Name.Equals("GetHashCode") || x.Name.Equals("GetType") || x.Name.Equals("ToString") || x.Name.Equals("Equals"))).ToArray();
+
+                    var createHostBuilderMethod = FindMethod(startupType, nameof(CreateHostBuilder), typeof(IHostBuilder));
+                    var configureHostMethod = FindMethod(startupType, nameof(ConfigureHost));
+                    var configureServicesMethod = FindMethod(startupType, nameof(ConfigureServices));
+                    var configureMethod = FindMethod(startupType, nameof(Configure));
+
+                    if (createHostBuilderMethod is not null) counter++;
+                    if (configureHostMethod is not null) counter++;
+                    if (configureServicesMethod is not null) counter++;
+                    if (configureMethod is not null) counter++;
+
+                    if (counter > 0 && methods.Length == counter)
+                        return true;
+
+                    throw new InvalidOperationException($"Startup type is found but does not match signature of startup: {startupType.FullName}");
+                }
+                catch
+                {
+                    return false;
+                }
+            }
+
+            var types = mainAssemblyStartupType.Assembly.GetTypes();
+
+            return
+                types
+                  .Where(x => x.Name.Equals("Startup") && IsValidModuleStartup(x))
+                  .Select(x => (x, x.DeclaringType))
+                  .ToArray();
+        }
+
+        public static Type GetAssemblyStartupType(AssemblyName assemblyName)
         {
             var assembly = Assembly.Load(assemblyName);
             var attr = assembly.GetCustomAttribute<StartupTypeAttribute>();

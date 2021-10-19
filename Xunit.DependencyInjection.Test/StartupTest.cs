@@ -3,9 +3,151 @@ using Microsoft.Extensions.Hosting;
 using System;
 using System.Reflection;
 using System.Text;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using Xunit.DependencyInjection.Demystifier;
+using Xunit.DependencyInjection.Logging;
 
 namespace Xunit.DependencyInjection.Test
 {
+    public static class MyDiScope
+    {
+        private static Type? StartupThatWasUsed { get; set; }
+
+        public class Dependency
+        {
+            public string Value => "Wow";
+        }
+
+        public class Startup
+        {
+            public void ConfigureHost(IHostBuilder hostBuilder)
+            {
+                StartupThatWasUsed = this.GetType();
+
+                hostBuilder.ConfigureAppConfiguration(lb => lb.AddJsonFile("appsettings.json", false, true))
+                           .UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            }
+
+            public void ConfigureServices(IServiceCollection services) =>
+                services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug))
+                        .AddScoped<IDependency, DependencyClass>()
+                        .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
+                        .AddHostedService<HostServiceTest>()
+                        .AddSkippableFactSupport()
+                        .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>()
+                        .AddSingleton<Dependency>();
+
+            public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)
+            {
+                Assert.NotNull(accessor);
+
+                XunitTestOutputLoggerProvider.Register(provider);
+            }
+        }
+
+        public class StartupTest
+        {
+            public Dependency Dependency { get; }
+
+            private static readonly AssemblyName Name = Assembly.GetExecutingAssembly().GetName();
+            public StartupTest(Dependency dependency) {
+                Dependency = dependency;
+            }
+
+            [Fact]
+            public void GetStartupTypeTest()
+            {
+                var startupType = StartupLoader.GetAssemblyStartupType(Name);
+                var moduleStartupTypes = StartupLoader.GetModuleStartupTypes(startupType);
+
+                Assert.Equal(typeof(Startup), moduleStartupTypes[0].StartupType);
+            }
+
+            [Fact]
+            public void ProperStartupWasUsed()
+            {
+                Assert.Equal(typeof(Startup), StartupThatWasUsed);
+            }
+
+            [Fact]
+            public void DependencyIsInjectedInInnerScope()
+            {
+                Assert.Equal("Wow", Dependency.Value);
+            }
+        }
+    }
+
+    public static class MyDiScope2
+    {
+        private static Type? StartupThatWasUsed { get; set; }
+
+        public class Dependency
+        {
+            public string Value => "Wow2";
+        }
+
+        public class Startup
+        {
+            public void ConfigureHost(IHostBuilder hostBuilder)
+            {
+                StartupThatWasUsed = this.GetType();
+
+                hostBuilder.ConfigureAppConfiguration(lb => lb.AddJsonFile("appsettings.json", false, true))
+                           .UseServiceProviderFactory(new AutofacServiceProviderFactory());
+            }
+
+            public void ConfigureServices(IServiceCollection services) =>
+                services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug))
+                        .AddScoped<IDependency, DependencyClass>()
+                        .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
+                        .AddHostedService<HostServiceTest>()
+                        .AddSkippableFactSupport()
+                        .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>()
+                        .AddSingleton<Dependency>();
+
+            public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)
+            {
+                Assert.NotNull(accessor);
+
+                XunitTestOutputLoggerProvider.Register(provider);
+            }
+        }
+
+        public class StartupTest
+        {
+            public Dependency Dependency { get; }
+
+            private static readonly AssemblyName Name = Assembly.GetExecutingAssembly().GetName();
+            public StartupTest(Dependency dependency) {
+                Dependency = dependency;
+            }
+
+            [Fact]
+            public void GetStartupTypeTest()
+            {
+                var startupType = StartupLoader.GetAssemblyStartupType(Name);
+                var moduleStartupTypes = StartupLoader.GetModuleStartupTypes(startupType);
+
+                Assert.Equal(typeof(Startup), moduleStartupTypes[1].StartupType);
+            }
+
+            [Fact]
+            public void ProperStartupWasUsed()
+            {
+                Assert.Equal(typeof(Startup), StartupThatWasUsed);
+            }
+
+            [Fact]
+            public void DependencyIsInjectedInInnerScope()
+            {
+                Assert.Equal("Wow2", Dependency.Value);
+            }
+        }
+    }
+
     public class StartupTest
     {
         private static readonly AssemblyName Name = Assembly.GetExecutingAssembly().GetName();
@@ -13,16 +155,29 @@ namespace Xunit.DependencyInjection.Test
         [Fact]
         public void GetStartupTypeTest()
         {
-            Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(Name));
+            Assert.Equal(typeof(Startup), StartupLoader.GetAssemblyStartupType(Name));
 
-            Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(new AssemblyName("Xunit.DependencyInjection.FakeTest")));
+            Assert.Equal(typeof(Startup), StartupLoader.GetAssemblyStartupType(new AssemblyName("Xunit.DependencyInjection.FakeTest")));
         }
 
-        #region CreateStartupTest
+#region CreateStartupTest
+
         public class EmptyStartup { }
-        public class CreateStartupTestStartup1 { public CreateStartupTestStartup1() { } }
-        public class CreateStartupTestStartup2 { private CreateStartupTestStartup2() { } }
-        public class CreateStartupTestStartup3 { public CreateStartupTestStartup3(AssemblyName name) { } }
+
+        public class CreateStartupTestStartup1
+        {
+            public CreateStartupTestStartup1() { }
+        }
+
+        public class CreateStartupTestStartup2
+        {
+            private CreateStartupTestStartup2() { }
+        }
+
+        public class CreateStartupTestStartup3
+        {
+            public CreateStartupTestStartup3(AssemblyName name) { }
+        }
 
         public class CreateStartupTestStartup4
         {
@@ -45,12 +200,21 @@ namespace Xunit.DependencyInjection.Test
 
             Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateStartup(typeof(CreateStartupTestStartup4)));
         }
-        #endregion
 
-        #region CreateHostBuilderTest
+#endregion
 
-        public class CreateHostBuilderTestStartup0 { public void CreateHostBuilder() { } }
-        public class CreateHostBuilderTestStartup1 { public IHostBuilder CreateHostBuilder() => new HostBuilder().ConfigureServices(services => services.AddSingleton(this)); }
+#region CreateHostBuilderTest
+
+        public class CreateHostBuilderTestStartup0
+        {
+            public void CreateHostBuilder() { }
+        }
+
+        public class CreateHostBuilderTestStartup1
+        {
+            public IHostBuilder CreateHostBuilder() => new HostBuilder().ConfigureServices(services => services.AddSingleton(this));
+        }
+
         public class CreateHostBuilderTestStartup2
         {
             public HostBuilder CreateHostBuilder()
@@ -62,8 +226,17 @@ namespace Xunit.DependencyInjection.Test
                 return hostBuilder;
             }
         }
-        public class CreateHostBuilderTestStartup3 { public IHostBuilder CreateHostBuilder(IHostBuilder builder) => builder.ConfigureServices(services => services.AddSingleton(this)); }
-        public class CreateHostBuilderTestStartup4 { public IHostBuilder CreateHostBuilder(AssemblyName name) => new HostBuilder().ConfigureServices(services => services.AddSingleton(name)); }
+
+        public class CreateHostBuilderTestStartup3
+        {
+            public IHostBuilder CreateHostBuilder(IHostBuilder builder) => builder.ConfigureServices(services => services.AddSingleton(this));
+        }
+
+        public class CreateHostBuilderTestStartup4
+        {
+            public IHostBuilder CreateHostBuilder(AssemblyName name) => new HostBuilder().ConfigureServices(services => services.AddSingleton(name));
+        }
+
         public class CreateHostBuilderTestStartup5
         {
             public void CreateHostBuilder(IHostBuilder builder) { }
@@ -91,20 +264,42 @@ namespace Xunit.DependencyInjection.Test
 
             Assert.Throws<InvalidOperationException>(() => StartupLoader.CreateHostBuilder(new CreateHostBuilderTestStartup5(), Name));
         }
-        #endregion
 
-        #region ConfigureHostTest
+#endregion
 
-        public class ConfigureHostTestStartup0 { public void ConfigureHost() { } }
-        public class ConfigureHostTestStartup1 { public void ConfigureHost(IHostBuilder builder) => builder.ConfigureServices(services => services.AddSingleton(this)); }
-        public class ConfigureHostTestStartup2 { public void ConfigureHost(StringBuilder builder) { } }
-        public class ConfigureHostTestStartup3 { public void ConfigureHost(IHostBuilder builder, AssemblyName name) { } }
-        public class ConfigureHostTestStartup4 { public IHostBuilder ConfigureHost(IHostBuilder builder) => builder.ConfigureServices(services => services.AddSingleton(this)); }
+#region ConfigureHostTest
+
+        public class ConfigureHostTestStartup0
+        {
+            public void ConfigureHost() { }
+        }
+
+        public class ConfigureHostTestStartup1
+        {
+            public void ConfigureHost(IHostBuilder builder) => builder.ConfigureServices(services => services.AddSingleton(this));
+        }
+
+        public class ConfigureHostTestStartup2
+        {
+            public void ConfigureHost(StringBuilder builder) { }
+        }
+
+        public class ConfigureHostTestStartup3
+        {
+            public void ConfigureHost(IHostBuilder builder, AssemblyName name) { }
+        }
+
+        public class ConfigureHostTestStartup4
+        {
+            public IHostBuilder ConfigureHost(IHostBuilder builder) => builder.ConfigureServices(services => services.AddSingleton(this));
+        }
+
         public class ConfigureHostTestStartup7
         {
             public void ConfigureHost(IHostBuilder builder) { }
             public void ConfigureHost(StringBuilder builder) { }
         }
+
         public class ConfigureHostTestStartup8
         {
             public static void ConfigureHost(IHostBuilder builder) { }
@@ -125,30 +320,63 @@ namespace Xunit.DependencyInjection.Test
 
             Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup3()));
 
-            Assert.Throws<InvalidOperationException>(() =>StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup4()));
+            Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup4()));
 
             Assert.Throws<InvalidOperationException>(() => StartupLoader.ConfigureHost(hostBuilder, new ConfigureHostTestStartup7()));
 
             var services = hostBuilder.Build().Services;
             Assert.NotNull(services.GetService<ConfigureHostTestStartup1>());
         }
-        #endregion
 
-        #region ConfigureServicesTest
+#endregion
 
-        public class ConfigureServicesTestStartup0 { public void ConfigureServices() { } }
-        public class ConfigureServicesTestStartup1 { public void ConfigureServices(IServiceCollection services) => services.AddSingleton(this); }
-        public class ConfigureServicesTestStartup2 { public void ConfigureServices(StringBuilder builder) { } }
-        public class ConfigureServicesTestStartup3 { public void ConfigureServices(IServiceCollection services, HostBuilderContext context) => services.AddSingleton(this); }
-        public class ConfigureServicesTestStartup4 { public void ConfigureServices(HostBuilderContext context, IServiceCollection services) => services.AddSingleton(this); }
-        public class ConfigureServicesTestStartup5 { public void ConfigureServices(IServiceCollection services, object context) { } }
-        public class ConfigureServicesTestStartup6 { public void ConfigureServices(HostBuilderContext context, IServiceCollection services, object obj) { } }
+#region ConfigureServicesTest
+
+        public class ConfigureServicesTestStartup0
+        {
+            public void ConfigureServices() { }
+        }
+
+        public class ConfigureServicesTestStartup1
+        {
+            public void ConfigureServices(IServiceCollection services) => services.AddSingleton(this);
+        }
+
+        public class ConfigureServicesTestStartup2
+        {
+            public void ConfigureServices(StringBuilder builder) { }
+        }
+
+        public class ConfigureServicesTestStartup3
+        {
+            public void ConfigureServices(IServiceCollection services, HostBuilderContext context) => services.AddSingleton(this);
+        }
+
+        public class ConfigureServicesTestStartup4
+        {
+            public void ConfigureServices(HostBuilderContext context, IServiceCollection services) => services.AddSingleton(this);
+        }
+
+        public class ConfigureServicesTestStartup5
+        {
+            public void ConfigureServices(IServiceCollection services, object context) { }
+        }
+
+        public class ConfigureServicesTestStartup6
+        {
+            public void ConfigureServices(HostBuilderContext context, IServiceCollection services, object obj) { }
+        }
+
         public class ConfigureServicesTestStartup7
         {
             public void ConfigureServices(IServiceCollection services, HostBuilderContext context) { }
             public void ConfigureServices(HostBuilderContext context, IServiceCollection services) { }
         }
-        public class ConfigureServicesTestStartup8 { public IServiceCollection ConfigureServices(IServiceCollection services) => services.AddSingleton(this); }
+
+        public class ConfigureServicesTestStartup8
+        {
+            public IServiceCollection ConfigureServices(IServiceCollection services) => services.AddSingleton(this);
+        }
 
         [Fact]
         public void ConfigureServicesTest()
@@ -180,9 +408,10 @@ namespace Xunit.DependencyInjection.Test
             Assert.NotNull(services.GetService<ConfigureServicesTestStartup3>());
             Assert.NotNull(services.GetService<ConfigureServicesTestStartup4>());
         }
-        #endregion
 
-        #region ConfigureTest
+#endregion
+
+#region ConfigureTest
 
         public class ConfigureTestStartup0
         {
@@ -229,6 +458,7 @@ namespace Xunit.DependencyInjection.Test
 
             Assert.True(startup.Invoked);
         }
-        #endregion
+
+#endregion
     }
 }
