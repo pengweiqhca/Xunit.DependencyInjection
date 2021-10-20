@@ -1,13 +1,52 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Reflection;
+using Xunit.Abstractions;
 
 namespace Xunit.DependencyInjection
 {
     internal static class StartupLoader
     {
+        public static IHost? CreateHost(AssemblyName assemblyName, IMessageSink diagnosticMessageSink) =>
+            CreateHost(GetStartupType(assemblyName), assemblyName, diagnosticMessageSink);
+
+        [return: NotNullIfNotNull("startupType")]
+        public static IHost? CreateHost(Type? startupType, AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
+        {
+            var startup = CreateStartup(startupType);
+            if (startup == null) return null;
+
+            var hostBuilder = CreateHostBuilder(startup, assemblyName) ?? new HostBuilder();
+
+            hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(
+                new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
+
+            ConfigureHost(hostBuilder, startup);
+
+            ConfigureServices(hostBuilder, startup);
+
+            var host = hostBuilder.ConfigureServices(services =>
+                {
+                    services
+                        .AddSingleton(diagnosticMessageSink)
+                        .TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
+
+                    services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
+                    services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
+                })
+                .Build();
+
+            Configure(host.Services, startup);
+
+            return host;
+        }
+
         public static Type? GetStartupType(AssemblyName assemblyName)
         {
             var assembly = Assembly.Load(assemblyName);
@@ -20,6 +59,7 @@ namespace Xunit.DependencyInjection
             return assembly.GetType(attr.TypeName) ?? throw new InvalidOperationException($"Can't load type {attr.TypeName} in '{assembly.FullName}'");
         }
 
+        [return: NotNullIfNotNull("startupType")]
         public static object? CreateStartup(Type? startupType)
         {
             if (startupType == null) return null;
@@ -67,7 +107,7 @@ namespace Xunit.DependencyInjection
             builder.ConfigureServices(parameters.Length switch
             {
                 1 when parameters[0].ParameterType == typeof(IServiceCollection) =>
-                (context, services) => method.Invoke(startup, new object[] { services }),
+                (_, services) => method.Invoke(startup, new object[] { services }),
                 2 when parameters[0].ParameterType == typeof(IServiceCollection) &&
                        parameters[1].ParameterType == typeof(HostBuilderContext) =>
                 (context, services) => method.Invoke(startup, new object[] { services, context }),

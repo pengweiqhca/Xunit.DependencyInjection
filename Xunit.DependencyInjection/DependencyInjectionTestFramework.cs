@@ -14,58 +14,7 @@ namespace Xunit.DependencyInjection
     {
         public DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
 
-        protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
-        {
-            IHost? host = null;
-            Exception? ex = null;
-
-            try
-            {
-                host = CreateHost(assemblyName);
-
-                if (host == null) return new XunitTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
-            }
-            catch (TargetInvocationException tie)
-            {
-                ex = tie.InnerException;
-            }
-            catch (Exception e)
-            {
-                ex = e;
-            }
-
-            return new DependencyInjectionTestFrameworkExecutor(host, ex,
-                assemblyName, SourceInformationProvider, DiagnosticMessageSink);
-        }
-
-        private IHost? CreateHost(AssemblyName assemblyName)
-        {
-            var startup = StartupLoader.CreateStartup(StartupLoader.GetStartupType(assemblyName));
-            if (startup == null) return null;
-
-            var hostBuilder = StartupLoader.CreateHostBuilder(startup, assemblyName) ?? new HostBuilder();
-
-            hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(
-                new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
-
-            StartupLoader.ConfigureHost(hostBuilder, startup);
-
-            StartupLoader.ConfigureServices(hostBuilder, startup);
-
-            var host = hostBuilder.ConfigureServices(services =>
-                {
-                    services
-                        .AddSingleton(DiagnosticMessageSink)
-                        .TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
-
-                    services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
-                    services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
-                })
-                .Build();
-
-            StartupLoader.Configure(host.Services, startup);
-
-            return host;
-        }
+        protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName) =>
+            new DependencyInjectionTestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink);
     }
 }

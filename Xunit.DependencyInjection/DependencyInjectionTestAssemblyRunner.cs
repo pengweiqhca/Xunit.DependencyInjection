@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.Hosting;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,20 +11,23 @@ namespace Xunit.DependencyInjection
     public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
     {
         private readonly IServiceProvider? _provider;
+        private readonly IReadOnlyDictionary<ITestClass, IHost?> _hostMap;
 
         public DependencyInjectionTestAssemblyRunner(IServiceProvider? provider,
             ITestAssembly testAssembly,
             IEnumerable<IXunitTestCase> testCases,
+            IReadOnlyDictionary<ITestClass, IHost?> hostMap,
             IMessageSink diagnosticMessageSink,
             IMessageSink executionMessageSink,
             ITestFrameworkExecutionOptions executionOptions,
-            params Exception?[] exceptions)
+            IEnumerable<Exception> exceptions)
             : base(testAssembly, testCases, diagnosticMessageSink,
                 executionMessageSink, executionOptions)
         {
             _provider = provider;
+            _hostMap = hostMap;
 
-            foreach (var exception in exceptions) if (exception != null) Aggregator.Add(exception);
+            foreach (var exception in exceptions) Aggregator.Add(exception);
         }
 
         /// <inheritdoc />
@@ -36,7 +40,7 @@ namespace Xunit.DependencyInjection
                 return base.RunTestCollectionAsync(messageBus, testCollection, testCases, cancellationTokenSource);
 
             return new DependencyInjectionTestCollectionRunner(_provider, testCollection,
-                    testCases, DiagnosticMessageSink, messageBus, TestCaseOrderer,
+                    testCases, _hostMap, DiagnosticMessageSink, messageBus, TestCaseOrderer,
                     new ExceptionAggregator(Aggregator), cancellationTokenSource)
                 .RunAsync();
         }

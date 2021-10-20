@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Threading;
@@ -11,12 +12,14 @@ namespace Xunit.DependencyInjection
     public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
     {
         private readonly IServiceProvider _provider;
+        private readonly IReadOnlyDictionary<ITestClass, IHost?> _hostMap;
         private IServiceScope? _serviceScope;
         private readonly IMessageSink _diagnosticMessageSink;
 
         public DependencyInjectionTestCollectionRunner(IServiceProvider provider,
             ITestCollection testCollection,
             IEnumerable<IXunitTestCase> testCases,
+            IReadOnlyDictionary<ITestClass, IHost?> hostMap,
             IMessageSink diagnosticMessageSink,
             IMessageBus messageBus,
             ITestCaseOrderer testCaseOrderer,
@@ -26,6 +29,7 @@ namespace Xunit.DependencyInjection
                   messageBus, testCaseOrderer, aggregator, cancellationTokenSource)
         {
             _provider = provider;
+            _hostMap = hostMap;
             _diagnosticMessageSink = diagnosticMessageSink;
         }
 
@@ -49,9 +53,11 @@ namespace Xunit.DependencyInjection
         /// <inheritdoc />
         protected override Task<RunSummary> RunTestClassAsync(ITestClass testClass,
             IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases) =>
-            new DependencyInjectionTestClassRunner(_provider, testClass, @class, testCases,
-                    _diagnosticMessageSink, MessageBus, TestCaseOrderer,
-                    new ExceptionAggregator(Aggregator), CancellationTokenSource, CollectionFixtureMappings)
-                .RunAsync();
+            _hostMap.TryGetValue(testClass, out var host) && host != null
+                ? new DependencyInjectionTestClassRunner(host.Services, testClass, @class, testCases,
+                        _diagnosticMessageSink, MessageBus, TestCaseOrderer,
+                        new ExceptionAggregator(Aggregator), CancellationTokenSource, CollectionFixtureMappings)
+                    .RunAsync()
+                : base.RunTestClassAsync(testClass, @class, testCases);
     }
 }
