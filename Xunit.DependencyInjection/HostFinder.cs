@@ -15,26 +15,26 @@ namespace Xunit.DependencyInjection
             HostsAndModules = hostsAndModules;
         }
 
-        private IHost? FindHostFormTestCaseType(Type type)
+        private IHost? FindHostForTestCaseType(Type type)
         {
             if (!type.IsNested) return AssemblyStartupHost;
-            for (int i = 0; i < HostsAndModules.Length; i++)
+            foreach (var hostAndModule in HostsAndModules)
             {
-                if (type.DeclaringType == HostsAndModules[i].ModuleType)
-                    return HostsAndModules[i].Host;
-            }
+                var declaringType = type.DeclaringType;
+                if (declaringType == hostAndModule.ModuleType)
+                    return hostAndModule.Host; }
 
             return AssemblyStartupHost;
         }
 
         public IHost? GetHostForTestCase(IXunitTestCase testCase)
         {
-            return FindHostFormTestCaseType(testCase.Method.ToRuntimeMethod().DeclaringType);
+            return FindHostForTestCaseType(testCase.Method.ToRuntimeMethod().DeclaringType);
         }
 
         public IHost? GetHostForTestFixture(Type fixture)
         {
-            return FindHostFormTestCaseType(fixture);
+            return FindHostForTestCaseType(fixture);
         }
     }
 }

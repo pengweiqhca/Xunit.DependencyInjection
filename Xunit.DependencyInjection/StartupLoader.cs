@@ -14,7 +14,7 @@ namespace Xunit.DependencyInjection
             {
                 if (startupType == mainAssemblyStartupType) return false;
 
-                if (!(startupType.IsNested && startupType.DeclaringType is { IsAbstract: true, IsSealed: true, IsNested: false }))
+                if (!(startupType.IsNested && startupType.DeclaringType is { IsAbstract: true, IsSealed: true }))
                     return false;
 
                 try

@@ -37,3 +37,8 @@ type Test(dep: Dependency1, dep2: Dependency2) =
     [<Fact>]
     let ``Test proper startup was used``() =
         Assert.Equal(typeof<Startup>, StartupValue.StartupThatWasUsed)
+
+module UnderNameSpaceWithoutStartup =
+    [<Fact>]
+    let ``Test proper startup was used``() =
+        Assert.Equal(typeof<Startup>, StartupValue.StartupThatWasUsed)
