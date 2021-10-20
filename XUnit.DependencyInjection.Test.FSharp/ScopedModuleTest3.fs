@@ -29,7 +29,7 @@ type Test(dep: Dependency1, dep2: Dependency2, dep3: Dependency3) =
 module NestedModuleOfModuleWithoutStartup =
     [<Fact>]
     let ``Test proper startup was used``() =
-        Assert.Equal(typeof<Startup>, StartupThatWasUsed) // assembly startup?
+        Assert.Equal(typeof<Startup>, StartupThatWasUsed)
 
 module NestedModuleOfModuleWithStartup =
     let mutable private StartupThatWasUsed = null
