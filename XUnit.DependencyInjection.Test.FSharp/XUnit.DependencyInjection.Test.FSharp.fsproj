@@ -7,6 +7,7 @@
     <LangVersion>preview</LangVersion>
     <TargetFrameworks>netcoreapp3.1;net6</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net461;$(TargetFrameworks)</TargetFrameworks>
+    <DisableImplicitSystemValueTupleReference>true</DisableImplicitSystemValueTupleReference>
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,6 +30,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="System.ValueTuple" Version="4.*" Condition="'$(TargetFramework)'=='net461'" />
   </ItemGroup>
 
   <ItemGroup>
