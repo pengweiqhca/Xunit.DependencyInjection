@@ -1,7 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Hosting;
+﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -42,7 +39,7 @@ namespace Xunit.DependencyInjection
             {
                 if (_hosts.TryGetValue(startupType, out startup)) return startup;
 
-                return _hosts[startupType] = CreateHost(startupType);
+                return _hosts[startupType] = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
             }
         }
 
@@ -61,32 +58,6 @@ namespace Xunit.DependencyInjection
             }
 
             return null;
-        }
-
-        private IHost CreateHost(Type startupType)
-        {
-            var startup = StartupLoader.CreateStartup(startupType);
-
-            var hostBuilder = StartupLoader.CreateHostBuilder(startup, _assemblyName) ?? new HostBuilder();
-
-            hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(
-                new Dictionary<string, string> { { HostDefaults.ApplicationKey, _assemblyName.Name } }));
-
-            StartupLoader.ConfigureHost(hostBuilder, startup);
-
-            StartupLoader.ConfigureServices(hostBuilder, startup);
-
-            var host = hostBuilder.ConfigureServices(services =>
-                {
-                    services.TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
-                    services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
-                    services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
-                })
-                .Build();
-
-            StartupLoader.Configure(host.Services, startup);
-
-            return host;
         }
 
         public Task StartAsync(CancellationToken cancellationToken)
