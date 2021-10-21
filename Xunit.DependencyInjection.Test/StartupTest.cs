@@ -11,6 +11,9 @@ namespace Xunit.DependencyInjection.Test
         private static readonly AssemblyName Name = Assembly.GetExecutingAssembly().GetName();
 
         [Fact]
+        public void StartupSharedTest() => Assert.Equal(1, Startup.Counter);
+
+        [Fact]
         public void GetStartupTypeTest()
         {
             Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(Name));

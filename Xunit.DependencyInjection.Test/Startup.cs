@@ -1,9 +1,9 @@
-﻿using System;
-using Autofac.Extensions.DependencyInjection;
+﻿using Autofac.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using System;
 using Xunit.DependencyInjection.Demystifier;
 using Xunit.DependencyInjection.Logging;
 
@@ -11,6 +11,10 @@ namespace Xunit.DependencyInjection.Test
 {
     public class Startup
     {
+        public static int Counter { get; set; }
+
+        public Startup() => Counter++;
+
         public void ConfigureHost(IHostBuilder hostBuilder) =>
             hostBuilder.ConfigureAppConfiguration(lb => lb.AddJsonFile("appsettings.json", false, true))
                 .UseServiceProviderFactory(new AutofacServiceProviderFactory());

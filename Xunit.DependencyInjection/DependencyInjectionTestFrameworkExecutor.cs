@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -9,21 +10,14 @@ namespace Xunit.DependencyInjection
 {
     public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecutor
     {
-        private readonly Exception? _exception;
-        private readonly IHost? _host;
+        private readonly HostManager _hostManager;
 
-        public DependencyInjectionTestFrameworkExecutor(IHost? host,
-            Exception? exception,
+        public DependencyInjectionTestFrameworkExecutor(
             AssemblyName assemblyName,
             ISourceInformationProvider sourceInformationProvider,
             IMessageSink diagnosticMessageSink)
-            : base(assemblyName, sourceInformationProvider, diagnosticMessageSink)
-        {
-            _host = host;
-            _exception = exception;
-
-            if (_host != null) DisposalTracker.Add(_host);
-        }
+            : base(assemblyName, sourceInformationProvider, diagnosticMessageSink) =>
+            DisposalTracker.Add(_hostManager = new HostManager(assemblyName, diagnosticMessageSink));
 
         /// <inheritdoc />
         protected override async void RunTestCases(
@@ -31,32 +25,59 @@ namespace Xunit.DependencyInjection
             IMessageSink executionMessageSink,
             ITestFrameworkExecutionOptions executionOptions)
         {
-            if (_host == null)
-            {
-                using var runner = new DependencyInjectionTestAssemblyRunner(null, TestAssembly,
-                    testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _exception);
+            var exceptions = new List<Exception>();
+            IHost? host = null;
 
-                await runner.RunAsync().ConfigureAwait(false);
-            }
-            else
+            try
             {
-                Exception? ex = null;
+                host = _hostManager.BuildDefaultHost();
+            }
+            catch (TargetInvocationException tie)
+            {
+                exceptions.Add(tie.InnerException);
+            }
+            catch (Exception ex)
+            {
+                exceptions.Add(ex);
+            }
+
+            // ReSharper disable once PossibleMultipleEnumeration
+            var hostMap = testCases
+                .GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
+                .ToDictionary(group => group.Key, group =>
+            {
                 try
                 {
-                    await _host.StartAsync().ConfigureAwait(false);
+                    return _hostManager.GetHost(group.Key.Class.ToRuntimeType());
                 }
-                catch (Exception e)
+                catch (TargetInvocationException tie)
                 {
-                    ex = e;
+                    exceptions.Add(tie.InnerException);
+                }
+                catch (Exception ex)
+                {
+                    exceptions.Add(ex);
                 }
 
-                using var runner = new DependencyInjectionTestAssemblyRunner(_host.Services, TestAssembly,
-                    testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _exception, ex);
+                return null;
+            });
 
-                await runner.RunAsync().ConfigureAwait(false);
-
-                await _host.StopAsync().ConfigureAwait(false);
+            try
+            {
+                await _hostManager.StartAsync(default).ConfigureAwait(false);
             }
+            catch (Exception ex)
+            {
+                exceptions.Add(ex);
+            }
+
+            using var runner = new DependencyInjectionTestAssemblyRunner(host?.Services, TestAssembly,
+                // ReSharper disable once PossibleMultipleEnumeration
+                testCases, hostMap, DiagnosticMessageSink, executionMessageSink, executionOptions, exceptions);
+
+            await runner.RunAsync().ConfigureAwait(false);
+
+            await _hostManager.StopAsync(default).ConfigureAwait(false);
         }
     }
 }
