@@ -8,5 +8,8 @@ namespace Xunit.DependencyInjection
         public StartupAttribute(Type startupType) => StartupType = startupType;
 
         public Type StartupType { get; }
+
+        /// <summary>Default is true. If false, a isolated Startup will be created for the test class.</summary>
+        public bool Shared { get; set; } = true;
     }
 }

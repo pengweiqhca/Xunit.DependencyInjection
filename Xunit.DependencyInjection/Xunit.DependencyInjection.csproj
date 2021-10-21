@@ -4,7 +4,7 @@
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
-7.8: Add feature: Startup per test class or shared.
+7.8: Add feature: Support multiple startup.
 7.7: Add [MethodData], like [MemberData], support injection.
 7.6: Fix #48, each TestRunner should have a different scope.
 7.5: Add XunitTestCaseRunnerAdapter, It will be support more XunitTestCase type.

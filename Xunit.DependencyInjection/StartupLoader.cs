@@ -13,9 +13,6 @@ namespace Xunit.DependencyInjection
 {
     internal static class StartupLoader
     {
-        public static IHost? CreateHost(AssemblyName assemblyName, IMessageSink diagnosticMessageSink) =>
-            CreateHost(GetStartupType(assemblyName), assemblyName, diagnosticMessageSink);
-
         [return: NotNullIfNotNull("startupType")]
         public static IHost? CreateHost(Type? startupType, AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
         {

@@ -41,6 +41,7 @@ namespace Xunit.DependencyInjection
                 exceptions.Add(ex);
             }
 
+            // ReSharper disable once PossibleMultipleEnumeration
             var hostMap = testCases
                 .GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
                 .ToDictionary(group => group.Key, group =>
@@ -71,6 +72,7 @@ namespace Xunit.DependencyInjection
             }
 
             using var runner = new DependencyInjectionTestAssemblyRunner(host?.Services, TestAssembly,
+                // ReSharper disable once PossibleMultipleEnumeration
                 testCases, hostMap, DiagnosticMessageSink, executionMessageSink, executionOptions, exceptions);
 
             await runner.RunAsync().ConfigureAwait(false);

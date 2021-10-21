@@ -28,6 +28,10 @@ namespace Xunit.DependencyInjection.Test
 
         public class Startup2
         {
+            public static int Counter { get; set; }
+
+            public Startup2() => Counter++;
+
             public void ConfigureHost(IHostBuilder hostBuilder)
             {
                 StartupThatWasUsed = GetType();
@@ -43,5 +47,12 @@ namespace Xunit.DependencyInjection.Test
                 XunitTestOutputLoggerProvider.Register(provider);
             }
         }
+    }
+
+    [Startup(typeof(StartupAttributeTest.Startup2), Shared = false)]
+    public class StartupAttributeSharedTest
+    {
+        [Fact]
+        public void SharedTest() => Assert.Equal(2, StartupAttributeTest.Startup2.Counter);
     }
 }
