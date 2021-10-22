@@ -26,12 +26,6 @@ namespace Xunit.DependencyInjection.Analyzer
             "Method", DiagnosticSeverity.Error, true,
            CreateLocalizableString(nameof(AnalyzerResources.MultipleOverloadsDescription)));
 
-        public static DiagnosticDescriptor NotStaticMethod { get; } = new("XD004",
-            CreateLocalizableString(nameof(AnalyzerResources.NotStaticMethodTitle)),
-           CreateLocalizableString(nameof(AnalyzerResources.NotStaticMethodMessageFormat)),
-            "Method", DiagnosticSeverity.Error, true,
-           CreateLocalizableString(nameof(AnalyzerResources.NotStaticMethodDescription)));
-
         public static DiagnosticDescriptor NoReturnType { get; } = new("XD005",
             CreateLocalizableString(nameof(AnalyzerResources.NoReturnTypeTitle)),
            CreateLocalizableString(nameof(AnalyzerResources.NoReturnTypeMessageFormat)),

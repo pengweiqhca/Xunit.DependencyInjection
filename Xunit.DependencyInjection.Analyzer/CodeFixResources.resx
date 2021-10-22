@@ -120,8 +120,4 @@
   <data name="ModifyReturnType" xml:space="preserve">
     <value>Modify return type</value>
   </data>
-  <data name="RemoveStatic" xml:space="preserve">
-    <value>Remove static</value>
-    <comment>The title of the code fix.</comment>
-  </data>
 </root>

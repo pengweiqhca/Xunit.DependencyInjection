@@ -150,13 +150,7 @@ namespace Xunit.DependencyInjection.Analyzer.Test
                 }
             };
             yield return new object?[] { "NonStartup.cs", null, Array.Empty<DiagnosticResult>() };
-            yield return new object?[]
-            {
-                "StaticMethod.cs", "CreateHostBuilderTestStartup3.cs", new[]
-                {
-                    new DiagnosticResult(Rules.NotStaticMethod).WithSpan(7, 35, 7, 52).WithArguments("CreateHostBuilder"),
-                }
-            };
+            yield return new object?[] { "StaticMethod.cs", null, Array.Empty<DiagnosticResult>() };
         }
     }
 }

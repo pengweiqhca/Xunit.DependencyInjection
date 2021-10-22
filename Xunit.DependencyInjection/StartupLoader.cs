@@ -16,17 +16,28 @@ namespace Xunit.DependencyInjection
         [return: NotNullIfNotNull("startupType")]
         public static IHost? CreateHost(Type? startupType, AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
         {
-            var startup = CreateStartup(startupType);
-            if (startup == null) return null;
+            if (startupType == null) return null;
 
-            var hostBuilder = CreateHostBuilder(startup, assemblyName) ?? new HostBuilder();
+            var createHostBuilderMethod = FindMethod(startupType, nameof(CreateHostBuilder), typeof(IHostBuilder));
+            var configureHostMethod = FindMethod(startupType, nameof(ConfigureHost));
+            var configureServicesMethod = FindMethod(startupType, nameof(ConfigureServices));
+            var configureMethod = FindMethod(startupType, nameof(Configure));
+
+            var startup = createHostBuilderMethod is { IsStatic: false } ||
+                          configureHostMethod is { IsStatic: false } ||
+                          configureServicesMethod is { IsStatic: false } ||
+                          configureMethod is { IsStatic: false }
+                ? CreateStartup(startupType)
+                : null;
+
+            var hostBuilder = CreateHostBuilder(assemblyName, startup, startupType, createHostBuilderMethod) ?? new HostBuilder();
 
             hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(
                 new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
 
-            ConfigureHost(hostBuilder, startup);
+            ConfigureHost(hostBuilder, startup, startupType, configureHostMethod);
 
-            ConfigureServices(hostBuilder, startup);
+            ConfigureServices(hostBuilder, startup, startupType, configureServicesMethod);
 
             var host = hostBuilder.ConfigureServices(services =>
                 {
@@ -39,7 +50,7 @@ namespace Xunit.DependencyInjection
                 })
                 .Build();
 
-            Configure(host.Services, startup);
+            Configure(host.Services, startup, configureMethod);
 
             return host;
         }
@@ -56,10 +67,11 @@ namespace Xunit.DependencyInjection
             return assembly.GetType(attr.TypeName) ?? throw new InvalidOperationException($"Can't load type {attr.TypeName} in '{assembly.FullName}'");
         }
 
-        [return: NotNullIfNotNull("startupType")]
-        public static object? CreateStartup(Type? startupType)
+        public static object? CreateStartup(Type startupType)
         {
-            if (startupType == null) return null;
+            if (startupType == null) throw new ArgumentNullException(nameof(startupType));
+
+            if (startupType.IsAbstract && startupType.IsSealed) return null;
 
             var ctors = startupType.GetConstructors();
             if (ctors.Length != 1 || ctors[0].GetParameters().Length != 0)
@@ -68,64 +80,66 @@ namespace Xunit.DependencyInjection
             return Activator.CreateInstance(startupType);
         }
 
-        public static IHostBuilder? CreateHostBuilder(object startup, AssemblyName assemblyName)
+        public static IHostBuilder? CreateHostBuilder(AssemblyName assemblyName, object? startup, Type startupType, MethodInfo? method)
         {
-            var method = FindMethod(startup.GetType(), nameof(CreateHostBuilder), typeof(IHostBuilder));
             if (method == null) return null;
 
             var parameters = method.GetParameters();
             if (parameters.Length == 0)
-                return (IHostBuilder)method.Invoke(startup, Array.Empty<object>());
+                return (IHostBuilder)method.Invoke(method.IsStatic ? null : startup, Array.Empty<object>());
 
             if (parameters.Length > 1 || parameters[0].ParameterType != typeof(AssemblyName))
-                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must parameterless or have the single 'AssemblyName' parameter.");
+                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startupType.FullName}' must parameterless or have the single 'AssemblyName' parameter.");
 
-            return (IHostBuilder)method.Invoke(startup, new object[] { assemblyName });
+            return (IHostBuilder)method.Invoke(method.IsStatic ? null : startup, new object[] { assemblyName });
         }
 
-        public static void ConfigureHost(IHostBuilder builder, object startup)
+        public static void ConfigureHost(IHostBuilder builder, object? startup, Type startupType, MethodInfo? method)
         {
-            var method = FindMethod(startup.GetType(), nameof(ConfigureHost));
             if (method == null) return;
 
             var parameters = method.GetParameters();
             if (parameters.Length != 1 || parameters[0].ParameterType != typeof(IHostBuilder))
-                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startup.GetType().FullName}' must have the single 'IHostBuilder' parameter.");
+                throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startupType.FullName}' must have the single 'IHostBuilder' parameter.");
 
-            method.Invoke(startup, new object[] { builder });
+            method.Invoke(method.IsStatic ? null : startup, new object[] { builder });
         }
 
-        public static void ConfigureServices(IHostBuilder builder, object startup)
+        public static void ConfigureServices(IHostBuilder builder, object? startup, Type startupType, MethodInfo? method)
         {
-            var method = FindMethod(startup.GetType(), nameof(ConfigureServices));
             if (method == null) return;
 
             var parameters = method.GetParameters();
             builder.ConfigureServices(parameters.Length switch
             {
                 1 when parameters[0].ParameterType == typeof(IServiceCollection) =>
-                (_, services) => method.Invoke(startup, new object[] { services }),
+                (_, services) => method.Invoke(method.IsStatic ? null : startup, new object[] { services }),
                 2 when parameters[0].ParameterType == typeof(IServiceCollection) &&
                        parameters[1].ParameterType == typeof(HostBuilderContext) =>
-                (context, services) => method.Invoke(startup, new object[] { services, context }),
+                (context, services) => method.Invoke(method.IsStatic ? null : startup, new object[] { services, context }),
                 2 when parameters[1].ParameterType == typeof(IServiceCollection) &&
                        parameters[0].ParameterType == typeof(HostBuilderContext) =>
-                (context, services) => method.Invoke(startup, new object[] { context, services }),
-                _ => throw new InvalidOperationException($"The '{method.Name}' method in the type '{startup.GetType().FullName}' must have a 'IServiceCollection' parameter and optional 'HostBuilderContext' parameter.")
+                (context, services) => method.Invoke(method.IsStatic ? null : startup, new object[] { context, services }),
+                _ => throw new InvalidOperationException($"The '{method.Name}' method in the type '{startupType.FullName}' must have a 'IServiceCollection' parameter and optional 'HostBuilderContext' parameter.")
             });
         }
 
-        public static void Configure(IServiceProvider provider, object startup)
+        public static void Configure(IServiceProvider provider, object? startup, MethodInfo? method)
         {
-            var method = FindMethod(startup.GetType(), nameof(Configure));
+            if (method == null) return;
 
-            method?.Invoke(startup, method.GetParameters().Select(p => provider.GetService(p.ParameterType)).ToArray());
+            using var scope = provider.CreateScope();
+
+            method.Invoke(method.IsStatic ? null : startup, method.GetParameters()
+                .Select(p => p.ParameterType)
+                .Select(scope.ServiceProvider.GetRequiredService)
+                .ToArray());
         }
 
-        private static MethodInfo? FindMethod(Type startupType, string methodName) =>
+        public static MethodInfo? FindMethod(Type startupType, string methodName) =>
             FindMethod(startupType, methodName, typeof(void));
 
-        private static MethodInfo? FindMethod(Type startupType, string methodName, Type returnType)
+        public static MethodInfo? FindMethod(Type startupType, string methodName, Type returnType)
         {
             var selectedMethods = startupType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.Static)
                 .Where(method => method.Name.Equals(methodName, StringComparison.OrdinalIgnoreCase)).ToList();
@@ -135,9 +149,6 @@ namespace Xunit.DependencyInjection
 
             var methodInfo = selectedMethods.FirstOrDefault();
             if (methodInfo == null) return methodInfo;
-
-            if (methodInfo.IsStatic)
-                throw new InvalidOperationException($"Method '{methodName}' should not be static.");
 
             if (returnType == typeof(void))
             {

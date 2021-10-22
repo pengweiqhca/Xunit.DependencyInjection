@@ -144,15 +144,6 @@
   <data name="MultipleOverloadsTitle" xml:space="preserve">
     <value>Method not supported multiple overloads.</value>
   </data>
-  <data name="NotStaticMethodDescription" xml:space="preserve">
-    <value>Method should not be static.</value>
-  </data>
-  <data name="NotStaticMethodMessageFormat" xml:space="preserve">
-    <value>Method '{0}' should not be static.</value>
-  </data>
-  <data name="NotStaticMethodTitle" xml:space="preserve">
-    <value>Method is static.</value>
-  </data>
   <data name="NoReturnTypeDescription" xml:space="preserve">
     <value>Method must have no return type.</value>
   </data>

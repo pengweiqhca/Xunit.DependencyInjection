@@ -148,12 +148,6 @@ namespace Xunit.DependencyInjection.Analyzer
                     context.ReportDiagnostic(Diagnostic.Create(Rules.MultipleOverloads, method.Locations[0], method.Name));
             }
 
-            private static void AnalyzeStatic(SymbolAnalysisContext context, IMethodSymbol method)
-            {
-                if (method.IsStatic)
-                    context.ReportDiagnostic(Diagnostic.Create(Rules.NotStaticMethod, method.Locations[0], method.Name));
-            }
-
             private static void AnalyzeReturnType(SymbolAnalysisContext context, IMethodSymbol method, ITypeSymbol? returnType)
             {
                 if (returnType == null)
@@ -190,8 +184,6 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private void AnalyzeCreateHostBuilder(SymbolAnalysisContext context, IMethodSymbol method)
             {
-                AnalyzeStatic(context, method);
-
                 AnalyzeReturnType(context, method, _hostBuilder);
 
                 if (method.Parameters.Length == 0) return;
@@ -202,8 +194,6 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private void AnalyzeConfigureHost(SymbolAnalysisContext context, IMethodSymbol method)
             {
-                AnalyzeStatic(context, method);
-
                 AnalyzeReturnType(context, method, null);
 
                 var parameters = method.Parameters;
@@ -213,8 +203,6 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private void AnalyzeConfigureServices(SymbolAnalysisContext context, IMethodSymbol method)
             {
-                AnalyzeStatic(context, method);
-
                 AnalyzeReturnType(context, method, null);
 
                 var parameters = method.Parameters;
@@ -230,8 +218,6 @@ namespace Xunit.DependencyInjection.Analyzer
 
             private static void AnalyzeConfigure(SymbolAnalysisContext context, IMethodSymbol method)
             {
-                AnalyzeStatic(context, method);
-
                 AnalyzeReturnType(context, method, null);
             }
         }
