@@ -1,4 +1,4 @@
-module XUnit.DependencyInjection.Test.FSharp.ScopedAndTransientTest
+module XUnit.DependencyInjection.Test.FSharp.ScopedTest
 
 open Xunit
 
