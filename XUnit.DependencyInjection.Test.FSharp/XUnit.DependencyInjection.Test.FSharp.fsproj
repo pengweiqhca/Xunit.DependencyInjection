@@ -13,7 +13,12 @@
   <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
-    <Compile Include="*.fs" />
+    <Compile Include="AssemblyNamespaceTest.fs" />
+    <Compile Include="ModuleTest.fs" />
+    <Compile Include="ModuleTest2.fs" />
+    <Compile Include="ModuleTest3.fs" />
+    <Compile Include="ScopedTest.fs" />
+    <Compile Include="Program.fs" />
 
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" />
     <PackageReference Include="System.ValueTuple" Version="4.*" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />

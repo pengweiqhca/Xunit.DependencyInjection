@@ -16,6 +16,10 @@ type Dependency3 = {
     Value: Dependency2
 }
 
+type ScopedDependency = {
+    mutable Value: int
+}
+
 module private StartupValue =
     let mutable StartupThatWasUsed: Type = null
 
@@ -23,6 +27,7 @@ type Startup() =
     member this.ConfigureServices(services: IServiceCollection) =
        StartupValue.StartupThatWasUsed <- this.GetType()
        services
+           .AddScoped<_>(fun _ -> { ScopedDependency.Value = 0 })
            .AddSingleton({ Dependency1.Value = "RootAssembly" })
            .AddSingleton<Dependency2>()
        |> ignore
