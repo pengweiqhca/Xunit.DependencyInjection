@@ -1,4 +1,4 @@
-﻿module XUnit.DependencyInjection.Test.FSharp.ScopedModuleTest2
+﻿module XUnit.DependencyInjection.Test.FSharp.ModuleTest2
 
 open Microsoft.Extensions.DependencyInjection
 open Xunit
