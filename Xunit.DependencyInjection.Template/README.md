@@ -7,7 +7,7 @@ used for create a xunit test project with Xunit.DependencyInjection
 ## Package
 
 ``` bash
-nuget pack Xunit.DependencyInjection.Template.nuspec
+dotnet pack -o out
 ```
 
 publish the nupkg file to nuget for release
@@ -46,7 +46,7 @@ dotnet templating Wiki: <https://github.com/dotnet/templating/wiki>
 
 ``` bash
 # package
-nuget pack Xunit.DependencyInjection.Template.nuspec
+dotnet pack Xunit.DependencyInjection.Template.csproj
 
 # install
 dotnet new -i Xunit.DependencyInjection.Template.1.1.0.nupkg
