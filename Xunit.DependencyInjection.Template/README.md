@@ -28,7 +28,7 @@ dotnet new xunit-di
 
 > Create test project with Specific TargetFramework:
 
-By default, we create test project targeted at `netcoreapp3.1`, you can change the target framework via `-f <targetFrameworkName>` or `--framework <targetFrameworkName>`
+By default, we create test project targeted at `net6.0`, you can change the target framework via `-f <targetFrameworkName>` or `--framework <targetFrameworkName>`
 
 ``` bash
 dotnet new xunit-di -f net5.0
@@ -49,7 +49,7 @@ dotnet templating Wiki: <https://github.com/dotnet/templating/wiki>
 nuget pack Xunit.DependencyInjection.Template.nuspec
 
 # install
-dotnet new -i Xunit.DependencyInjection.Template.1.0.0.nupkg
+dotnet new -i Xunit.DependencyInjection.Template.1.1.0.nupkg
 
 # testing
 dotnet new xunit-di -n TestProject

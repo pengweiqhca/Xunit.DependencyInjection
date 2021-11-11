@@ -19,7 +19,7 @@
         "description": "The target framework for the project.",
         "replaces": "TargetFrameworkOverride",
         "datatype": "text",
-        "defaultValue": "netcoreapp3.1"
+        "defaultValue": "net6.0"
       }
     },
     "sources":[],

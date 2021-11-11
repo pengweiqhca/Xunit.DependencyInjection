@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
   <metadata>
     <id>Xunit.DependencyInjection.Template</id>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <title>Xunit.DependencyInjection.Template</title>
     <description>dotnet new xunit-di, Xunit.DependencyInjection project template</description>
     <authors>Wei Peng</authors>
@@ -11,7 +11,7 @@
     <license type="expression">MIT</license>
     <projectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</projectUrl>
     <repository type="git" url="https://github.com/pengweiqhca/Xunit.DependencyInjection" />    
-    <releaseNotes>Init</releaseNotes>
+    <releaseNotes>Update to .NET 6</releaseNotes>
     <tags>xunit ioc di DependencyInjection test</tags>
     <packageTypes>
       <packageType name="Template" />
