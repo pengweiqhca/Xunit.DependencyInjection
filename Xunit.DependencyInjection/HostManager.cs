@@ -1,127 +1,117 @@
-﻿using Microsoft.Extensions.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit.Abstractions;
+﻿namespace Xunit.DependencyInjection;
 
-namespace Xunit.DependencyInjection
+internal sealed class HostManager : IHostedService, IDisposable
 {
-    internal sealed class HostManager : IHostedService, IDisposable
+    private readonly IDictionary<Type, IHost> _hostMap = new Dictionary<Type, IHost>();
+    private readonly IList<IHost> _hosts = new List<IHost>();
+
+    private Type? _defaultStartupType;
+    private IHost? _host;
+    private readonly AssemblyName _assemblyName;
+    private readonly IMessageSink _diagnosticMessageSink;
+
+    public HostManager(AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
     {
-        private readonly IDictionary<Type, IHost> _hostMap = new Dictionary<Type, IHost>();
-        private readonly IList<IHost> _hosts = new List<IHost>();
+        _assemblyName = assemblyName;
+        _diagnosticMessageSink = diagnosticMessageSink;
+    }
 
-        private Type? _defaultStartupType;
-        private IHost? _host;
-        private readonly AssemblyName _assemblyName;
-        private readonly IMessageSink _diagnosticMessageSink;
+    public IHost? BuildDefaultHost()
+    {
+        _defaultStartupType = StartupLoader.GetStartupType(_assemblyName);
 
-        public HostManager(AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
+        _host = StartupLoader.CreateHost(_defaultStartupType, _assemblyName, _diagnosticMessageSink);
+
+        if (_host != null) _hosts.Add(_host);
+
+        return _host;
+    }
+
+    public IHost? GetHost(Type? type)
+    {
+        if (type == null) return _host;
+
+        var startupType = FindStartup(type, out var shared);
+        if (startupType == null) return _host;
+
+        if (!shared)
         {
-            _assemblyName = assemblyName;
-            _diagnosticMessageSink = diagnosticMessageSink;
+            var host = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
+
+            _hosts.Add(host);
+
+            return host;
         }
 
-        public IHost? BuildDefaultHost()
+        if (_hostMap.TryGetValue(startupType, out var startup)) return startup;
+
+        if (startupType == _defaultStartupType) return _hostMap[startupType] = _host!;
+
+        var h = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
+
+        _hosts.Add(h);
+
+        return _hostMap[startupType] = h;
+    }
+
+    private static Type? FindStartup(Type testClassType, out bool shared)
+    {
+        shared = true;
+
+        var attr = testClassType.GetCustomAttribute<StartupAttribute>();
+        if (attr != null)
         {
-            _defaultStartupType = StartupLoader.GetStartupType(_assemblyName);
+            shared = attr.Shared;
 
-            _host = StartupLoader.CreateHost(_defaultStartupType, _assemblyName, _diagnosticMessageSink);
-
-            if (_host != null) _hosts.Add(_host);
-
-            return _host;
+            return attr.StartupType;
         }
 
-        public IHost? GetHost(Type? type)
+        var type = testClassType;
+        while (type != null)
         {
-            if (type == null) return _host;
+            var startupType = type.GetNestedType("Startup");
+            if (startupType != null) return startupType;
 
-            var startupType = FindStartup(type, out var shared);
-            if (startupType == null) return _host;
+            testClassType = type;
 
-            if (!shared)
-            {
-                var host = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
-
-                _hosts.Add(host);
-
-                return host;
-            }
-
-            if (_hostMap.TryGetValue(startupType, out var startup)) return startup;
-
-            if (startupType == _defaultStartupType) return _hostMap[startupType] = _host!;
-
-            var h = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
-
-            _hosts.Add(h);
-
-            return _hostMap[startupType] = h;
+            type = type.DeclaringType;
         }
 
-        private static Type? FindStartup(Type testClassType, out bool shared)
+        var ns = testClassType.Namespace;
+        while (true)
         {
-            shared = true;
+            var startupTypeString = "Startup";
+            if (!string.IsNullOrEmpty(ns))
+                startupTypeString = ns + ".Startup";
 
-            var attr = testClassType.GetCustomAttribute<StartupAttribute>();
-            if (attr != null)
-            {
-                shared = attr.Shared;
+            var startupType = testClassType.Assembly.GetType(startupTypeString);
+            if (startupType != null) return startupType;
 
-                return attr.StartupType;
-            }
-
-            var type = testClassType;
-            while (type != null)
-            {
-                var startupType = type.GetNestedType("Startup");
-                if (startupType != null) return startupType;
-
-                testClassType = type;
-
-                type = type.DeclaringType;
-            }
-
-            var ns = testClassType.Namespace;
-            while (true)
-            {
-                var startupTypeString = "Startup";
-                if (!string.IsNullOrEmpty(ns))
-                    startupTypeString = ns + ".Startup";
-
-                var startupType = testClassType.Assembly.GetType(startupTypeString);
-                if (startupType != null) return startupType;
-
-                var index = ns?.LastIndexOf('.');
-                if (index > 0) ns = ns!.Substring(0, index.Value);
-                else break;
-            }
-
-            return null;
+            var index = ns?.LastIndexOf('.');
+            if (index > 0) ns = ns!.Substring(0, index.Value);
+            else break;
         }
 
-        public Task StartAsync(CancellationToken cancellationToken) =>
-            Task.WhenAll(_hosts.Select(x => x.StartAsync(cancellationToken)));
+        return null;
+    }
 
-        public Task StopAsync(CancellationToken cancellationToken)
-        {
-            var tasks = new Task[_hosts.Count];
+    public Task StartAsync(CancellationToken cancellationToken) =>
+        Task.WhenAll(_hosts.Select(x => x.StartAsync(cancellationToken)));
 
-            for (var index = _hosts.Count - 1; index >= 0; index--)
-                tasks[index] = _hosts[index].StopAsync(cancellationToken);
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        var tasks = new Task[_hosts.Count];
 
-            return Task.WhenAll(tasks);
-        }
+        for (var index = _hosts.Count - 1; index >= 0; index--)
+            tasks[index] = _hosts[index].StopAsync(cancellationToken);
 
-        //DisposalTracker not support IAsyncDisposable
-        public void Dispose()
-        {
-            for (var index = _hosts.Count - 1; index >= 0; index--)
-                _hosts[index].DisposeAsync().GetAwaiter().GetResult();
-        }
+        return Task.WhenAll(tasks);
+    }
+
+    //DisposalTracker not support IAsyncDisposable
+    public void Dispose()
+    {
+        for (var index = _hosts.Count - 1; index >= 0; index--)
+            _hosts[index].DisposeAsync().GetAwaiter().GetResult();
     }
 }

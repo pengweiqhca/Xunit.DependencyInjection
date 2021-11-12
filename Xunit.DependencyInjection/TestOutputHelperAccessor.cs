@@ -1,21 +1,17 @@
-﻿using System.Threading;
-using Xunit.Abstractions;
+﻿namespace Xunit.DependencyInjection;
 
-namespace Xunit.DependencyInjection
+public interface ITestOutputHelperAccessor
 {
-    public interface ITestOutputHelperAccessor
-    {
-        ITestOutputHelper? Output { get; set; }
-    }
+    ITestOutputHelper? Output { get; set; }
+}
 
-    public class TestOutputHelperAccessor : ITestOutputHelperAccessor
-    {
-        private readonly AsyncLocal<ITestOutputHelper?> _output = new();
+public class TestOutputHelperAccessor : ITestOutputHelperAccessor
+{
+    private readonly AsyncLocal<ITestOutputHelper?> _output = new();
 
-        public ITestOutputHelper? Output
-        {
-            get => _output.Value;
-            set => _output.Value = value;
-        }
+    public ITestOutputHelper? Output
+    {
+        get => _output.Value;
+        set => _output.Value = value;
     }
 }

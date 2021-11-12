@@ -1,4 +1,3 @@
-﻿namespace Xunit.DependencyInjection.Analyzer.Test
-{
-    public class Startup { }
-}
+﻿namespace Xunit.DependencyInjection.Analyzer.Test;
+
+public class Startup { }

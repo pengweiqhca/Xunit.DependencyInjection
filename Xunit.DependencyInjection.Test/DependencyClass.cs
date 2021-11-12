@@ -1,37 +1,35 @@
-﻿using System;
-using System.Threading;
+﻿namespace Xunit.DependencyInjection.Test;
 
-namespace Xunit.DependencyInjection.Test
+public interface IDependency
 {
-    public interface IDependency
-    {
-        int Value { get; set; }
+    int Value { get; set; }
 
-        int TestWriteLine(int count);
+    int TestWriteLine(int count);
+}
+
+internal class DependencyClass : IDependency, IAsyncDisposable
+{
+    private readonly ITestOutputHelperAccessor _testOutputHelperAccessor;
+
+    public DependencyClass(ITestOutputHelperAccessor testOutputHelperAccessor)
+    {
+        _testOutputHelperAccessor = testOutputHelperAccessor;
     }
 
-    internal class DependencyClass : IDependency
+    public int Value { get; set; }
+
+    public int TestWriteLine(int count)
     {
-        private readonly ITestOutputHelperAccessor _testOutputHelperAccessor;
+        var output = _testOutputHelperAccessor.Output;
+        if (output != null)
+            for (var index = 0; index < count; index++)
+            {
+                output.WriteLine($"{DateTime.Now:ss.fff} test {index}");
+                Thread.Sleep(1);
+            }
 
-        public DependencyClass(ITestOutputHelperAccessor testOutputHelperAccessor)
-        {
-            _testOutputHelperAccessor = testOutputHelperAccessor;
-        }
-
-        public int Value { get; set; }
-
-        public int TestWriteLine(int count)
-        {
-            var output = _testOutputHelperAccessor.Output;
-            if (output != null)
-                for (var index = 0; index < count; index++)
-                {
-                    output.WriteLine($"{DateTime.Now:ss.fff} test {index}");
-                    Thread.Sleep(1);
-                }
-
-            return 1;
-        }
+        return 1;
     }
+
+    public ValueTask DisposeAsync() => default;
 }

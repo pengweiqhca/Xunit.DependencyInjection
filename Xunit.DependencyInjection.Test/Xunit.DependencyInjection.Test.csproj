@@ -10,11 +10,19 @@
   <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
+    <Using Include="Microsoft.Extensions.Configuration" />
+    <Using Include="Microsoft.Extensions.DependencyInjection" />
+    <Using Include="Microsoft.Extensions.Hosting" />
+    <Using Include="Microsoft.Extensions.Logging" />
+    <Using Include="Xunit.Abstractions" />
+    <Using Include="Xunit.Sdk" />
+    <Using Include="Xunit.DependencyInjection.Logging;" />
+
     <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
 
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.*" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
     <PackageReference Include="xunit" Version="2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
     <ProjectReference Include="..\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj" />

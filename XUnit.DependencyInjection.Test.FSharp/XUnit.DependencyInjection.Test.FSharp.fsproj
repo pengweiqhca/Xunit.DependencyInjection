@@ -4,7 +4,7 @@
 
     <IsPackable>false</IsPackable>
     <GenerateProgramFile>false</GenerateProgramFile>
-    <LangVersion>preview</LangVersion>
+    <LangVersion>6.0</LangVersion>
     <DisableImplicitSystemValueTupleReference>true</DisableImplicitSystemValueTupleReference>
     <TargetFrameworks>netcoreapp3.1;net6</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net461;$(TargetFrameworks)</TargetFrameworks>
@@ -20,7 +20,8 @@
     <Compile Include="ScopedTest.fs" />
     <Compile Include="Program.fs" />
 
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.*" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
+    <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.*" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     <PackageReference Include="System.ValueTuple" Version="4.*" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     <PackageReference Include="xunit" Version="2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />

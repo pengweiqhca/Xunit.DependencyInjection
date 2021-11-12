@@ -1,7 +1,6 @@
-namespace Xunit.DependencyInjection.Test
+namespace Xunit.DependencyInjection.Test;
+
+public interface IDependencyWithManagedLifetime
 {
-    public interface IDependencyWithManagedLifetime
-    {
-         bool IsDisposed { get; }
-    }
+    bool IsDisposed { get; }
 }

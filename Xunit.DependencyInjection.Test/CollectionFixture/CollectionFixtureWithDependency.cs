@@ -1,15 +1,12 @@
-﻿using System;
+﻿namespace Xunit.DependencyInjection.Test.CollectionFixture;
 
-namespace Xunit.DependencyInjection.Test.CollectionFixture
+public class CollectionFixtureWithDependency : IDisposable
 {
-    public class CollectionFixtureWithDependency : IDisposable
-    {
-        public bool IsDisposed { get; private set; }
+    public bool IsDisposed { get; private set; }
 
-        public CollectionFixtureWithDependency(IDependency dependency) => Dependency = dependency;
+    public CollectionFixtureWithDependency(IDependency dependency) => Dependency = dependency;
 
-        public IDependency Dependency { get; }
+    public IDependency Dependency { get; }
 
-        public void Dispose() => IsDisposed = true;
-    }
+    public void Dispose() => IsDisposed = true;
 }

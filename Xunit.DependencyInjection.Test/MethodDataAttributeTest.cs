@@ -1,48 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
+﻿namespace Xunit.DependencyInjection.Test;
 
-namespace Xunit.DependencyInjection.Test
+public class MethodDataAttributeTest
 {
-    public class MethodDataAttributeTest
+    private static readonly Guid RandomValue = Guid.NewGuid();
+
+    [Theory]
+    [MethodData(nameof(TestClassA.InstanceMethod), typeof(TestClassA))]
+    public void InstanceMethodTest(Guid value) => Assert.Equal(RandomValue, value);
+
+    [Theory]
+    [MethodData(nameof(TestClassA.StaticMethod), typeof(TestClassA), null, 3)]
+    public void StaticMethodTest(Guid value) => Assert.Equal(RandomValue, value);
+
+    private class TestClassA
     {
-        private static readonly Guid RandomValue = Guid.NewGuid();
+        private readonly IDependency _dependency;
 
-        [Theory]
-        [MethodData(nameof(TestClassA.InstanceMethod), typeof(TestClassA))]
-        public void InstanceMethodTest(Guid value) => Assert.Equal(RandomValue, value);
-
-        [Theory]
-        [MethodData(nameof(TestClassA.StaticMethod), typeof(TestClassA), null, 3)]
-        public void StaticMethodTest(Guid value) => Assert.Equal(RandomValue, value);
-
-        private class TestClassA
+        public TestClassA(IDependency dependency)
         {
-            private readonly IDependency _dependency;
+            Assert.NotNull(dependency);
 
-            public TestClassA(IDependency dependency)
-            {
-                Assert.NotNull(dependency);
+            _dependency = dependency;
+        }
 
-                _dependency = dependency;
-            }
+        public IEnumerable<object?[]> InstanceMethod(IDependency dependency)
+        {
+            Assert.NotNull(dependency);
 
-            public IEnumerable<object?[]> InstanceMethod(IDependency dependency)
-            {
-                Assert.NotNull(dependency);
+            Assert.Equal(_dependency, dependency);
 
-                Assert.Equal(_dependency, dependency);
+            yield return new object?[] { RandomValue };
+        }
 
-                yield return new object?[] { RandomValue };
-            }
+        public static IEnumerable<object?[]> StaticMethod([FromServices]IDependency dependency, int value)
+        {
+            Assert.NotNull(dependency);
 
-            public IEnumerable<object?[]> StaticMethod([FromServices]IDependency dependency, int value)
-            {
-                Assert.NotNull(dependency);
+            Assert.Equal(3, value);
 
-                Assert.Equal(3, value);
-
-                yield return new object?[] { RandomValue };
-            }
+            yield return new object?[] { RandomValue };
         }
     }
 }

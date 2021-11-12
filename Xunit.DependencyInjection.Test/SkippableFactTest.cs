@@ -1,22 +1,21 @@
-﻿namespace Xunit.DependencyInjection.Test
+﻿namespace Xunit.DependencyInjection.Test;
+
+public class SkippableFactTest
 {
-    public class SkippableFactTest
+    [SkippableFact]
+    public void SkipTest()
     {
-        [SkippableFact]
-        public void SkipTest()
-        {
-            Skip.If(true, "Alway skip");
+        Skip.If(true, "Alway skip");
 
-            Assert.False(true);
-        }
+        Assert.False(true);
+    }
 
-        [SkippableTheory]
-        [InlineData(1)]
-        public void TheoryTest(int index)
-        {
-            Skip.If(true, "Skip " + index);
+    [SkippableTheory]
+    [InlineData(1)]
+    public void TheoryTest(int index)
+    {
+        Skip.If(true, "Skip " + index);
 
-            Assert.False(true);
-        }
+        Assert.False(true);
     }
 }

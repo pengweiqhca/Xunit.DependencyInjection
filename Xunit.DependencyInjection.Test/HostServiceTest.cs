@@ -1,23 +1,18 @@
-﻿using Microsoft.Extensions.Hosting;
-using System.Threading;
-using System.Threading.Tasks;
+﻿namespace Xunit.DependencyInjection.Test;
 
-namespace Xunit.DependencyInjection.Test
+public class HostServiceTest : IHostedService
 {
-    public class HostServiceTest : IHostedService
+    private static bool HostedServiceInvoked { get; set; }
+
+    public Task StartAsync(CancellationToken cancellationToken)
     {
-        private static bool HostedServiceInvoked { get; set; }
-
-        public Task StartAsync(CancellationToken cancellationToken)
-        {
-            HostedServiceInvoked = true;
+        HostedServiceInvoked = true;
             
-            return Task.CompletedTask;
-        }
-
-        public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-
-        [Fact]
-        public void Test() => Assert.True(HostedServiceInvoked);
+        return Task.CompletedTask;
     }
+
+    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+
+    [Fact]
+    public void Test() => Assert.True(HostedServiceInvoked);
 }

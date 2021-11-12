@@ -1,9 +1,6 @@
-﻿using System;
+﻿namespace Xunit.DependencyInjection;
 
-namespace Xunit.DependencyInjection
+public interface IAsyncExceptionFilter
 {
-    public interface IAsyncExceptionFilter
-    {
-        Exception Process(Exception exception);
-    }
+    Exception Process(Exception exception);
 }

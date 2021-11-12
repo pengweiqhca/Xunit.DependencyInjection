@@ -1,48 +1,38 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit.Abstractions;
-using Xunit.Sdk;
+﻿namespace Xunit.DependencyInjection;
 
-namespace Xunit.DependencyInjection
+public class DependencyInjectionTestInvoker : XunitTestInvoker
 {
-    public class DependencyInjectionTestInvoker : XunitTestInvoker
+    private readonly IServiceProvider _provider;
+
+    public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus,
+        Type testClass, object?[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
+        IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator,
+        CancellationTokenSource cancellationTokenSource)
+        : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
+            beforeAfterAttributes, aggregator, cancellationTokenSource) =>
+        _provider = provider;
+
+    /// <inheritdoc />
+    protected override object CallTestMethod(object testClassInstance)
     {
-        private readonly IServiceProvider _provider;
+        var result = base.CallTestMethod(testClassInstance);
 
-        public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus,
-            Type testClass, object?[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
-            IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator,
-            CancellationTokenSource cancellationTokenSource)
-            : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
-                beforeAfterAttributes, aggregator, cancellationTokenSource) =>
-            _provider = provider;
+        return result is Task task ? AsyncStack(task) : result;
 
-        /// <inheritdoc />
-        protected override object CallTestMethod(object testClassInstance)
+        async Task AsyncStack(Task t)
         {
-            var result = base.CallTestMethod(testClassInstance);
-
-            return result is Task task ? AsyncStack(task) : result;
-
-            async Task AsyncStack(Task t)
+            try
             {
-                try
+                await t.ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                while (ex is TargetInvocationException { InnerException: { } } tie)
                 {
-                    await t.ConfigureAwait(false);
+                    ex = tie.InnerException;
                 }
-                catch (Exception ex)
-                {
-                    while (ex is TargetInvocationException { InnerException: { } } tie)
-                    {
-                        ex = tie.InnerException;
-                    }
 
-                    Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
-                }
+                Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
             }
         }
     }

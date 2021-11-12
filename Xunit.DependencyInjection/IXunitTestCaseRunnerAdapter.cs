@@ -1,35 +1,28 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Xunit.Abstractions;
-using Xunit.Sdk;
+﻿namespace Xunit.DependencyInjection;
 
-namespace Xunit.DependencyInjection
+public interface IXunitTestCaseRunnerWrapper
 {
-    public interface IXunitTestCaseRunnerWrapper
-    {
-        /// <summary>
-        /// Support type.
-        /// </summary>
-        Type TestCaseType { get; }
+    /// <summary>
+    /// Support type.
+    /// </summary>
+    Type TestCaseType { get; }
 
-        /// <summary>
-        /// Executes the test case, returning 0 or more result messages through the message sink.
-        /// </summary>
-        /// <param name="testCase">Test case.</param>
-        /// <param name="provider">The service provider.</param>
-        /// <param name="diagnosticMessageSink">The message sink used to send diagnostic messages to.</param>
-        /// <param name="messageBus">The message bus to report results to.</param>
-        /// <param name="constructorArguments">The arguments to pass to the constructor.</param>
-        /// <param name="aggregator">The error aggregator to use for catching exception.</param>
-        /// <param name="cancellationTokenSource">The cancellation token source that indicates whether cancellation has been requested.</param>
-        /// <returns>Returns the summary of the test case run.</returns>
-        Task<RunSummary> RunAsync(IXunitTestCase testCase,
-            IServiceProvider provider,
-            IMessageSink diagnosticMessageSink,
-            IMessageBus messageBus,
-            object?[] constructorArguments,
-            ExceptionAggregator aggregator,
-            CancellationTokenSource cancellationTokenSource);
-    }
+    /// <summary>
+    /// Executes the test case, returning 0 or more result messages through the message sink.
+    /// </summary>
+    /// <param name="testCase">Test case.</param>
+    /// <param name="provider">The service provider.</param>
+    /// <param name="diagnosticMessageSink">The message sink used to send diagnostic messages to.</param>
+    /// <param name="messageBus">The message bus to report results to.</param>
+    /// <param name="constructorArguments">The arguments to pass to the constructor.</param>
+    /// <param name="aggregator">The error aggregator to use for catching exception.</param>
+    /// <param name="cancellationTokenSource">The cancellation token source that indicates whether cancellation has been requested.</param>
+    /// <returns>Returns the summary of the test case run.</returns>
+    Task<RunSummary> RunAsync(IXunitTestCase testCase,
+        IServiceProvider provider,
+        IMessageSink diagnosticMessageSink,
+        IMessageBus messageBus,
+        object?[] constructorArguments,
+        ExceptionAggregator aggregator,
+        CancellationTokenSource cancellationTokenSource);
 }

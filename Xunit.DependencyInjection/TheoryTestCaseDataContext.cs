@@ -1,36 +1,30 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
+﻿namespace Xunit.DependencyInjection;
 
-namespace Xunit.DependencyInjection
+internal static class TheoryTestCaseDataContext
 {
-    internal static class TheoryTestCaseDataContext
+    private static readonly AsyncLocal<IServiceProvider?> AsyncLocalServices = new();
+
+    public static IServiceProvider? Services { get => AsyncLocalServices.Value; private set => AsyncLocalServices.Value = value; }
+
+    public static IAsyncDisposable BeginContext(IServiceProvider provider) =>
+        new Disposable(provider.CreateScope());
+
+    private class Disposable : IAsyncDisposable
     {
-        private static readonly AsyncLocal<IServiceProvider?> AsyncLocalServices = new();
+        private readonly IServiceScope _scope;
 
-        public static IServiceProvider? Services { get => AsyncLocalServices.Value; private set => AsyncLocalServices.Value = value; }
-
-        public static IAsyncDisposable BeginContext(IServiceProvider provider) =>
-            new Disposable(provider.CreateScope());
-
-        private class Disposable : IAsyncDisposable
+        public Disposable(IServiceScope scope)
         {
-            private readonly IServiceScope _scope;
+            Services = scope.ServiceProvider;
 
-            public Disposable(IServiceScope scope)
-            {
-                Services = scope.ServiceProvider;
+            _scope = scope;
+        }
 
-                _scope = scope;
-            }
+        public ValueTask DisposeAsync()
+        {
+            Services = null;
 
-            public ValueTask DisposeAsync()
-            {
-                Services = null;
-
-                return _scope.DisposeAsync();
-            }
+            return _scope.DisposeAsync();
         }
     }
 }

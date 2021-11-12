@@ -1,10 +1,8 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
-namespace Xunit.DependencyInjection.Demystifier
+namespace Xunit.DependencyInjection.Demystifier;
+
+public class DemystifyExceptionFilter : IAsyncExceptionFilter
 {
-    public class DemystifyExceptionFilter : IAsyncExceptionFilter
-    {
-        public Exception Process(Exception exception) => exception.Demystify();
-    }
+    public Exception Process(Exception exception) => exception.Demystify();
 }
