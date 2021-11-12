@@ -87,7 +87,7 @@ namespace Xunit.DependencyInjection
         {
             await base.BeforeTestClassFinishedAsync().ConfigureAwait(false);
 
-            _serviceScope?.Dispose();
+            if (_serviceScope != null) await _serviceScope.DisposeAsync().ConfigureAwait(false);
         }
 
         internal class DelayArgument

@@ -47,7 +47,7 @@ namespace Xunit.DependencyInjection
         {
             await base.BeforeTestCollectionFinishedAsync().ConfigureAwait(false);
 
-             _serviceScope?.Dispose();
+            if (_serviceScope != null) await _serviceScope.DisposeAsync().ConfigureAwait(false);
         }
 
         /// <inheritdoc />

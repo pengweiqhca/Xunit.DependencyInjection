@@ -61,7 +61,7 @@ namespace Xunit.DependencyInjection
 
         public new async Task<RunSummary> RunAsync()
         {
-            using (TheoryTestCaseDataContext.BeginContext(_provider))
+            await using (TheoryTestCaseDataContext.BeginContext(_provider).ConfigureAwait(false))
                 return await base.RunAsync().ConfigureAwait(false);
         }
     }

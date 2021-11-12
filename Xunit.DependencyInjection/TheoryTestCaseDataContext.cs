@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace Xunit.DependencyInjection
 {
@@ -10,10 +11,10 @@ namespace Xunit.DependencyInjection
 
         public static IServiceProvider? Services { get => AsyncLocalServices.Value; private set => AsyncLocalServices.Value = value; }
 
-        public static IDisposable BeginContext(IServiceProvider provider) =>
+        public static IAsyncDisposable BeginContext(IServiceProvider provider) =>
             new Disposable(provider.CreateScope());
 
-        private class Disposable : IDisposable
+        private class Disposable : IAsyncDisposable
         {
             private readonly IServiceScope _scope;
 
@@ -24,11 +25,11 @@ namespace Xunit.DependencyInjection
                 _scope = scope;
             }
 
-            public void Dispose()
+            public ValueTask DisposeAsync()
             {
                 Services = null;
 
-                _scope.Dispose();
+                return _scope.DisposeAsync();
             }
         }
     }

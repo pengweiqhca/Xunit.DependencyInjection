@@ -117,10 +117,11 @@ namespace Xunit.DependencyInjection
             return Task.WhenAll(tasks);
         }
 
+        //DisposalTracker not support IAsyncDisposable
         public void Dispose()
         {
             for (var index = _hosts.Count - 1; index >= 0; index--)
-                _hosts[index].Dispose();
+                _hosts[index].DisposeAsync().GetAwaiter().GetResult();
         }
     }
 }

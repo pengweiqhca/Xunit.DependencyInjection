@@ -81,9 +81,10 @@ namespace Xunit.DependencyInjection
                         .ConfigureAwait(false);
             } while ((type = type.BaseType) != null);
 
-            using var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
 
-            return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
+            await using (scope.AsAsyncDisposable().ConfigureAwait(false))
+                return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
                     CreateTestClassConstructorArguments(scope.ServiceProvider, _constructorArguments, Aggregator),
                     new ExceptionAggregator(Aggregator), CancellationTokenSource)
                 .ConfigureAwait(false);

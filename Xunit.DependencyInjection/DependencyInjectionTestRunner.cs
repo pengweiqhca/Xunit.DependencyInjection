@@ -29,7 +29,9 @@ namespace Xunit.DependencyInjection
         /// <inheritdoc />
         protected override async Task<Tuple<decimal, string>> InvokeTestAsync(ExceptionAggregator aggregator)
         {
-            using var scope = _provider.CreateScope();
+            var scope = _provider.CreateScope();
+
+            await using var _ = scope.AsAsyncDisposable().ConfigureAwait(false);
 
             var testOutputHelper = _provider.GetRequiredService<ITestOutputHelperAccessor>().Output as TestOutputHelper;
             testOutputHelper?.Initialize(MessageBus, Test);
@@ -60,6 +62,7 @@ namespace Xunit.DependencyInjection
             }
 
             return Tuple.Create(item, output);
+
         }
     }
 }
