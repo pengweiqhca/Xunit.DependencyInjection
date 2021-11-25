@@ -1,10 +1,12 @@
 ﻿using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Xunit.DependencyInjection;
 
 public class DependencyInjectionTestInvoker : XunitTestInvoker
 {
     private static readonly ActivitySource ActivitySource = new("Xunit.DependencyInjection", typeof(DependencyInjectionTestInvoker).Assembly.GetName().Version.ToString());
+    private static readonly MethodInfo AsTaskMethod = new Func<ValueTask<object>, Task>(AsTask).Method.GetGenericMethodDefinition();
     private readonly IServiceProvider _provider;
 
     public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus,
@@ -21,7 +23,7 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
         var activity = ActivitySource.StartActivity(TestCase.DisplayName, ActivityKind.Internal,
             Activity.Current?.Context ?? default, new Dictionary<string, object?>
             {
-                { "Type", TestCase.Method.Type.Name },
+                { "Type", TestCase.TestMethod.TestClass.Class.Name },
                 { "Method", TestCase.Method.Name },
             });
 
@@ -29,14 +31,14 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
         {
             var result = base.CallTestMethod(testClassInstance);
 
-            return result is Task task ? AsyncStack(task) : result;
+            return TryAsTask(result, out var task) ? AsyncStack(task, activity) : result;
         }
 
         try
         {
             var result = base.CallTestMethod(testClassInstance);
 
-            if (result is Task task) return AsyncStack(task);
+            if (TryAsTask(result, out var task)) return AsyncStack(task, activity);
 
             activity.SetStatus(ActivityStatusCode.Ok);
 
@@ -52,28 +54,58 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
 
             throw;
         }
+    }
 
-        async Task AsyncStack(Task t)
+    private static bool TryAsTask(object? result, [NotNullWhen(true)] out Task? task)
+    {
+        task = null;
+
+        if (result == null) return false;
+
+        if (result is Task t)
         {
-            try
-            {
-                await t.ConfigureAwait(false);
+            task = t;
 
-                activity?.SetStatus(ActivityStatusCode.Ok);
-            }
-            catch (Exception ex)
-            {
-                while (ex is TargetInvocationException { InnerException: { } } tie)
-                {
-                    ex = tie.InnerException;
-                }
-
-                Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
-
-                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
-            }
-
-            activity?.Stop();
+            return true;
         }
+
+        if (result is ValueTask vt)
+        {
+            task = vt.AsTask();
+
+            return true;
+        }
+
+        var type = result.GetType();
+        if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(ValueTask<>)) return false;
+
+        task = (Task)AsTaskMethod.MakeGenericMethod(type.GetGenericArguments()[0]).Invoke(null, new[] { result });
+
+        return true;
+    }
+
+    private static Task AsTask<T>(ValueTask<T> task) => task.AsTask();
+
+    private async Task AsyncStack(Task task, Activity? activity)
+    {
+        try
+        {
+            await task.ConfigureAwait(false);
+
+            activity?.SetStatus(ActivityStatusCode.Ok);
+        }
+        catch (Exception ex)
+        {
+            while (ex is TargetInvocationException { InnerException: { } } tie)
+            {
+                ex = tie.InnerException;
+            }
+
+            Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
+
+            activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
+        }
+
+        activity?.Stop();
     }
 }

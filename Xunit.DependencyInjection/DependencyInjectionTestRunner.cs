@@ -53,6 +53,5 @@ public class DependencyInjectionTestRunner : XunitTestRunner
         }
 
         return Tuple.Create(item, output);
-
     }
 }
