@@ -2,7 +2,7 @@
 
 internal static class TheoryTestCaseDataContext
 {
-    private static readonly AsyncLocal<IServiceProvider?> AsyncLocalServices = new();
+    private static readonly ContextValue<IServiceProvider?> AsyncLocalServices = new();
 
     public static IServiceProvider? Services { get => AsyncLocalServices.Value; private set => AsyncLocalServices.Value = value; }
 

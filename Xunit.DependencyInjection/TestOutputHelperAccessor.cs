@@ -5,13 +5,13 @@ public interface ITestOutputHelperAccessor
     ITestOutputHelper? Output { get; set; }
 }
 
-public class TestOutputHelperAccessor : ITestOutputHelperAccessor
+public class TestOutputHelperAccessor : ContextValue<ITestOutputHelper>, ITestOutputHelperAccessor, IDisposable
 {
-    private readonly AsyncLocal<ITestOutputHelper?> _output = new();
-
     public ITestOutputHelper? Output
     {
-        get => _output.Value;
-        set => _output.Value = value;
+        get => Value;
+        set => Value = value;
     }
+
+    public void Dispose() => Value = null;
 }

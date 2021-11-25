@@ -34,6 +34,7 @@ Release notes:
     </AssemblyAttribute>
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="1.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="2.1.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="6.0.0" />
     <PackageReference Include="xunit.extensibility.execution" Version="[2.1.0,3.0.0)" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     <PackageReference Include="xunit.extensibility.execution" Version="[2.2.0,3.0.0)" Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'" />
 
