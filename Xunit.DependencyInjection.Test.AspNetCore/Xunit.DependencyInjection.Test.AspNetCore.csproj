@@ -6,7 +6,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
+  <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.*" Condition="'$(TargetFramework)' == 'netcoreapp3.1'" />

@@ -5,7 +5,7 @@
     <XunitStartupAssembly>Xunit.DependencyInjection.Test</XunitStartupAssembly>
   </PropertyGroup>
 
-  <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
+  <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />

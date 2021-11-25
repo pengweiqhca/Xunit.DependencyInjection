@@ -7,7 +7,7 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
-  <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
+  <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
     <Compile Remove="Startup\**" />

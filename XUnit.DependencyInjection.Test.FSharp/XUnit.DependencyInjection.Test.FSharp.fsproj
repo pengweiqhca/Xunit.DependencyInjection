@@ -10,7 +10,7 @@
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net461;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
-  <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
+  <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
     <Compile Include="AssemblyNamespaceTest.fs" />

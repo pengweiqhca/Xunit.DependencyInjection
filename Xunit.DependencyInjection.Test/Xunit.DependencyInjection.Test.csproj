@@ -7,7 +7,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <Import Project="..\Xunit.DependencyInjection\targets\Xunit.DependencyInjection.targets" />
+  <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
     <Using Include="Microsoft.Extensions.Configuration" />
