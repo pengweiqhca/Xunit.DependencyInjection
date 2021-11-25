@@ -1,4 +1,5 @@
 ﻿using Autofac.Extensions.DependencyInjection;
+using System.Diagnostics;
 using Xunit.DependencyInjection.Demystifier;
 
 namespace Xunit.DependencyInjection.Test;
@@ -26,5 +27,12 @@ public class Startup
         Assert.NotNull(accessor);
 
         XunitTestOutputLoggerProvider.Register(provider);
+
+        var listener = new ActivityListener();
+
+        listener.ShouldListenTo += _ => true;
+        listener.Sample += delegate { return ActivitySamplingResult.AllDataAndRecorded; };
+
+        ActivitySource.AddActivityListener(listener);
     }
 }

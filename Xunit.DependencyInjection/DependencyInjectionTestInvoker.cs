@@ -1,7 +1,10 @@
-﻿namespace Xunit.DependencyInjection;
+﻿using System.Diagnostics;
+
+namespace Xunit.DependencyInjection;
 
 public class DependencyInjectionTestInvoker : XunitTestInvoker
 {
+    private static readonly ActivitySource ActivitySource = new("Xunit.DependencyInjection", typeof(DependencyInjectionTestInvoker).Assembly.GetName().Version.ToString());
     private readonly IServiceProvider _provider;
 
     public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus,
@@ -15,15 +18,48 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
     /// <inheritdoc />
     protected override object CallTestMethod(object testClassInstance)
     {
-        var result = base.CallTestMethod(testClassInstance);
+        var activity = ActivitySource.StartActivity(TestCase.DisplayName, ActivityKind.Internal,
+            Activity.Current?.Context ?? default, new Dictionary<string, object?>
+            {
+                { "Type", TestCase.Method.Type.Name },
+                { "Method", TestCase.Method.Name },
+            });
 
-        return result is Task task ? AsyncStack(task) : result;
+        if (activity == null)
+        {
+            var result = base.CallTestMethod(testClassInstance);
+
+            return result is Task task ? AsyncStack(task) : result;
+        }
+
+        try
+        {
+            var result = base.CallTestMethod(testClassInstance);
+
+            if (result is Task task) return AsyncStack(task);
+
+            activity.SetStatus(ActivityStatusCode.Ok);
+
+            activity.Stop();
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            activity.SetStatus(ActivityStatusCode.Error, ex.Message);
+
+            activity.Stop();
+
+            throw;
+        }
 
         async Task AsyncStack(Task t)
         {
             try
             {
                 await t.ConfigureAwait(false);
+
+                activity?.SetStatus(ActivityStatusCode.Ok);
             }
             catch (Exception ex)
             {
@@ -33,7 +69,11 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
                 }
 
                 Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
+
+                activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
             }
+
+            activity?.Stop();
         }
     }
 }

@@ -4,6 +4,7 @@
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
+8.3: Add ActivitySource(name: Xunit.DependencyInjection) support.
 8.2: Fix #60: support IAsyncDisposable.
 8.1: Startup allow static method or class (like Asp.Net Core startup).
 8.0: New feature: Support multiple startup.
@@ -16,7 +17,7 @@ Release notes:
 7.1: Fix can't run test case when host.StartAsync() throw exception.
 7.0: Add fixture injection and refactor DependencyInjectionTestFramework, you don't have to declare the [assembly: TestFrameworkAttribute] on normal case.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>8.2.0</Version>
+    <Version>8.3.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 

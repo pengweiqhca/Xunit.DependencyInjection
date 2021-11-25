@@ -180,3 +180,11 @@ public class Startup
 
 ## [MemberData] how to inject?
 Use **[MethodData]**
+
+## Integrate opentelemetry
+
+``` C#
+TracerProviderBuilder builder;
+
+builder.AddSource("Xunit.DependencyInjection");
+```
