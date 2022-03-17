@@ -25,6 +25,15 @@ internal static class StartupLoader
 
         var hostBuilder = CreateHostBuilder(assemblyName, startup, startupType, createHostBuilderMethod) ?? new HostBuilder();
 
+        hostBuilder.ConfigureServices(services =>
+        {
+            services.TryAddSingleton(diagnosticMessageSink);
+            services.TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
+
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
+        });
+
         hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(
             new Dictionary<string, string> { { HostDefaults.ApplicationKey, assemblyName.Name } }));
 
@@ -32,16 +41,7 @@ internal static class StartupLoader
 
         ConfigureServices(hostBuilder, startup, startupType, configureServicesMethod);
 
-        var host = hostBuilder.ConfigureServices(services =>
-            {
-                services
-                    .AddSingleton(diagnosticMessageSink)
-                    .TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
-
-                services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
-                services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
-            })
-            .Build();
+        var host = hostBuilder.Build();
 
         Configure(host.Services, startup, configureMethod);
 
