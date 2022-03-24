@@ -1,23 +1,16 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
-    <Title>Xunit.DependencyInjection.Template</Title>
-    <Authors>Wei Peng</Authors>
     <PackageType>Template</PackageType>
-    <PackageId>Xunit.DependencyInjection.Template</PackageId>
     <PackageVersion>1.1.0</PackageVersion>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>    
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
     <Description>Xunit.DependencyInjection project template</Description>
-    <PackageReleaseNotes>Update to .NET 6</PackageReleaseNotes>    
-    <PackageProjectUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/master/Xunit.DependencyInjection.Template</PackageProjectUrl>
-    <RepositoryUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
+    <PackageReleaseNotes>Update to .NET 6</PackageReleaseNotes>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
     <IncludeContentInPack>true</IncludeContentInPack>
     <IncludeBuildOutput>false</IncludeBuildOutput>
-    <ContentTargetFolders>content</ContentTargetFolders>    
+    <ContentTargetFolders>content</ContentTargetFolders>
     <NoWarn>$(NoWarn);NU5128</NoWarn>
   </PropertyGroup>
 
