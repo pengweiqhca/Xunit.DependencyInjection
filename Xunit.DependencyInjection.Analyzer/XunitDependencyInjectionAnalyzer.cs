@@ -49,7 +49,7 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
 #if DEBUG
             if (sta == null) startupName = $"{csac.Compilation.Assembly.Name}.Startup";
 #else
-                if (sta == null) return;
+			if (sta == null) return;
 #endif
             else if (sta.ConstructorArguments.Length == 1)
             {
