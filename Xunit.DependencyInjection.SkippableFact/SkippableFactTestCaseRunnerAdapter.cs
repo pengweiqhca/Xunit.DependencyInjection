@@ -17,8 +17,10 @@ public class SkippableFactTestCaseRunnerWrapper : DependencyInjectionTestCaseRun
                 "SkippingExceptionNames"), testCaseRunner).Compile();
     }
 
+    /// <inheritdoc />
     public override Type TestCaseType => typeof(SkippableFactTestCase);
 
+    /// <inheritdoc />
     public override async Task<RunSummary> RunAsync(IXunitTestCase testCase, IServiceProvider provider, IMessageSink diagnosticMessageSink, IMessageBus messageBus, object?[] constructorArguments, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
     {
         var messageBusInterceptor = new SkippableTestMessageBus(messageBus, GetSkippingExceptionNames(testCase));
