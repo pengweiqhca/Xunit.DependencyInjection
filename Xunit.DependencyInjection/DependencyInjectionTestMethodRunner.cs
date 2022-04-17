@@ -24,7 +24,7 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
     }
 
     protected internal static object?[] CreateTestClassConstructorArguments(IServiceProvider provider,
-        object[] constructorArguments, ExceptionAggregator aggregator)
+        object?[] constructorArguments, ExceptionAggregator aggregator)
     {
         var unusedArguments = new List<Tuple<int, ParameterInfo>>();
         Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string>? formatConstructorArgsMissingMessage = null;
@@ -41,8 +41,7 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
                 else
                     unusedArguments.Add(Tuple.Create(index, delay.Parameter));
             }
-            else
-                args[index] = constructorArguments[index];
+            else args[index] = constructorArguments[index];
         }
 
         if (unusedArguments.Count > 0 && formatConstructorArgsMissingMessage != null)
