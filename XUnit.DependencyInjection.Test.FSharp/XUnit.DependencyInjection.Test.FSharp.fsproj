@@ -7,7 +7,7 @@
     <LangVersion>6.0</LangVersion>
     <DisableImplicitSystemValueTupleReference>true</DisableImplicitSystemValueTupleReference>
     <TargetFrameworks>netcoreapp3.1;net6</TargetFrameworks>
-    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net461;$(TargetFrameworks)</TargetFrameworks>
+    <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
   <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
