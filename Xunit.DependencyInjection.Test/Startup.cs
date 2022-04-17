@@ -20,6 +20,7 @@ public class Startup
             .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
             .AddHostedService<HostServiceTest>()
             .AddSkippableFactSupport()
+            .AddStaFactSupport()
             .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
     public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)

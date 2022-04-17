@@ -29,6 +29,7 @@
     <ProjectReference Include="..\Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj" />
     <ProjectReference Include="..\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
     <ProjectReference Include="..\Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj" />
+    <ProjectReference Include="..\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj" />
   </ItemGroup>
 
 </Project>
