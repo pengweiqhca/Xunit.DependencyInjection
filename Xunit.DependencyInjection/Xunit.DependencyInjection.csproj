@@ -4,6 +4,7 @@
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
+8.5: Change analyzer category.
 8.4: Fix #63: allow modify default service from DI container.
 8.3: Add ActivitySource(name: Xunit.DependencyInjection) and ValueTask/ValueTask&lt;&gt; support.
 8.2: Fix #60: support IAsyncDisposable.
