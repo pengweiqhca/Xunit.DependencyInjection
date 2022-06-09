@@ -38,6 +38,9 @@ public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
     {
         await base.BeforeTestCollectionFinishedAsync().ConfigureAwait(false);
 
+        foreach (var fixture in CollectionFixtureMappings.Values.OfType<IAsyncDisposable>())
+            await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask()).ConfigureAwait(false);
+
         if (_serviceScope != null) await _serviceScope.DisposeAsync().ConfigureAwait(false);
     }
 
