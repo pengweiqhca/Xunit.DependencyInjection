@@ -34,24 +34,20 @@ internal sealed class HostManager : IHostedService, IDisposable
         var startupType = FindStartup(type, out var shared);
         if (startupType == null) return _host;
 
-        if (!shared)
+        if (shared)
         {
-            var host = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
+            if (_hostMap.TryGetValue(startupType, out var startup)) return startup;
 
-            _hosts.Add(host);
-
-            return host;
+            if (startupType == _defaultStartupType) return _hostMap[startupType] = _host!;
         }
 
-        if (_hostMap.TryGetValue(startupType, out var startup)) return startup;
+        var host = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
 
-        if (startupType == _defaultStartupType) return _hostMap[startupType] = _host!;
+        if (!shared) _hostMap[startupType] = host;
 
-        var h = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
+        _hosts.Add(host);
 
-        _hosts.Add(h);
-
-        return _hostMap[startupType] = h;
+        return host;
     }
 
     private static Type? FindStartup(Type testClassType, out bool shared)
