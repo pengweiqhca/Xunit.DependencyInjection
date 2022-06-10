@@ -101,7 +101,28 @@ Anything defined in ConfigureServices, can be specified in the Configure method 
 
 ## How to find `Startup`?
 
-Default is find `Your.Test.Project.Startup, Your.Test.Project`.
+### 1. Specific startup
+Declare [Startup] on test class
+
+### 2. Nest startup
+``` C#
+public class TestClass1
+{
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services) { }
+    }
+```
+
+### 3. Closest startup
+If the class type full name is "A.B.C.TestClass", find Startup in the following order:
+1. A.B.C.Startup
+2. A.B.Startup
+3. A.Startup
+4. Startup
+
+### 4. Global startup
+Default is find Your.Test.Project.Startup, Your.Test.Project`.
 
 If you want use a special `Startup`, you can defined `XunitStartupAssembly` and `XunitStartupFullName` in `PropertyGroup` section
 
