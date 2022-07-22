@@ -10,9 +10,11 @@ public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) =>
         hostBuilder.ConfigureWebHost(webHostBuilder => webHostBuilder
-            .UseTestServer()
-            .Configure(Configure));
+            .UseTestServer().UseStartup<AspNetCoreStartup>());
 
-    private void Configure(IApplicationBuilder app) =>
-        app.Run(context => context.Response.WriteAsync(TestServerTest.Key));
+    private class AspNetCoreStartup
+    {
+        public void Configure(IApplicationBuilder app) =>
+            app.Run(context => context.Response.WriteAsync(TestServerTest.Key));
+    }
 }
