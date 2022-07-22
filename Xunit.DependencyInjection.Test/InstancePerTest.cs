@@ -1,15 +1,12 @@
 ﻿namespace Xunit.DependencyInjection.Test;
 
-public class InstancePerTest : IDisposable
+public class InstancePerTest
 {
-    private readonly IServiceScope _serviceScope;
     private readonly IDependency _d;
 
-    public InstancePerTest(IServiceProvider provider, CancellationToken cancellationToken)
+    public InstancePerTest(IDependency d, CancellationToken cancellationToken)
     {
-        _serviceScope = provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
-
-        _d = _serviceScope.ServiceProvider.GetRequiredService<IDependency>();
+        _d = d;
 
         Assert.NotEqual(CancellationToken.None, cancellationToken);
     }
@@ -34,12 +31,5 @@ public class InstancePerTest : IDisposable
     public void Test3()
     {
         _d.TestWriteLine(100);
-    }
-
-    public void Dispose()
-    {
-        _serviceScope.DisposeAsync().AsTask().GetAwaiter().GetResult();
-
-        GC.SuppressFinalize(this);
     }
 }
