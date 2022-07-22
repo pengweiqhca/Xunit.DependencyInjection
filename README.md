@@ -60,13 +60,8 @@ dotnet add package Microsoft.AspNetCore.TestHost
 public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) =>
-        hostBuilder.ConfigureWebHost(webHostBuilder => webHostBuilder
-            .UseTestServer()
-            .Configure(Configure)
-            .ConfigureServices(services => services.AddRouting()));
-
-    private void Configure(IApplicationBuilder app) =>
-        app.UseRouting().UseEndpoints(endpoints => xxx);
+        hostBuilder.ConfigureWebHost[Defaults](webHostBuilder => webHostBuilder
+            .UseTestServer().UseStartup<AspNetCoreStartup>());
 }
 ```
 
