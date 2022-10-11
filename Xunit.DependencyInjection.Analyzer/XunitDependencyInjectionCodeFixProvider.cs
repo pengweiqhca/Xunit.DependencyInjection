@@ -27,8 +27,7 @@ public class XunitDependencyInjectionCodeFixProvider : CodeFixProvider
 
         var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
 
-        if (root.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true)
-            is not MethodDeclarationSyntax method) return;
+        if (root?.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is not MethodDeclarationSyntax method) return;
 
         if (diagnostic.Id == Rules.NoReturnType.Id)
             context.RegisterCodeFix(CodeAction.Create(
@@ -62,7 +61,8 @@ public class XunitDependencyInjectionCodeFixProvider : CodeFixProvider
 
     private static async Task<Document> ChangeReturnType(Document document, MethodDeclarationSyntax node, TypeSyntax returnType, CancellationToken cancellationToken)
     {
-        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
+        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)
+                   ?? throw new NullReferenceException();
 
         return document.WithSyntaxRoot(root.ReplaceNode(node, node.WithReturnType(returnType)));
     }

@@ -161,7 +161,7 @@ public class Startup
 }
 ```
 
-## How to inject `IConfiguration` or `IHostingEnvironment` into `Startup`?
+## How to inject `IConfiguration` or `IHostEnvironment` into `Startup`?
 
 ``` C#
 public class Startup

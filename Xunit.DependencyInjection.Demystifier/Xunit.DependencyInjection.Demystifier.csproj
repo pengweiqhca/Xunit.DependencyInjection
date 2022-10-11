@@ -15,6 +15,7 @@ public void ConfigureServices(IServiceCollection services)
 
   <ItemGroup>
     <PackageReference Include="Ben.Demystifier" Version="0.*" />
+
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
 

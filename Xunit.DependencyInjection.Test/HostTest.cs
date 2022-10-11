@@ -4,10 +4,10 @@ namespace Xunit.DependencyInjection.Test;
 
 public class HostTest
 {
-    private readonly IHostingEnvironment _environment;
+    private readonly IHostEnvironment _environment;
     private readonly IServiceProvider _provider;
 
-    public HostTest(IHostingEnvironment environment, IServiceProvider provider)
+    public HostTest(IHostEnvironment environment, IServiceProvider provider)
     {
         _environment = environment;
         _provider = provider;
