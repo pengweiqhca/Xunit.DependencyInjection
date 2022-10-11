@@ -35,15 +35,11 @@ public class TheoryTest
 
     [Theory]
     [MemberData(nameof(GetSimpleData))]
-    public async ValueTask<int> SimpleParameterizedTestAsync(string arg1, int arg2, int delay)
+    public void SimpleParameterizedTestAsync(string arg1, int arg2, int delay)
     {
         Assert.Equal("Test", arg1);
         Assert.Equal(1, arg2);
         Assert.True(delay >= 0);
-
-        await Task.Delay(delay).ConfigureAwait(false);
-
-        return delay;
     }
 
     [Theory]
