@@ -1,12 +1,15 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.Extensions.Internal;
+using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq.Expressions;
 
 namespace Xunit.DependencyInjection;
 
 public class DependencyInjectionTestInvoker : XunitTestInvoker
 {
     private static readonly ActivitySource ActivitySource = new("Xunit.DependencyInjection", typeof(DependencyInjectionTestInvoker).Assembly.GetName().Version.ToString());
-    private static readonly MethodInfo AsTaskMethod = new Func<ValueTask<object>, Task>(AsTask).Method.GetGenericMethodDefinition();
+    private static readonly MethodInfo AsTaskMethod = new Func<ObjectMethodExecutorAwaitable, Task>(AsTask).Method;
     private readonly IServiceProvider _provider;
 
     public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus,
@@ -31,14 +34,14 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
         {
             var result = base.CallTestMethod(testClassInstance);
 
-            return TryAsTask(result, out var task) ? AsyncStack(task, activity) : result;
+            return TryAsTask(TestCase.Method.ReturnType, result, out var task) ? AsyncStack(task, activity) : result;
         }
 
         try
         {
             var result = base.CallTestMethod(testClassInstance);
 
-            if (TryAsTask(result, out var task)) return AsyncStack(task, activity);
+            if (TryAsTask(TestCase.Method.ReturnType, result, out var task)) return AsyncStack(task, activity);
 
             activity.SetStatus(ActivityStatusCode.Ok);
 
@@ -56,7 +59,9 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
         }
     }
 
-    private static bool TryAsTask(object? result, [NotNullWhen(true)] out Task? task)
+    private static readonly ConcurrentDictionary<ITypeInfo, Func<object, Task>?> Factories = new();
+
+    private static bool TryAsTask(ITypeInfo typeInfo, object? result, [NotNullWhen(true)] out Task? task)
     {
         task = null;
 
@@ -76,15 +81,27 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
             return true;
         }
 
-        var type = result.GetType();
-        if (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(ValueTask<>)) return false;
+        var func = Factories.GetOrAdd(typeInfo, static typeInfo =>
+        {
+            var type = typeInfo.ToRuntimeType();
 
-        task = (Task)AsTaskMethod.MakeGenericMethod(type.GetGenericArguments()[0]).Invoke(null, new[] { result });
+            if (!CoercedAwaitableInfo.IsTypeAwaitable(type, out var coercedAwaitableInfo)) return null;
+
+            var param = Expression.Parameter(typeof(object));
+
+            return Expression.Lambda<Func<object, Task>>(Expression.Call(AsTaskMethod,
+                ObjectMethodExecutor.ConvertToObjectMethodExecutorAwaitable(coercedAwaitableInfo,
+                    Expression.Convert(param, type))), param).Compile();
+        });
+
+        if (func == null) return false;
+
+        task = func(result);
 
         return true;
     }
 
-    private static Task AsTask<T>(ValueTask<T> task) => task.AsTask();
+    private static async Task AsTask(ObjectMethodExecutorAwaitable awaitable) => await awaitable;
 
     private async Task AsyncStack(Task task, Activity? activity)
     {
@@ -99,6 +116,11 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
             while (ex is TargetInvocationException { InnerException: { } } tie)
             {
                 ex = tie.InnerException;
+            }
+
+            while (ex is AggregateException { InnerException: { } } ae)
+            {
+                ex = ae.InnerException;
             }
 
             Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
