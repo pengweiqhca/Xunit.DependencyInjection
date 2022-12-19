@@ -6,8 +6,19 @@ namespace Xunit.DependencyInjection.Test;
 public class xRetryTest
 {
     private readonly IDependency _dependency;
-    private static int _nFact = 0;
-    private static int _nTheory = 0;
+    private static int _factNumCalls = 0;
+    // testId => numCalls
+    private static Dictionary<int, int> _theoryNumCalls = new()
+    {
+        { 0, 0 },
+        { 1, 0 }
+    };
+    // testId => numCalls
+    private static readonly Dictionary<int, int> _nonSerializableTheoryNumCalls = new()
+    {
+        { 0, 0 },
+        { 1, 0 }
+    };
 
     public xRetryTest(IDependency dependency)
     {
@@ -19,18 +30,19 @@ public class xRetryTest
     {
         AssertDependencyUnique();
 
-        _nFact++;
-        Assert.Equal(3, _nFact);
+        _factNumCalls++;
+        Assert.Equal(3, _factNumCalls);
     }
 
     [RetryTheory]
-    [InlineData(3)]
-    public void RetryTheory(int expected)
+    [InlineData(0)]
+    [InlineData(1)]
+    public void RetryTheory(int id)
     {
         AssertDependencyUnique();
 
-        _nTheory++;
-        Assert.Equal(expected, _nTheory);
+        _theoryNumCalls[id]++;
+        Assert.Equal(3, _theoryNumCalls[id]);
     }
 
     public class NonSerializableTestData
@@ -43,21 +55,14 @@ public class xRetryTest
         }
     }
 
-    // testId => numCalls
-    private static readonly Dictionary<int, int> _defaultNumCalls = new()
-    {
-        { 0, 0 },
-        { 1, 0 }
-    };
-
     [RetryTheory]
     [MemberData(nameof(GetTestData))]
     public void RetryTheoryNonSerializableData(NonSerializableTestData nonSerializableWrapper)
     {
         AssertDependencyUnique();
 
-        _defaultNumCalls[nonSerializableWrapper.Id]++;
-        Assert.Equal(3, _defaultNumCalls[nonSerializableWrapper.Id]);
+        _nonSerializableTheoryNumCalls[nonSerializableWrapper.Id]++;
+        Assert.Equal(3, _nonSerializableTheoryNumCalls[nonSerializableWrapper.Id]);
     }
 
     public static IEnumerable<object[]> GetTestData() => new[]
