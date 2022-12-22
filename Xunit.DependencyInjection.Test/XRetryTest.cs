@@ -3,12 +3,12 @@ using Xunit;
 
 namespace Xunit.DependencyInjection.Test;
 
-public class xRetryTest
+public class XRetryTest
 {
     private readonly IDependency _dependency;
     private static int _factNumCalls = 0;
     // testId => numCalls
-    private static Dictionary<int, int> _theoryNumCalls = new()
+    private static readonly Dictionary<int, int> _theoryNumCalls = new()
     {
         { 0, 0 },
         { 1, 0 }
@@ -20,7 +20,7 @@ public class xRetryTest
         { 1, 0 }
     };
 
-    public xRetryTest(IDependency dependency)
+    public XRetryTest(IDependency dependency)
     {
         _dependency = dependency;
     }
