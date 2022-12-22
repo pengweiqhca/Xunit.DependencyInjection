@@ -1,5 +1,4 @@
 ﻿using xRetry;
-using Xunit;
 
 namespace Xunit.DependencyInjection.Test;
 
