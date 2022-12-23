@@ -21,6 +21,7 @@ public class Startup
             .AddHostedService<HostServiceTest>()
             .AddSkippableFactSupport()
             .AddStaFactSupport()
+            .AddXRetrySupport()
             .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
     public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)

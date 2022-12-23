@@ -31,6 +31,7 @@
     <ProjectReference Include="..\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
     <ProjectReference Include="..\Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj" />
     <ProjectReference Include="..\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj" />
+    <ProjectReference Include="..\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj" />
   </ItemGroup>
 
 </Project>
