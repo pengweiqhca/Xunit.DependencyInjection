@@ -11,6 +11,7 @@ public void ConfigureServices(IServiceCollection services)
     <PackageTags>xunit ioc di DependencyInjection test skipping Retry Test-Automation</PackageTags>
     <Version>8.0.0-alpha1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
+    <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
