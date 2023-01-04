@@ -127,7 +127,7 @@ If you want use a special `Startup`, you can defined `XunitStartupAssembly` and 
 
 ``` xml
 <Project>
-  <PropertyGroup>~~~~
+  <PropertyGroup>
     <XunitStartupAssembly>Abc</XunitStartupAssembly>
     <XunitStartupFullName>Xyz</XunitStartupFullName>
   </PropertyGroup>
