@@ -4,7 +4,7 @@
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
 Release notes:
-8.7: Startup class is optional.
+8.7: Allow missing default startup in some case.
 8.6: Support any awaitable type of async test method.
 8.5: Change analyzer category.
 8.4: Fix #63: allow modify default service from DI container.
