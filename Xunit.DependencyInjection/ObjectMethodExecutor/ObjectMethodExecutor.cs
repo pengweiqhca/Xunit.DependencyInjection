@@ -33,7 +33,7 @@ internal sealed class ObjectMethodExecutor
         var isAwaitable = CoercedAwaitableInfo.IsTypeAwaitable(MethodReturnType, out var coercedAwaitableInfo);
 
         IsMethodAsync = isAwaitable;
-        AsyncResultType = isAwaitable ? coercedAwaitableInfo.AwaitableInfo.ResultType : null;
+        AsyncResultType = isAwaitable ? coercedAwaitableInfo.AwaitableInfo.AwaiterGetResultMethod.ReturnType : null;
 
         // Upstream code may prefer to use the sync-executor even for async methods, because if it knows
         // that the result is a specific Task<T> where T is known, then it can directly cast to that type
@@ -233,7 +233,7 @@ internal sealed class ObjectMethodExecutor
 
         var getResultExpression = Expression.Call(Expression.Convert(getResultParam, awaitableInfo.AwaiterType), awaitableInfo.AwaiterGetResultMethod);
 
-        var getResultFunc = Expression.Lambda<Func<object, object>>(awaitableInfo.ResultType == typeof(void)
+        var getResultFunc = Expression.Lambda<Func<object, object>>(awaitableInfo.AwaiterGetResultMethod.ReturnType == typeof(void)
             ? Expression.Block(getResultExpression, Expression.Constant(null))
             : Expression.Convert(getResultExpression, typeof(object)), getResultParam).Compile();
 

@@ -14,7 +14,6 @@ internal readonly struct AwaitableInfo
     public MethodInfo AwaiterGetResultMethod { get; }
     public MethodInfo AwaiterOnCompletedMethod { get; }
     public MethodInfo? AwaiterUnsafeOnCompletedMethod { get; }
-    public Type ResultType { get; }
     public MethodInfo GetAwaiterMethod { get; }
 
     public AwaitableInfo(
@@ -23,7 +22,6 @@ internal readonly struct AwaitableInfo
         MethodInfo awaiterGetResultMethod,
         MethodInfo awaiterOnCompletedMethod,
         MethodInfo? awaiterUnsafeOnCompletedMethod,
-        Type resultType,
         MethodInfo getAwaiterMethod)
     {
         AwaiterType = awaiterType;
@@ -31,7 +29,6 @@ internal readonly struct AwaitableInfo
         AwaiterGetResultMethod = awaiterGetResultMethod;
         AwaiterOnCompletedMethod = awaiterOnCompletedMethod;
         AwaiterUnsafeOnCompletedMethod = awaiterUnsafeOnCompletedMethod;
-        ResultType = resultType;
         GetAwaiterMethod = getAwaiterMethod;
     }
 
@@ -41,7 +38,6 @@ internal readonly struct AwaitableInfo
 
         // Awaitable must have method matching "object GetAwaiter()"
         var getAwaiterMethod = type.GetMethod(nameof(Task.GetAwaiter), Everything, null, Type.EmptyTypes, null);
-
         if (getAwaiterMethod is null)
         {
             awaitableInfo = default;
@@ -52,7 +48,7 @@ internal readonly struct AwaitableInfo
 
         // Awaiter must have property matching "bool IsCompleted { get; }"
         var isCompletedProperty = awaiterType.GetProperty(nameof(TaskAwaiter.IsCompleted), Everything, null, typeof(bool), Type.EmptyTypes, null);
-        if (isCompletedProperty is null)
+        if (isCompletedProperty?.GetMethod is null)
         {
             awaitableInfo = default;
             return false;
@@ -78,7 +74,6 @@ internal readonly struct AwaitableInfo
 
         // Awaiter must have method matching "void GetResult" or "T GetResult()"
         var getResultMethod = awaiterType.GetMethod(nameof(TaskAwaiter.GetResult), Everything, null, Type.EmptyTypes, null);
-
         if (getResultMethod is null)
         {
             awaitableInfo = default;
@@ -91,7 +86,6 @@ internal readonly struct AwaitableInfo
             getResultMethod,
             onCompletedMethod,
             unsafeOnCompletedMethod,
-            getResultMethod.ReturnType,
             getAwaiterMethod);
         return true;
     }
