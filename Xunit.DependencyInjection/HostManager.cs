@@ -6,7 +6,7 @@ internal sealed class HostManager : IHostedService, IDisposable
     private readonly IList<IHost> _hosts = new List<IHost>();
 
     private Type? _defaultStartupType;
-    private IHost? _host;
+    private IHost? _defaultHost;
     private readonly AssemblyName _assemblyName;
     private readonly IMessageSink _diagnosticMessageSink;
 
@@ -20,25 +20,22 @@ internal sealed class HostManager : IHostedService, IDisposable
     {
         _defaultStartupType = StartupLoader.GetStartupType(_assemblyName);
 
-        _host = StartupLoader.CreateHost(_defaultStartupType, _assemblyName, _diagnosticMessageSink);
+        if (_defaultStartupType != null)
+            _hosts.Add(_defaultHost = StartupLoader.CreateHost(_defaultStartupType, _assemblyName, _diagnosticMessageSink));
 
-        if (_host != null) _hosts.Add(_host);
-
-        return _host;
+        return _defaultHost;
     }
 
-    public IHost? GetHost(Type? type)
+    public IHost GetHost(Type type)
     {
-        if (type == null) return _host;
-
         var startupType = FindStartup(type, out var shared);
-        if (startupType == null) return _host;
+        if (startupType == null) return _defaultHost ?? throw MissingDefaultHost("Default startup is required.");
 
         if (shared)
         {
             if (_hostMap.TryGetValue(startupType, out var startup)) return startup;
 
-            if (startupType == _defaultStartupType) return _hostMap[startupType] = _host!;
+            if (startupType == _defaultStartupType) return _hostMap[startupType] = _defaultHost!;
         }
 
         var host = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
@@ -49,6 +46,9 @@ internal sealed class HostManager : IHostedService, IDisposable
 
         return host;
     }
+
+    public static Exception MissingDefaultHost(string message) =>
+        new InvalidOperationException(message + Environment.NewLine + "https://github.com/pengweiqhca/Xunit.DependencyInjection#4-default-startup");
 
     private static Type? FindStartup(Type testClassType, out bool shared)
     {
@@ -84,7 +84,7 @@ internal sealed class HostManager : IHostedService, IDisposable
             if (startupType != null) return startupType;
 
             var index = ns?.LastIndexOf('.');
-            if (index > 0) ns = ns!.Substring(0, index.Value);
+            if (index > 0) ns = ns![..index.Value];
             else break;
         }
 

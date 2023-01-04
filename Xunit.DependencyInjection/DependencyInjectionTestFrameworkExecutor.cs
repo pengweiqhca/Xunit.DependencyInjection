@@ -18,41 +18,30 @@ public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecut
         ITestFrameworkExecutionOptions executionOptions)
     {
         var exceptions = new List<Exception>();
-        IHost? host = null;
+        var host = GetHost(exceptions, _hostManager.BuildDefaultHost);
 
-        try
+        static IHost? GetHost(ICollection<Exception> exceptions, Func<IHost?> func)
         {
-            host = _hostManager.BuildDefaultHost();
-        }
-        catch (TargetInvocationException tie)
-        {
-            exceptions.Add(tie.InnerException);
-        }
-        catch (Exception ex)
-        {
-            exceptions.Add(ex);
+            try
+            {
+                return func();
+            }
+            catch (TargetInvocationException tie)
+            {
+                exceptions.Add(tie.InnerException);
+            }
+            catch (Exception ex)
+            {
+                exceptions.Add(ex);
+            }
+
+            return null;
         }
 
         // ReSharper disable once PossibleMultipleEnumeration
         var hostMap = testCases
             .GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
-            .ToDictionary(group => group.Key, group =>
-            {
-                try
-                {
-                    return _hostManager.GetHost(group.Key.Class.ToRuntimeType());
-                }
-                catch (TargetInvocationException tie)
-                {
-                    exceptions.Add(tie.InnerException);
-                }
-                catch (Exception ex)
-                {
-                    exceptions.Add(ex);
-                }
-
-                return null;
-            });
+            .ToDictionary(group => group.Key, group => GetHost(exceptions, () => _hostManager.GetHost(group.Key.Class.ToRuntimeType())));
 
         try
         {

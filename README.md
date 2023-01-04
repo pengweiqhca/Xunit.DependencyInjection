@@ -116,14 +116,18 @@ If the class type full name is "A.B.C.TestClass", find Startup in the following 
 3. A.Startup
 4. Startup
 
-### 4. Global startup
+### 4. Default startup
+> Default startup is required before 8.7.0, is optional in some case after 8.7.0.
+>
+> If is required, plaese add a startup class in your test project.
+
 Default is find Your.Test.Project.Startup, Your.Test.Project`.
 
 If you want use a special `Startup`, you can defined `XunitStartupAssembly` and `XunitStartupFullName` in `PropertyGroup` section
 
 ``` xml
 <Project>
-  <PropertyGroup>
+  <PropertyGroup>~~~~
     <XunitStartupAssembly>Abc</XunitStartupAssembly>
     <XunitStartupFullName>Xyz</XunitStartupFullName>
   </PropertyGroup>
@@ -136,6 +140,15 @@ If you want use a special `Startup`, you can defined `XunitStartupAssembly` and 
 | Abc |   | Abc.Startup, Abc |
 |   | Xyz | Xyz, Your.Test.Project |
 | Abc | Xyz | Xyz, Abc |
+
+## How to disable Xunit.DependencyInjection
+``` xml
+<Project>
+    <PropertyGroup>
+        <EnableXunitDependencyInjectionDefaultTestFrameworkAttribute>false</EnableXunitDependencyInjectionDefaultTestFrameworkAttribute>
+    </PropertyGroup>
+</Project>
+```
 
 ## How to inject ITestOutputHelper
 

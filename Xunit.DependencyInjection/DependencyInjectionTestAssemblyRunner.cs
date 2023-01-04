@@ -26,14 +26,9 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
     protected override Task<RunSummary> RunTestCollectionAsync(IMessageBus messageBus,
         ITestCollection testCollection,
         IEnumerable<IXunitTestCase> testCases,
-        CancellationTokenSource cancellationTokenSource)
-    {
-        if (_provider == null)
-            return base.RunTestCollectionAsync(messageBus, testCollection, testCases, cancellationTokenSource);
-
-        return new DependencyInjectionTestCollectionRunner(_provider, testCollection,
+        CancellationTokenSource cancellationTokenSource) =>
+        new DependencyInjectionTestCollectionRunner(_provider, testCollection,
                 testCases, _hostMap, DiagnosticMessageSink, messageBus, TestCaseOrderer,
                 new ExceptionAggregator(Aggregator), cancellationTokenSource)
             .RunAsync();
-    }
 }

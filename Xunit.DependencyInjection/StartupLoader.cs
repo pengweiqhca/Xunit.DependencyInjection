@@ -6,11 +6,8 @@ namespace Xunit.DependencyInjection;
 
 internal static class StartupLoader
 {
-    [return: NotNullIfNotNull("startupType")]
-    public static IHost? CreateHost(Type? startupType, AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
+    public static IHost CreateHost(Type startupType, AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
     {
-        if (startupType == null) return null;
-
         var createHostBuilderMethod = FindMethod(startupType, nameof(CreateHostBuilder), typeof(IHostBuilder));
         var configureHostMethod = FindMethod(startupType, nameof(ConfigureHost));
         var configureServicesMethod = FindMethod(startupType, nameof(ConfigureServices));

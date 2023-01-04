@@ -2,12 +2,12 @@
 
 public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
 {
-    private readonly IServiceProvider _provider;
+    private readonly IServiceProvider? _provider;
     private readonly IReadOnlyDictionary<ITestClass, IHost?> _hostMap;
     private IServiceScope? _serviceScope;
     private readonly IMessageSink _diagnosticMessageSink;
 
-    public DependencyInjectionTestCollectionRunner(IServiceProvider provider,
+    public DependencyInjectionTestCollectionRunner(IServiceProvider? provider,
         ITestCollection testCollection,
         IEnumerable<IXunitTestCase> testCases,
         IReadOnlyDictionary<ITestClass, IHost?> hostMap,
@@ -27,10 +27,20 @@ public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
     /// <inheritdoc />
     protected override void CreateCollectionFixture(Type fixtureType)
     {
-        _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        if (_provider == null)
+        {
+            Aggregator.Add(HostManager.MissingDefaultHost("Collection fixture  require a default startup."));
 
-        Aggregator.Run(() => CollectionFixtureMappings[fixtureType] =
-            ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, fixtureType));
+            base.CreateCollectionFixture(fixtureType);
+        }
+        else
+        {
+            _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+
+            Aggregator.Run(() => CollectionFixtureMappings[fixtureType] =
+                ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, fixtureType));
+        }
+
     }
 
     /// <inheritdoc/>
