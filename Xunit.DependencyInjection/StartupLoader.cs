@@ -57,7 +57,7 @@ internal static class StartupLoader
 
         if (attr.AssemblyName != null) assembly = Assembly.Load(attr.AssemblyName);
 
-        return assembly.GetType(attr.TypeName) ?? throw new InvalidOperationException($"Can't load type {attr.TypeName} in '{assembly.FullName}'");
+        return assembly.GetType(attr.TypeName);
     }
 
     public static object? CreateStartup(Type startupType)
