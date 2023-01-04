@@ -2,6 +2,8 @@
 
 public class TheoryTest
 {
+    public TheoryTest(IDependency _) { }
+
     [Theory]
     [MemberData(nameof(GetComplexData))]
     public void ComplexParameterizedTest(string arg1, Dictionary<string, string> arg2, Dictionary<string, string> arg3, int delay)

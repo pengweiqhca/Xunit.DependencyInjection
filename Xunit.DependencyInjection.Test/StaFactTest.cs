@@ -5,7 +5,7 @@ public class StaFactTest : IDisposable, IAsyncLifetime
     private readonly SynchronizationContext? _ctorSyncContext;
     private readonly int _ctorThreadId;
 
-    public StaFactTest()
+    public StaFactTest(IDependency _)
     {
         _ctorSyncContext = SynchronizationContext.Current;
 

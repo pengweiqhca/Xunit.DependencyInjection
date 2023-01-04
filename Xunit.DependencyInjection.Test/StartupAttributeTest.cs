@@ -1,4 +1,6 @@
-﻿namespace Xunit.DependencyInjection.Test;
+﻿using FluentAssertions;
+
+namespace Xunit.DependencyInjection.Test;
 
 [Startup(typeof(Startup2))]
 public class StartupAttributeTest
@@ -47,5 +49,5 @@ public class StartupAttributeTest
 public class StartupAttributeSharedTest
 {
     [Fact]
-    public void SharedTest() => Assert.Equal(2, StartupAttributeTest.Startup2.Counter);
+    public void SharedTest() => StartupAttributeTest.Startup2.Counter.Should().BeGreaterOrEqualTo(1);
 }

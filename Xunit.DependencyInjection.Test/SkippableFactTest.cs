@@ -6,6 +6,8 @@ namespace Xunit.DependencyInjection.Test;
 
 public class SkippableFactTest
 {
+    public SkippableFactTest(IDependency _) { }
+
     [SkippableFact]
     public TestAwaitable SkipTest() => new();
 
