@@ -23,9 +23,6 @@ public class Startup
 
     private class AspNetCoreStartup
     {
-        public void ConfigureServices(IServiceCollection services) =>
-            services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug));
-
         public void Configure(IApplicationBuilder app)
         {
 #if NETCOREAPP3_1
