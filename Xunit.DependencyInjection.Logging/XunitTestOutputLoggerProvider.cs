@@ -25,4 +25,7 @@ public class XunitTestOutputLoggerProvider : ILoggerProvider
 
     public static void Register(IServiceProvider provider) =>
         provider.GetRequiredService<ILoggerFactory>().AddProvider(ActivatorUtilities.CreateInstance<XunitTestOutputLoggerProvider>(provider));
+
+    public static void Register(IServiceProvider provider, LogLevel minimumLevel) =>
+        provider.GetRequiredService<ILoggerFactory>().AddProvider(new XunitTestOutputLoggerProvider(provider.GetRequiredService<ITestOutputHelperAccessor>(), (_, level) => level >= minimumLevel && level < LogLevel.None));
 }
