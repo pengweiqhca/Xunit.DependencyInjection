@@ -61,9 +61,12 @@ public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) =>
         hostBuilder.ConfigureWebHost[Defaults](webHostBuilder => webHostBuilder
-            .UseTestServer().UseStartup<AspNetCoreStartup>());
+            .UseTestServer(options => options.PreserveExecutionContext = true)
+            .UseStartup<AspNetCoreStartup>());
 }
 ```
+
+> Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/Xunit.DependencyInjection.Test.AspNetCore)
 
 ## `Startup` limitation
 
