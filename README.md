@@ -168,6 +168,7 @@ internal class DependencyClass : IDependency
 ```
 
 ## Write Microsoft.Extensions.Logging to ITestOutputHelper
+> The call clain must from test case. If not, this feature not work.
 
 ``` C#
 public class Startup
