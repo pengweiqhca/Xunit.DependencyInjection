@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection", "Xunit.DependencyInjection\Xunit.DependencyInjection.csproj", "{3D2ED524-0543-4349-B171-70EC032F82D6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection", "src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj", "{3D2ED524-0543-4349-B171-70EC032F82D6}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Test", "Xunit.DependencyInjection.Test\Xunit.DependencyInjection.Test.csproj", "{95A96D26-648F-4E83-B344-85C2E3BA1C0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Test", "test\Xunit.DependencyInjection.Test\Xunit.DependencyInjection.Test.csproj", "{95A96D26-648F-4E83-B344-85C2E3BA1C0D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D15D255-B53C-4579-8F15-2CFDBEAD101A}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,29 +19,38 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Logging", "Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj", "{3F8D11EF-25C5-4416-9BB5-49A3AB5A188D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Logging", "src\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj", "{3F8D11EF-25C5-4416-9BB5-49A3AB5A188D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Demystifier", "Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj", "{17899397-D576-4DC1-A833-7E289A893A8B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Demystifier", "src\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj", "{17899397-D576-4DC1-A833-7E289A893A8B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.FakeTest", "Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj", "{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.FakeTest", "test\Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj", "{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Test.AspNetCore", "Xunit.DependencyInjection.Test.AspNetCore\Xunit.DependencyInjection.Test.AspNetCore.csproj", "{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Test.AspNetCore", "test\Xunit.DependencyInjection.Test.AspNetCore\Xunit.DependencyInjection.Test.AspNetCore.csproj", "{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer", "Xunit.DependencyInjection.Analyzer\Xunit.DependencyInjection.Analyzer.csproj", "{7896DD7C-CFB1-430A-8664-C8ECCD1CED16}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer", "src\Xunit.DependencyInjection.Analyzer\Xunit.DependencyInjection.Analyzer.csproj", "{7896DD7C-CFB1-430A-8664-C8ECCD1CED16}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer.Test", "Xunit.DependencyInjection.Analyzer.Test\Xunit.DependencyInjection.Analyzer.Test.csproj", "{EE91A816-AE5C-42D6-9E0F-5E02E6C68250}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer.Test", "test\Xunit.DependencyInjection.Analyzer.Test\Xunit.DependencyInjection.Analyzer.Test.csproj", "{EE91A816-AE5C-42D6-9E0F-5E02E6C68250}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer.Vsix", "Xunit.DependencyInjection.Analyzer.Vsix\Xunit.DependencyInjection.Analyzer.Vsix.csproj", "{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Analyzer.Vsix", "src\Xunit.DependencyInjection.Analyzer.Vsix\Xunit.DependencyInjection.Analyzer.Vsix.csproj", "{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.SkippableFact", "Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj", "{C92E88E0-9CED-4DE1-AF5F-69990D3B8872}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.SkippableFact", "src\Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj", "{C92E88E0-9CED-4DE1-AF5F-69990D3B8872}"
 EndProject
-Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "XUnit.DependencyInjection.Test.FSharp", "XUnit.DependencyInjection.Test.FSharp\XUnit.DependencyInjection.Test.FSharp.fsproj", "{AC55DBE8-0F24-486D-89E6-E8B39F4ED110}"
+Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Xunit.DependencyInjection.Test.FSharp", "test\Xunit.DependencyInjection.Test.FSharp\Xunit.DependencyInjection.Test.FSharp.fsproj", "{AC55DBE8-0F24-486D-89E6-E8B39F4ED110}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Template", "Xunit.DependencyInjection.Template\Xunit.DependencyInjection.Template.csproj", "{3CD9DE7F-E242-4A2A-A292-23B4E0918A41}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Template", "src\Xunit.DependencyInjection.Template\Xunit.DependencyInjection.Template.csproj", "{3CD9DE7F-E242-4A2A-A292-23B4E0918A41}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.StaFact", "Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj", "{1AD2C55A-6F20-4B05-BCF1-FD48A3DB1D56}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.StaFact", "src\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj", "{1AD2C55A-6F20-4B05-BCF1-FD48A3DB1D56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.xRetry", "Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj", "{47F04277-15B1-4449-93E2-A868953126A1}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.xRetry", "src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj", "{47F04277-15B1-4449-93E2-A868953126A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C0D7390E-7F27-41C5-8204-6F2C71E62D9C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}"
+	ProjectSection(SolutionItems) = preProject
+		src\Directory.Build.props = src\Directory.Build.props
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{25119119-1FAE-46DF-9722-9E1AA38586D7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,5 +120,22 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {63FC91EA-4C82-472D-AD93-5A073622A8AD}
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C0D7390E-7F27-41C5-8204-6F2C71E62D9C} = {1D15D255-B53C-4579-8F15-2CFDBEAD101A}
+		{3D2ED524-0543-4349-B171-70EC032F82D6} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{7896DD7C-CFB1-430A-8664-C8ECCD1CED16} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{17899397-D576-4DC1-A833-7E289A893A8B} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{6E4A4C3E-C6EA-40F5-8D68-8AD688A6EAE7} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{3F8D11EF-25C5-4416-9BB5-49A3AB5A188D} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{C92E88E0-9CED-4DE1-AF5F-69990D3B8872} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{1AD2C55A-6F20-4B05-BCF1-FD48A3DB1D56} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{3CD9DE7F-E242-4A2A-A292-23B4E0918A41} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{47F04277-15B1-4449-93E2-A868953126A1} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{EE91A816-AE5C-42D6-9E0F-5E02E6C68250} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{95A96D26-648F-4E83-B344-85C2E3BA1C0D} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{AC55DBE8-0F24-486D-89E6-E8B39F4ED110} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 	EndGlobalSection
 EndGlobal

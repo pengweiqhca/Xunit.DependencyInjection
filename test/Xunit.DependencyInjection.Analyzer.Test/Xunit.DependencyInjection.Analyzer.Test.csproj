@@ -8,7 +8,7 @@
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
   </PropertyGroup>
 
-  <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
+  <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
     <Compile Remove="Startup\**" />
@@ -28,8 +28,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
-    <ProjectReference Include="..\Xunit.DependencyInjection.Analyzer\Xunit.DependencyInjection.Analyzer.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Analyzer\Xunit.DependencyInjection.Analyzer.csproj" />
   </ItemGroup>
 
 </Project>

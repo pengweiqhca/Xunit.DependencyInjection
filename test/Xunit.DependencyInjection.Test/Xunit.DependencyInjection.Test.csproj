@@ -8,7 +8,7 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
+  <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
     <Using Include="Microsoft.Extensions.Configuration" />
@@ -28,12 +28,12 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
     <PackageReference Include="xunit" Version="2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
-    <ProjectReference Include="..\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj" />
     <ProjectReference Include="..\Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj" />
-    <ProjectReference Include="..\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
-    <ProjectReference Include="..\Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj" />
-    <ProjectReference Include="..\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj" />
-    <ProjectReference Include="..\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj" />
   </ItemGroup>
 
 </Project>

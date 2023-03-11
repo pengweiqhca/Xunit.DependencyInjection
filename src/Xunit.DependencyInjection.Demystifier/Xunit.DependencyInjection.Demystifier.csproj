@@ -1,24 +1,20 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <AnalysisLevel>latest-Recommended</AnalysisLevel>
-    <EnableNETAnalyzers>True</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
-
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
-    <Description>Support Xunit.SkippableFact.
+    <Description>Use Ben.Demystifier Formate Exception.
 
 public void ConfigureServices(IServiceCollection services)
 {
-    services.AddSkippableFactSupport();
+    services.UseDemystifyExceptionFilter();
 }</Description>
-    <PackageTags>xunit ioc di DependencyInjection test skipping</PackageTags>
+    <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
     <Version>8.0.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
+    <PackageReference Include="Ben.Demystifier" Version="0.*" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>

@@ -11,7 +11,7 @@
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
-  <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
+  <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
     <Compile Include="AssemblyNamespaceTest.fs" />
@@ -27,7 +27,7 @@
     <PackageReference Include="xunit" Version="2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
 
-    <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

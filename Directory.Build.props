@@ -1,7 +1,8 @@
 ﻿<Project>
 
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>..\Key.snk</AssemblyOriginatorKeyFile>
+    <SolutionDir Condition="'$(SolutionDir)' == ''">$([MSBuild]::GetDirectoryNameOfFileAbove('$(MSBuildThisFileDirectory)', '.gitignore'))</SolutionDir>
+    <AssemblyOriginatorKeyFile>$(SolutionDir)\Key.snk</AssemblyOriginatorKeyFile>
     <AssemblyTitle>$(MSBuildProjectName) ($(TargetFramework))</AssemblyTitle>
     <Authors>Wei Peng</Authors>
     <Copyright>Copyright © 2019</Copyright>

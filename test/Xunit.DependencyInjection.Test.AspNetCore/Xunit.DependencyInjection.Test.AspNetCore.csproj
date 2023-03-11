@@ -7,16 +7,16 @@
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <Import Project="..\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
+  <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="6.*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
     <PackageReference Include="xunit" Version="2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
-    <ProjectReference Include="..\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
 
-    <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>
