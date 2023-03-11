@@ -3,10 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31612.314
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection", "src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj", "{3D2ED524-0543-4349-B171-70EC032F82D6}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Test", "test\Xunit.DependencyInjection.Test\Xunit.DependencyInjection.Test.csproj", "{95A96D26-648F-4E83-B344-85C2E3BA1C0D}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D15D255-B53C-4579-8F15-2CFDBEAD101A}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
@@ -18,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection", "src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj", "{3D2ED524-0543-4349-B171-70EC032F82D6}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Test", "test\Xunit.DependencyInjection.Test\Xunit.DependencyInjection.Test.csproj", "{95A96D26-648F-4E83-B344-85C2E3BA1C0D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Logging", "src\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj", "{3F8D11EF-25C5-4416-9BB5-49A3AB5A188D}"
 EndProject
@@ -42,8 +42,6 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.StaFact", "src\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj", "{1AD2C55A-6F20-4B05-BCF1-FD48A3DB1D56}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.xRetry", "src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj", "{47F04277-15B1-4449-93E2-A868953126A1}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{C0D7390E-7F27-41C5-8204-6F2C71E62D9C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}"
 	ProjectSection(SolutionItems) = preProject
@@ -122,7 +120,6 @@ Global
 		SolutionGuid = {63FC91EA-4C82-472D-AD93-5A073622A8AD}
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{C0D7390E-7F27-41C5-8204-6F2C71E62D9C} = {1D15D255-B53C-4579-8F15-2CFDBEAD101A}
 		{3D2ED524-0543-4349-B171-70EC032F82D6} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
 		{7896DD7C-CFB1-430A-8664-C8ECCD1CED16} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
 		{17899397-D576-4DC1-A833-7E289A893A8B} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
