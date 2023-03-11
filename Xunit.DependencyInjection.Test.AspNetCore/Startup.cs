@@ -14,20 +14,13 @@ public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) =>
         hostBuilder.ConfigureWebHost(webHostBuilder => webHostBuilder
-#if NET
             .UseTestServer(options => options.PreserveExecutionContext = true)
-#else
-            .UseTestServer()
-#endif
             .UseStartup<AspNetCoreStartup>());
 
     private class AspNetCoreStartup
     {
         public void Configure(IApplicationBuilder app)
         {
-#if NETCOREAPP3_1
-            ((TestServer)app.ApplicationServices.GetRequiredService<IServer>()).PreserveExecutionContext = true;
-#endif
             XunitTestOutputLoggerProvider.Register(app.ApplicationServices);
 
             app.Run(static context => context.Response.WriteAsync(TestServerTest.Key));
