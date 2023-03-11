@@ -6,7 +6,9 @@
     <!--https://docs.microsoft.com/zh-cn/dotnet/fundamentals/code-analysis/overview -->
     <AnalysisLevel>latest-Recommended</AnalysisLevel>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
-    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+
+
+    <PackageProjectUrl>$(RepositoryUrl)/src/$(MSBuildProjectName)</PackageProjectUrl>
   </PropertyGroup>
 
 </Project>
