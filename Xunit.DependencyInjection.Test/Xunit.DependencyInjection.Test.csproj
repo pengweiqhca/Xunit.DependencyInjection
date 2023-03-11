@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <RollForward>Major</RollForward>
-    <TargetFrameworks>netcoreapp3.1;net6.0</TargetFrameworks>
+    <TargetFrameworks>net6.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
