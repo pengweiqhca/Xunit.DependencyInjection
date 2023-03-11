@@ -15,7 +15,7 @@ public class XunitTestOutputLogger : ILogger
     static XunitTestOutputLogger()
     {
         var logLevelString = GetLogLevelString(LogLevel.Information);
-        MessagePadding = new string(' ', logLevelString.Length + LogLevelPadding.Length);
+        MessagePadding = new(' ', logLevelString.Length + LogLevelPadding.Length);
         NewLineWithMessagePadding = Environment.NewLine + MessagePadding;
     }
 
@@ -51,13 +51,13 @@ public class XunitTestOutputLogger : ILogger
         var logBuilder = _logBuilder;
         _logBuilder = null;
 
-        logBuilder ??= new StringBuilder();
+        logBuilder ??= new();
 
         var logLevelString = GetLogLevelString(logLevel);
         // category and event id
         logBuilder.Append(LogLevelPadding);
         logBuilder.Append(logName);
-        logBuilder.Append("[");
+        logBuilder.Append('[');
         logBuilder.Append(eventId);
         logBuilder.AppendLine("]");
 
@@ -105,7 +105,7 @@ public class XunitTestOutputLogger : ILogger
         _ => throw new ArgumentOutOfRangeException(nameof(logLevel))
     };
 
-    private class NullScope : IDisposable
+    private sealed class NullScope : IDisposable
     {
         public static NullScope Instance { get; } = new();
 

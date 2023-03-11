@@ -19,7 +19,7 @@ public class XunitTestOutputLoggerProvider : ILoggerProvider
         _filter = filter ?? throw new ArgumentNullException(nameof(filter));
     }
 
-    public void Dispose() { }
+    public void Dispose() => GC.SuppressFinalize(this);
 
     public ILogger CreateLogger(string categoryName) => _loggers.GetOrAdd(categoryName, name => new XunitTestOutputLogger(_accessor, name, _filter));
 

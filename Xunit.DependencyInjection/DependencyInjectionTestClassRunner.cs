@@ -168,7 +168,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod,
         IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object[] constructorArguments) =>
         new DependencyInjectionTestMethodRunner(_provider, testMethod, Class, method,
-                testCases, DiagnosticMessageSink, MessageBus, new ExceptionAggregator(Aggregator),
+                testCases, DiagnosticMessageSink, MessageBus, new(Aggregator),
                 CancellationTokenSource, constructorArguments)
             .RunAsync();
 }

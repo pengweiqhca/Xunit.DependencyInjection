@@ -24,7 +24,7 @@ public sealed class MethodDataAttribute : DataAttribute
     public Type? ClassType { get; }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:Xunit.MethodDataAttribute" /> class.
+    /// Initializes a new instance of the <see cref="MethodDataAttribute" /> class.
     /// </summary>
     /// <param name="methodName">The name of the public method on the test class that will provide the test data</param>
     /// <param name="parameters">The parameters for the method</param>
@@ -36,7 +36,7 @@ public sealed class MethodDataAttribute : DataAttribute
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="T:Xunit.MethodDataAttribute" /> class.
+    /// Initializes a new instance of the <see cref="MethodDataAttribute" /> class.
     /// </summary>
     /// <param name="methodName">The name of the public method on the test class that will provide the test data</param>
     /// <param name="classType">The class that provides the data.</param>

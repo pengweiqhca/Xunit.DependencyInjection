@@ -21,7 +21,7 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(SymbolAnalyzer.RegisterCompilationStartAction);
     }
 
-    private class SymbolAnalyzer
+    private sealed class SymbolAnalyzer
     {
         private readonly INamedTypeSymbol _hostBuilder;
         private readonly INamedTypeSymbol _assemblyName;

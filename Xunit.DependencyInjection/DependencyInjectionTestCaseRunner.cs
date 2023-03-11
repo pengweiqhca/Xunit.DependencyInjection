@@ -15,6 +15,6 @@ public class DependencyInjectionTestCaseRunner : XunitTestCaseRunner
         new DependencyInjectionTestRunner(_provider, new XunitTest(TestCase, DisplayName), MessageBus,
                 FromServicesAttribute.CreateFromServices(TestMethod),
                 TestClass, ConstructorArguments, TestMethod, TestMethodArguments, SkipReason,
-                BeforeAfterAttributes, new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                BeforeAfterAttributes, new(Aggregator), CancellationTokenSource)
             .RunAsync();
 }

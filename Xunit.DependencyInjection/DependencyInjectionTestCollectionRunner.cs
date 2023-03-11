@@ -60,7 +60,7 @@ public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
         _hostMap.TryGetValue(testClass, out var host) && host != null
             ? new DependencyInjectionTestClassRunner(host.Services, testClass, @class, testCases,
                     _diagnosticMessageSink, MessageBus, TestCaseOrderer,
-                    new ExceptionAggregator(Aggregator), CancellationTokenSource, CollectionFixtureMappings)
+                    new(Aggregator), CancellationTokenSource, CollectionFixtureMappings)
                 .RunAsync()
             : base.RunTestClassAsync(testClass, @class, testCases);
 }

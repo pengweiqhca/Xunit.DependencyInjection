@@ -55,7 +55,7 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
     {
         if (testCase is ExecutionErrorTestCase)
             return await testCase.RunAsync(_diagnosticMessageSink, MessageBus, _constructorArguments,
-                    new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                    new(Aggregator), CancellationTokenSource)
                 .ConfigureAwait(false);
 
         var wrappers = _provider.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
@@ -66,7 +66,7 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
             var adapter = wrappers.FirstOrDefault(w => w.TestCaseType == type);
             if (adapter != null)
                 return await adapter.RunAsync(testCase, _provider, _diagnosticMessageSink, MessageBus,
-                        _constructorArguments, new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                        _constructorArguments, new(Aggregator), CancellationTokenSource)
                     .ConfigureAwait(false);
         } while ((type = type.BaseType) != null);
 
@@ -75,7 +75,7 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
         await using (scope.AsAsyncDisposable().ConfigureAwait(false))
             return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
                     CreateTestClassConstructorArguments(scope.ServiceProvider, _constructorArguments, Aggregator),
-                    new ExceptionAggregator(Aggregator), CancellationTokenSource)
+                    new(Aggregator), CancellationTokenSource)
                 .ConfigureAwait(false);
     }
 }

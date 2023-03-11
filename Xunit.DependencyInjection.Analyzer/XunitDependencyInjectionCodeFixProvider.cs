@@ -62,7 +62,7 @@ public class XunitDependencyInjectionCodeFixProvider : CodeFixProvider
     private static async Task<Document> ChangeReturnType(Document document, MethodDeclarationSyntax node, TypeSyntax returnType, CancellationToken cancellationToken)
     {
         var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)
-                   ?? throw new NullReferenceException();
+                   ?? throw new InvalidOperationException();
 
         return document.WithSyntaxRoot(root.ReplaceNode(node, node.WithReturnType(returnType)));
     }

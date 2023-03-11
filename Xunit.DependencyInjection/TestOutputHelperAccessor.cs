@@ -13,5 +13,10 @@ public class TestOutputHelperAccessor : ContextValue<ITestOutputHelper>, ITestOu
         set => Value = value;
     }
 
-    public void Dispose() => Value = null;
+    public void Dispose()
+    {
+        Value = null;
+
+        GC.SuppressFinalize(this);
+    }
 }

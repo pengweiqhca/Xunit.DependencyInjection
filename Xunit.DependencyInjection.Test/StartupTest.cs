@@ -18,7 +18,7 @@ public class StartupTest
     {
         Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(Name));
 
-        Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(new AssemblyName("Xunit.DependencyInjection.FakeTest")));
+        Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(new("Xunit.DependencyInjection.FakeTest")));
     }
 
     #region CreateStartupTest
@@ -83,7 +83,7 @@ public class StartupTest
 
         Assert.Null(CreateHostBuilder(Name, new EmptyStartup()));
 
-        Assert.Throws<InvalidOperationException>(() => CreateHostBuilder(new AssemblyName(), new CreateHostBuilderTestStartup0()));
+        Assert.Throws<InvalidOperationException>(() => CreateHostBuilder(new(), new CreateHostBuilderTestStartup0()));
 
         Assert.Throws<InvalidOperationException>(() => CreateHostBuilder(Name, new CreateHostBuilderTestStartup0()));
 

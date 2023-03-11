@@ -12,6 +12,7 @@
     <IncludeSymbols>True</IncludeSymbols>
     <LangVersion>10.0</LangVersion>
     <NoWarn>1591</NoWarn>
+    <NeutralLanguage>en-us</NeutralLanguage>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
     <RepositoryUrl>https://github.com/pengweiqhca/Xunit.DependencyInjection</RepositoryUrl>

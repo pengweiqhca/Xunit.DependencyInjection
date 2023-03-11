@@ -1,6 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <AnalysisLevel>latest-Recommended</AnalysisLevel>
+    <EnableNETAnalyzers>True</EnableNETAnalyzers>
+    <EnforceCodeStyleInBuild>True</EnforceCodeStyleInBuild>
+
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
     <Description>Support Microsoft.Extensions.Logging to ITestOutputHelper.
 

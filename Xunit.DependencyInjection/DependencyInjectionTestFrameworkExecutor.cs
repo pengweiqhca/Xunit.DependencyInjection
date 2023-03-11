@@ -9,7 +9,7 @@ public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecut
         ISourceInformationProvider sourceInformationProvider,
         IMessageSink diagnosticMessageSink)
         : base(assemblyName, sourceInformationProvider, diagnosticMessageSink) =>
-        DisposalTracker.Add(_hostManager = new HostManager(assemblyName, diagnosticMessageSink));
+        DisposalTracker.Add(_hostManager = new(assemblyName, diagnosticMessageSink));
 
     /// <inheritdoc />
     protected override async void RunTestCases(

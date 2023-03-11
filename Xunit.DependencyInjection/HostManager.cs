@@ -21,7 +21,8 @@ internal sealed class HostManager : IHostedService, IDisposable
         _defaultStartupType = StartupLoader.GetStartupType(_assemblyName);
 
         if (_defaultStartupType != null)
-            _hosts.Add(_defaultHost = StartupLoader.CreateHost(_defaultStartupType, _assemblyName, _diagnosticMessageSink));
+            _hosts.Add(_defaultHost =
+                StartupLoader.CreateHost(_defaultStartupType, _assemblyName, _diagnosticMessageSink));
 
         return _defaultHost;
     }
@@ -48,7 +49,8 @@ internal sealed class HostManager : IHostedService, IDisposable
     }
 
     public static Exception MissingDefaultHost(string message) =>
-        new InvalidOperationException(message + Environment.NewLine + "https://github.com/pengweiqhca/Xunit.DependencyInjection#4-default-startup");
+        new InvalidOperationException(message + Environment.NewLine +
+            "https://github.com/pengweiqhca/Xunit.DependencyInjection#4-default-startup");
 
     private static Type? FindStartup(Type testClassType, out bool shared)
     {
@@ -108,6 +110,11 @@ internal sealed class HostManager : IHostedService, IDisposable
     public void Dispose()
     {
         for (var index = _hosts.Count - 1; index >= 0; index--)
-            _hosts[index].DisposeAsync().GetAwaiter().GetResult();
+        {
+            var task = _hosts[index].DisposeAsync();
+
+            if (!task.IsCompletedSuccessfully)
+                task.AsTask().GetAwaiter().GetResult();
+        }
     }
 }
