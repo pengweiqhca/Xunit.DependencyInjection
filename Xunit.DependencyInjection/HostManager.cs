@@ -83,8 +83,8 @@ internal sealed class HostManager : IHostedService, IDisposable
             var startupType = testClassType.Assembly.GetType(startupTypeString);
             if (startupType != null) return startupType;
 
-            var index = ns?.LastIndexOf('.');
-            if (index > 0) ns = ns![..index.Value];
+            var index = ns!.LastIndexOf('.');
+            if (index > 0) ns = ns.Substring(0, index);
             else break;
         }
 
