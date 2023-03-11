@@ -40,7 +40,7 @@ internal sealed class HostManager : IHostedService, IDisposable
 
         var host = StartupLoader.CreateHost(startupType, _assemblyName, _diagnosticMessageSink);
 
-        if (!shared) _hostMap[startupType] = host;
+        if (shared) _hostMap[startupType] = host;
 
         _hosts.Add(host);
 
