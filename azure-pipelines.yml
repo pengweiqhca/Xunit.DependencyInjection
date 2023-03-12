@@ -53,5 +53,4 @@ jobs:
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
     script: |
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test
