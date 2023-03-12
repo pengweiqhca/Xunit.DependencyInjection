@@ -64,7 +64,10 @@ build_script:
 
 # to run your custom scripts instead of automatic tests
 test_script:
-  - dotnet test -c Release -f net6.0
+  - dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+  - dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+  - dotnet test -c Release ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
+  - dotnet test -c Release ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.csproj
 
 # to disable automatic tests
 #test: off

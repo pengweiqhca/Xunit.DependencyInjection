@@ -9,7 +9,6 @@ trigger:
 variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  buildConfiguration: 'Release'
 
 jobs:
 - job: Linux_Build_and_Test
@@ -22,8 +21,11 @@ jobs:
       version: 6.x
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
-  - script: dotnet test -c $(buildConfiguration) -f net6.0
-    displayName: 'dotnet test'
+  - displayName: 'dotnet test'
+    script: |
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.csproj
 
 - job: MacOS_Build_and_Test
   pool:
@@ -35,8 +37,11 @@ jobs:
       version: 6.x
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
-  - script: dotnet test -c $(buildConfiguration) -f net6.0
-    displayName: 'dotnet test'
+  - displayName: 'dotnet test'
+    script: |
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.csproj
 
 - job: Windows_Build_and_Test
   pool:
@@ -48,5 +53,9 @@ jobs:
       version: 6.x
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
-  - script: dotnet test -c $(buildConfiguration) -f net6.0
-    displayName: 'dotnet test'
+  - displayName: 'dotnet test'
+    script: |
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.csproj
