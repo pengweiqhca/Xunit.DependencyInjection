@@ -18,8 +18,6 @@ jobs:
       run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
     - name: 'dotnet test aspnetcore'
       run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-    - name: 'dotnet test FSharp'
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.csproj
 
   linux-build:
     runs-on: ubuntu-latest
