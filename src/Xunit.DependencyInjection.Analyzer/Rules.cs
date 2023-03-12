@@ -54,7 +54,7 @@ public static class Rules
         "Startup method parameter", DiagnosticSeverity.Error, true,
         CreateLocalizableString(nameof(AnalyzerResources.ConfigureServicesDescription)));
 
-    private static LocalizableString CreateLocalizableString(string key) => new LocalizableResourceString(key, AnalyzerResources.ResourceManager, typeof(AnalyzerResources));
+    private static Microsoft.CodeAnalysis.LocalizableResourceString CreateLocalizableString(string key) => new LocalizableResourceString(key, AnalyzerResources.ResourceManager, typeof(AnalyzerResources));
 
     public static ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics { get; } = ImmutableArray.CreateRange(typeof(Rules)
         .GetProperties(BindingFlags.Public | BindingFlags.Static)

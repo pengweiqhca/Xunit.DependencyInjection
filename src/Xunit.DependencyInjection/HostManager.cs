@@ -2,8 +2,8 @@
 
 internal sealed class HostManager : IHostedService, IDisposable
 {
-    private readonly IDictionary<Type, IHost> _hostMap = new Dictionary<Type, IHost>();
-    private readonly IList<IHost> _hosts = new List<IHost>();
+    private readonly Dictionary<Type, IHost> _hostMap = new Dictionary<Type, IHost>();
+    private readonly List<IHost> _hosts = new List<IHost>();
 
     private Type? _defaultStartupType;
     private IHost? _defaultHost;

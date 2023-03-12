@@ -103,7 +103,7 @@ public sealed class MethodDataAttribute : DataAttribute
         return !parameters.Where((t, idx) => parameterTypes[idx] != null && !t.ParameterType.IsAssignableFrom(parameterTypes[idx])).Any();
     }
 
-    private object?[] GetParameters(IServiceProvider serviceProvider, MethodBase method)
+    private object?[] GetParameters(IServiceProvider serviceProvider, MethodInfo method)
     {
         var mp = method.GetParameters();
 
