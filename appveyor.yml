@@ -66,8 +66,8 @@ build_script:
 test_script:
   - dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
   - dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-  - dotnet test -c Release ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
   - dotnet test -c Release ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.csproj
+  - dotnet test -c Release ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj -p:ParallelizeTestCollections=false
 
 # to disable automatic tests
 #test: off

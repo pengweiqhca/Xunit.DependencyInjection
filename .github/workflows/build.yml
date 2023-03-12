@@ -18,8 +18,6 @@ jobs:
       run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
     - name: 'dotnet test aspnetcore'
       run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-    - name: 'dotnet test Analyzer'
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
     - name: 'dotnet test FSharp'
       run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.csproj
 
@@ -37,10 +35,6 @@ jobs:
       run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
     - name: 'dotnet test aspnetcore'
       run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-    - name: 'dotnet test Analyzer'
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
-    - name: 'dotnet test FSharp'
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.csproj
 
   windows-build:
     runs-on: windows-latest
@@ -53,10 +47,4 @@ jobs:
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-    - name: 'dotnet test aspnetcore'
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-    - name: 'dotnet test Analyzer'
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
-    - name: 'dotnet test FSharp'
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.csproj
+      run: dotnet test -c Release -p:ParallelizeTestCollections=false
