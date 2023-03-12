@@ -64,7 +64,7 @@ build_script:
 
 # to run your custom scripts instead of automatic tests
 test_script:
-  - dotnet test -c Release
+  - dotnet test -c Release -f net6.0
 
 # to disable automatic tests
 #test: off
