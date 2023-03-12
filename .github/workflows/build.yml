@@ -44,4 +44,8 @@ jobs:
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
-      run: dotnet test
+      run: |
+        dotnet test ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+        dotnet test ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+        dotnet test ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
+        dotnet test ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
