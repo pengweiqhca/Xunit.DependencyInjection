@@ -6,59 +6,46 @@ jobs:
   mac-build:
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core 3.1 SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.1.x'
+    - uses: actions/checkout@v3
     - name: Setup .NET 6 SDK
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.0.x'
-        include-prerelease: true
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
-      run: dotnet test -c Release Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
     - name: 'dotnet test aspnetcore'
-      run: dotnet test -c Release Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-  
+      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+
   linux-build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core 3.1 SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.1.x'
+    - uses: actions/checkout@v3
     - name: Setup .NET 6 SDK
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.0.x'
-        include-prerelease: true
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
-      run: dotnet test -c Release Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
     - name: 'dotnet test aspnetcore'
-      run: dotnet test -c Release Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-  
+      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+
   windows-build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v1
-    - name: Setup .NET Core 3.1 SDK
-      uses: actions/setup-dotnet@v1
-      with:
-        dotnet-version: '3.1.x'
+    - uses: actions/checkout@v3
     - name: Setup .NET 6 SDK
-      uses: actions/setup-dotnet@v1
+      uses: actions/setup-dotnet@v3
       with:
         dotnet-version: '6.0.x'
-        include-prerelease: true
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
-      run: dotnet test -c Release Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-    - name: 'dotnet test aspnetcore'
-      run: dotnet test -c Release Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      run: |
+        dotnet test ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+        dotnet test ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+        dotnet test ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
+        dotnet test ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj

@@ -9,7 +9,6 @@ trigger:
 variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
-  buildConfiguration: 'Release'
 
 jobs:
 - job: Linux_Build_and_Test
@@ -22,8 +21,10 @@ jobs:
       version: 6.x
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
-  - script: dotnet test -c
-    displayName: 'dotnet test'
+  - displayName: 'dotnet test'
+    script: |
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
 
 - job: MacOS_Build_and_Test
   pool:
@@ -35,8 +36,10 @@ jobs:
       version: 6.x
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
-  - script: dotnet test -c
-    displayName: 'dotnet test'
+  - displayName: 'dotnet test'
+    script: |
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
 
 - job: Windows_Build_and_Test
   pool:
@@ -48,5 +51,6 @@ jobs:
       version: 6.x
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
-  - script: dotnet test -c $(buildConfiguration)
-    displayName: 'dotnet test'
+  - displayName: 'dotnet test'
+    script: |
+      dotnet test
