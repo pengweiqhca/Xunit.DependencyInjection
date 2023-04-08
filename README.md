@@ -168,13 +168,14 @@ internal class DependencyClass : IDependency
 ```
 
 ## Write Microsoft.Extensions.Logging to ITestOutputHelper
-> The call chain must from test case. If not, this feature not work.
+> The call chain must from test case. If not, this feature will not work.
 
 ``` C#
 public class Startup
 {
     public void Configure(ILoggerFactory loggerFactory, ITestOutputHelperAccessor accessor) =>
-        loggerFactory.AddProvider(new XunitTestOutputLoggerProvider(accessor));
+        loggerFactory.AddProvider(new XunitTestOutputLoggerProvider(accessor,
+                (source, ll) => ll >= LogLevel.Infomation));
 }
 ```
 
