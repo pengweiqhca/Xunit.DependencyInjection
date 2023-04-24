@@ -1,4 +1,4 @@
-﻿Use Microsoft.Extensions.DependencyInjection to resolve xUnit test cases.
+﻿Uses Microsoft.Extensions.DependencyInjection to resolve xUnit test cases.
 
 How to use
 =============
