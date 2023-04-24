@@ -66,7 +66,7 @@ public class Startup
 }
 ```
 
-> Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/Xunit.DependencyInjection.Test.AspNetCore)
+> Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/test/Xunit.DependencyInjection.Test.AspNetCore)
 
 ## `Startup` limitation
 
