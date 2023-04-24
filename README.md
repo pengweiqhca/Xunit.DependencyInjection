@@ -95,7 +95,7 @@ public class Startup
 ```
 
 * Configure method
-* 
+
 Anything defined in ConfigureServices, can be specified in the Configure method signature. These services are injected if they're available.
 
 ## How to find `Startup`?
