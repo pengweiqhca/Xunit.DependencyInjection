@@ -174,9 +174,7 @@ internal class DependencyClass : IDependency
 ``` C#
 public class Startup
 {
-    public void Configure(ILoggerFactory loggerFactory, ITestOutputHelperAccessor accessor) =>
-        loggerFactory.AddProvider(new XunitTestOutputLoggerProvider(accessor,
-                (source, ll) => ll >= LogLevel.Infomation));
+    public void ConfigureServices(IServiceCollection services) => services.AddLogging(lb => lb.AddXunitOutput());
 }
 ```
 
