@@ -19,11 +19,9 @@ public class Startup
 
     private class AspNetCoreStartup
     {
-        public void Configure(IApplicationBuilder app)
-        {
-            XunitTestOutputLoggerProvider.Register(app.ApplicationServices);
+        public void ConfigureServices(IServiceCollection services) => services.AddLogging(lb => lb.AddXunitOutput());
 
+        public void Configure(IApplicationBuilder app) =>
             app.Run(static context => context.Response.WriteAsync(TestServerTest.Key));
-        }
     }
 }

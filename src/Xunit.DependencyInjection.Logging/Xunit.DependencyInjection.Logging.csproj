@@ -9,11 +9,13 @@ public void Configure(IServiceProvider provider)
       XunitTestOutputLoggerProvider.Register(provider);
 }</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>8.0.1</Version>
+    <Version>8.1.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.*" />
+    
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
 

@@ -1,4 +1,4 @@
-﻿Use Microsoft.Extensions.DependencyInjection to resolve xUnit test cases.
+﻿Uses Microsoft.Extensions.DependencyInjection to resolve xUnit test cases.
 
 How to use
 =============
@@ -66,7 +66,7 @@ public class Startup
 }
 ```
 
-> Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/Xunit.DependencyInjection.Test.AspNetCore)
+> Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/test/Xunit.DependencyInjection.Test.AspNetCore)
 
 ## `Startup` limitation
 
@@ -95,6 +95,7 @@ public class Startup
 ```
 
 * Configure method
+
 Anything defined in ConfigureServices, can be specified in the Configure method signature. These services are injected if they're available.
 
 ## How to find `Startup`?
@@ -173,9 +174,7 @@ internal class DependencyClass : IDependency
 ``` C#
 public class Startup
 {
-    public void Configure(ILoggerFactory loggerFactory, ITestOutputHelperAccessor accessor) =>
-        loggerFactory.AddProvider(new XunitTestOutputLoggerProvider(accessor,
-                (source, ll) => ll >= LogLevel.Infomation));
+    public void ConfigureServices(IServiceCollection services) => services.AddLogging(lb => lb.AddXunitOutput());
 }
 ```
 
