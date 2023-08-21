@@ -12,6 +12,7 @@ internal static class StartupLoader
         var configureHostMethod = FindMethod(startupType, nameof(ConfigureHost));
         var configureServicesMethod = FindMethod(startupType, nameof(ConfigureServices));
         var configureMethod = FindMethod(startupType, nameof(Configure));
+        var buildHostMethod = FindMethod(startupType, nameof(BuildHost), typeof(IHost));
 
         var startup = createHostBuilderMethod is { IsStatic: false } ||
                       configureHostMethod is { IsStatic: false } ||
@@ -38,7 +39,7 @@ internal static class StartupLoader
 
         ConfigureServices(hostBuilder, startup, startupType, configureServicesMethod);
 
-        var host = hostBuilder.Build();
+        var host = BuildHost(hostBuilder, startup, startupType, buildHostMethod) ?? hostBuilder.Build();
 
         Configure(host.Services, startup, configureMethod);
 
@@ -124,6 +125,20 @@ internal static class StartupLoader
             .Select(p => p.ParameterType)
             .Select(scope.ServiceProvider.GetRequiredService)
             .ToArray());
+    }
+
+    public static IHost? BuildHost(IHostBuilder hostBuilder, object? startup, Type startupType, MethodInfo? method)
+    {
+        if (method == null) return null;
+
+        var parameters = method.GetParameters();
+        if (parameters.Length == 0)
+            return (IHost)method.Invoke(method.IsStatic ? null : startup, Array.Empty<object>());
+
+        if (parameters.Length > 1 || parameters[0].ParameterType != typeof(IHostBuilder))
+            throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startupType.FullName}' must parameterless or have the single 'IHostBuilder' parameter.");
+
+        return (IHost)method.Invoke(method.IsStatic ? null : startup, new object[] { hostBuilder });
     }
 
     public static MethodInfo? FindMethod(Type startupType, string methodName) =>
