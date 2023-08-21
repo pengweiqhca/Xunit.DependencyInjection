@@ -5,9 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace Xunit.DependencyInjection.Logging;
 
-#if !DEBUG
 [Obsolete("Use `services.AddLogging(lb => lb.AddXunitOutput([options => {}]))`.")]
-#endif
 public class XunitTestOutputLoggerProvider : XUnitLoggerProvider
 {
     /// <summary>Log minLevel LogLevel.Information</summary>

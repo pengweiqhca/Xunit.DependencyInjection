@@ -54,7 +54,7 @@ after_build:
 
 # to run your custom scripts instead of automatic MSBuild
 build_script:
-  - dotnet build -v n
+  - dotnet build -c Release -v n
 # to disable automatic builds
 #build: off
 
@@ -64,6 +64,6 @@ build_script:
 
 # to run your custom scripts instead of automatic tests
 test_script:
-  - dotnet test ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+  - dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
 # to disable automatic tests
 #test: off

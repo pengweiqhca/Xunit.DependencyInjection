@@ -20,7 +20,9 @@ public class Startup
     public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)
     {
         Assert.NotNull(accessor);
+ #pragma warning disable CS0618 // Type or member is obsolete
         XunitTestOutputLoggerProvider.Register(provider);
+ #pragma warning restore CS0618 // Type or member is obsolete
     }
 }
 
