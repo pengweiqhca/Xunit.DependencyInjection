@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Xunit.DependencyInjection;
 
@@ -131,14 +130,14 @@ internal static class StartupLoader
     {
         if (method == null) return null;
 
+        if (!typeof(IHost).IsAssignableFrom(method.ReturnType))
+            throw new InvalidOperationException($"The '{method.Name}' method in the type '{startupType.FullName}' return type must assignable to '{typeof(IHost)}'.");
+
         var parameters = method.GetParameters();
-        if (parameters.Length == 0)
-            return (IHost)method.Invoke(method.IsStatic ? null : startup, Array.Empty<object>());
+        if (parameters.Length != 1 || parameters[0].ParameterType != typeof(IHostBuilder))
+            throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startupType.FullName}' must have the single 'IHostBuilder' parameter.");
 
-        if (parameters.Length > 1 || parameters[0].ParameterType != typeof(IHostBuilder))
-            throw new InvalidOperationException($"The '{method.Name}' method of startup type '{startupType.FullName}' must parameterless or have the single 'IHostBuilder' parameter.");
-
-        return (IHost)method.Invoke(method.IsStatic ? null : startup, new object[] { hostBuilder });
+        return (IHost?)method.Invoke(method.IsStatic ? null : startup, new object[] { hostBuilder });
     }
 
     public static MethodInfo? FindMethod(Type startupType, string methodName) =>

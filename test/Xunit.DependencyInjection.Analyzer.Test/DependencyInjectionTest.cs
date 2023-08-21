@@ -146,5 +146,14 @@ public class DependencyInjectionTest
         };
         yield return new object?[] { "NonStartup.cs", null, Array.Empty<DiagnosticResult>() };
         yield return new object?[] { "StaticMethod.cs", null, Array.Empty<DiagnosticResult>() };
+        yield return new object?[]
+        {
+            "BuildHostTestStartup0.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 30).WithArguments("BuildHost", typeof(IHost).FullName!),
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 30).WithArguments("BuildHost", nameof(IHostBuilder))
+            }
+        };
+        yield return new object?[] { "BuildHostTestStartup1.cs", null, Array.Empty<DiagnosticResult>() };
     }
 }
