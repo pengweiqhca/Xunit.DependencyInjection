@@ -23,8 +23,8 @@ jobs:
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
     script: |
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
 
 - job: MacOS_Build_and_Test
   pool:
@@ -38,8 +38,8 @@ jobs:
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
     script: |
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
 
 - job: Windows_Build_and_Test
   pool:
