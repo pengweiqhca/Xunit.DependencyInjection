@@ -7,7 +7,6 @@
     <AnalysisLevel>latest-Recommended</AnalysisLevel>
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
 
-
     <PackageProjectUrl>$(RepositoryUrl)/src/$(MSBuildProjectName)</PackageProjectUrl>
   </PropertyGroup>
 
