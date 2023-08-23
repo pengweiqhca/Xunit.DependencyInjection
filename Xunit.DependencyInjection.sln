@@ -51,6 +51,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A77B7EA7-84F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{25119119-1FAE-46DF-9722-9E1AA38586D7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.AspNetCoreTesting", "src\Xunit.DependencyInjection.AspNetCoreTesting\Xunit.DependencyInjection.AspNetCoreTesting.csproj", "{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -113,6 +115,10 @@ Global
 		{47F04277-15B1-4449-93E2-A868953126A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{47F04277-15B1-4449-93E2-A868953126A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{47F04277-15B1-4449-93E2-A868953126A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -135,5 +141,6 @@ Global
 		{95A96D26-648F-4E83-B344-85C2E3BA1C0D} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 		{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 		{AC55DBE8-0F24-486D-89E6-E8B39F4ED110} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
 	EndGlobalSection
 EndGlobal

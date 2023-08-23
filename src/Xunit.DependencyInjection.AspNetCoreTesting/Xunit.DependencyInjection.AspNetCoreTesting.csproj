@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Description>Integration with WebApplicationFactory</Description>
+    <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
+    <Version>8.0.0</Version>
+    <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0" />
+
+    <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -68,6 +68,34 @@ public class Startup
 
 > Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/test/Xunit.DependencyInjection.Test.AspNetCore)
 
+### Integration with `WebApplicationFactory`.
+
+``` bash
+dotnet add package Xunit.DependencyInjection.AspNetCoreTesting
+```
+
+``` C#
+[Fact]
+public async Task TestMethod()
+{
+    var factory = new XunitWebApplicationFactory<Startup>();
+}
+```
+
+If you get a `System.IO.DirectoryNotFoundException`, please see [`SetContentRoot` source code](https://github.com/dotnet/aspnetcore/blob/a0db11ba7c3ae217e9745976056f10cb2a7dafde/src/Mvc/Mvc.Testing/src/WebApplicationFactory.cs#L216) and look for a proper solution.
+
+Maybe I can give you a way:
+
+1. Crate file `MvcTestingAppManifest.json`, and set `CopyToOutputDirectory="PreserveNewest"`
+
+2. Add content
+
+   ``` json
+   {
+     "FullName of the assembly that contains the Startup type": "~"
+   }
+   ```
+
 ## `Startup` limitation
 
 * CreateHostBuilder method
