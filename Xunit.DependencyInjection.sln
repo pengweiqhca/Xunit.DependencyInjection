@@ -53,6 +53,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{25119119-1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.AspNetCoreTesting", "src\Xunit.DependencyInjection.AspNetCoreTesting\Xunit.DependencyInjection.AspNetCoreTesting.csproj", "{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApiSample", "test\MinimalApiSample\MinimalApiSample.csproj", "{57B47C72-4F79-4422-BFC7-E37F44899C9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalAppTest", "test\MinimalAppTest\MinimalAppTest.csproj", "{118D7E7D-334E-430F-990B-3CBFA722D295}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -119,6 +123,14 @@ Global
 		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{57B47C72-4F79-4422-BFC7-E37F44899C9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{57B47C72-4F79-4422-BFC7-E37F44899C9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{57B47C72-4F79-4422-BFC7-E37F44899C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{57B47C72-4F79-4422-BFC7-E37F44899C9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{118D7E7D-334E-430F-990B-3CBFA722D295}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{118D7E7D-334E-430F-990B-3CBFA722D295}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{118D7E7D-334E-430F-990B-3CBFA722D295}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{118D7E7D-334E-430F-990B-3CBFA722D295}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -142,5 +154,7 @@ Global
 		{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 		{AC55DBE8-0F24-486D-89E6-E8B39F4ED110} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{57B47C72-4F79-4422-BFC7-E37F44899C9F} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{118D7E7D-334E-430F-990B-3CBFA722D295} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 	EndGlobalSection
 EndGlobal

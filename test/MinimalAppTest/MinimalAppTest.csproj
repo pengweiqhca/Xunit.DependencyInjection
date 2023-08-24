@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net6.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+
+        <IsPackable>false</IsPackable>
+    </PropertyGroup>
+    <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
+
+    <ItemGroup>
+      <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
+      <PackageReference Include="xunit" Version="2.*" />
+      <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\..\src\Xunit.DependencyInjection.AspNetCoreTesting\Xunit.DependencyInjection.AspNetCoreTesting.csproj" />
+      <ProjectReference Include="..\MinimalApiSample\MinimalApiSample.csproj" />
+    </ItemGroup>
+
+</Project>
