@@ -10,7 +10,7 @@
   <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
-    <None Update="MvcTestingAppManifest.json" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="MvcTestingAppManifest.json" CopyToOutputDirectory="Always" />
     
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
     <PackageReference Include="xunit" Version="2.*" />
