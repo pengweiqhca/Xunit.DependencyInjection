@@ -1,13 +1,15 @@
+using Microsoft.Extensions.Hosting;
 using MinimalApiSample;
+using Xunit.DependencyInjection.AspNetCoreTesting;
 
-namespace MinimalAppTest;
+namespace Xunit.DependencyInjection.Test.AspNetCore;
 
-public class ApiTest
+public class MinimalApiTest
 {
     private readonly HttpClient _httpClient;
     private readonly IRandomService _randomService;
 
-    public ApiTest(HttpClient httpClient, IRandomService randomService)
+    public MinimalApiTest(HttpClient httpClient, IRandomService randomService)
     {
         _httpClient = httpClient;
         _randomService = randomService;
@@ -25,5 +27,10 @@ public class ApiTest
     {
         var num = _randomService.Get();
         Assert.True(num < 10);
+    }
+
+    public class Startup
+    {
+        public IHostBuilder CreateHostBuilder() => MinimalApiHostBuilderFactory.GetHostBuilder<Program>();
     }
 }

@@ -52,6 +52,8 @@ public class MyAwesomeTests
 
 ## Integration asp.net core TestHost(3.0+)
 
+### Asp.Net Core Startup
+
 ``` bash
 dotnet add package Microsoft.AspNetCore.TestHost
 ```
@@ -66,35 +68,23 @@ public class Startup
 }
 ```
 
-> Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/test/Xunit.DependencyInjection.Test.AspNetCore)
-
-### Integration with `WebApplicationFactory`.
+### MinimalApi
+If you use MinimalApi rather than asp.net core Startup class.
 
 ``` bash
 dotnet add package Xunit.DependencyInjection.AspNetCoreTesting
 ```
 
 ``` C#
-[Fact]
-public async Task TestMethod()
+public class Startup
 {
-    var factory = new XunitWebApplicationFactory<Startup>();
+    public IHostBuilder CreateHostBuilder() => MinimalApiHostBuilderFactory.GetHostBuilder<Program>();
 }
 ```
 
-If you get a `System.IO.DirectoryNotFoundException`, please see [`SetContentRoot` source code](https://github.com/dotnet/aspnetcore/blob/a0db11ba7c3ae217e9745976056f10cb2a7dafde/src/Mvc/Mvc.Testing/src/WebApplicationFactory.cs#L216) and look for a proper solution.
+> Maybe your asp.net core project should InternalsVisibleTo or add `public partial class Program {}` in the end of `Program.cs`;
 
-Maybe I can give you a way:
-
-1. Crate file `MvcTestingAppManifest.json`, and set `CopyToOutputDirectory="PreserveNewest"`
-
-2. Add content
-
-   ``` json
-   {
-     "FullName of the assembly that contains the Startup type": "~"
-   }
-   ```
+> Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/test/Xunit.DependencyInjection.Test.AspNetCore)
 
 ## `Startup` limitation
 

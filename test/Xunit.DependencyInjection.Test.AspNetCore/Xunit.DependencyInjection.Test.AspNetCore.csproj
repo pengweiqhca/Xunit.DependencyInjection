@@ -10,7 +10,6 @@
   <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
 
   <ItemGroup>
-    <None Update="MvcTestingAppManifest.json" CopyToOutputDirectory="Always" />
     
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
     <PackageReference Include="xunit" Version="2.*" />
@@ -18,6 +17,7 @@
     
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.AspNetCoreTesting\Xunit.DependencyInjection.AspNetCoreTesting.csproj" />
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
+    <ProjectReference Include="..\MinimalApiSample\MinimalApiSample.csproj" />
   </ItemGroup>
 
 </Project>

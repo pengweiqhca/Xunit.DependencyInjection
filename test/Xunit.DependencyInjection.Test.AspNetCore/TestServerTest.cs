@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Hosting.Server;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 
 namespace Xunit.DependencyInjection.Test.AspNetCore;

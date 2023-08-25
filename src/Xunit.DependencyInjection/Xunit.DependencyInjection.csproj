@@ -24,7 +24,6 @@ Release notes:
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
     <Version>8.8.2</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
-    <PublicKey>0024000004800000940000000602000000240000525341310004000001000100b5808d2661c4f48da3683c5a557422a4ca5a132ac461790b148b8eabb94f109dad5ac0c3889f8e68f4923afb429cd5583ed0290540b5ec89a9153c954ad38f2e123ac292ca0f1b495a4bc103e5f7dec05264943f3ee018cb5e8feceff3659470a6837dc1f6c324e3b537245947032eba5c570e47a6573c5d75d9e2b12981f6b1</PublicKey>
   </PropertyGroup>
 
   <ItemGroup>
@@ -34,7 +33,6 @@ Release notes:
     <Using Include="Xunit.Abstractions" />
     <Using Include="Xunit.Sdk" />
 
-    <InternalsVisibleTo Include="Xunit.DependencyInjection.AspNetCoreTesting" Key="$(PublicKey)" />
     <InternalsVisibleTo Include="Xunit.DependencyInjection.StaFact" Key="$(PublicKey)" />
     <InternalsVisibleTo Include="Xunit.DependencyInjection.Test" Key="$(PublicKey)" />
 

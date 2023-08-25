@@ -3,5 +3,3 @@ builder.Services.AddSingleton<MinimalApiSample.IRandomService, MinimalApiSample.
 var app = builder.Build();
 app.Map("/", () => "Hello world");
 await app.RunAsync().ConfigureAwait(false);
-
-public partial class Program {}
