@@ -40,7 +40,7 @@ public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecut
 
         // ReSharper disable once PossibleMultipleEnumeration
         var hostMap = testCases
-            .GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
+            .GroupBy(tc => tc.TestMethod.TestClass)
             .ToDictionary(group => group.Key, group => GetHost(exceptions, () => _hostManager.GetHost(group.Key.Class.ToRuntimeType())));
 
         try
