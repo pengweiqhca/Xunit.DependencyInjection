@@ -21,19 +21,12 @@ public sealed class ParallelTestFramework : XunitTestFramework
         {
         }
 
-        protected override void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions)
+        protected override void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink,
+            ITestFrameworkExecutionOptions executionOptions)
         {
-            try
-            {
-                var newTestCases = SetUpTestCaseParallelization(testCases);
+            var newTestCases = SetUpTestCaseParallelization(testCases);
 
-                base.RunTestCases(newTestCases, executionMessageSink, executionOptions);
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
+            base.RunTestCases(newTestCases, executionMessageSink, executionOptions);
         }
 
         /// <summary>
@@ -103,7 +96,7 @@ public sealed class ParallelTestFramework : XunitTestFramework
                 }
             }
 
-            return testCases;
+            return result;
 
             static TestMethodDisplay GetTestMethodDisplay(TestMethodTestCase testCase) =>
                 (TestMethodDisplay)typeof(TestMethodTestCase)
