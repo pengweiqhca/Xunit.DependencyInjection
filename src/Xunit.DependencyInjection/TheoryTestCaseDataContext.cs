@@ -7,13 +7,13 @@ internal static class TheoryTestCaseDataContext
     public static IServiceProvider? Services { get => AsyncLocalServices.Value; private set => AsyncLocalServices.Value = value; }
 
     public static IAsyncDisposable BeginContext(IServiceProvider provider) =>
-        new Disposable(provider.CreateScope());
+        new Disposable(provider.CreateAsyncScope());
 
     private class Disposable : IAsyncDisposable
     {
-        private readonly IServiceScope _scope;
+        private readonly AsyncServiceScope _scope;
 
-        public Disposable(IServiceScope scope)
+        public Disposable(AsyncServiceScope scope)
         {
             Services = scope.ServiceProvider;
 

@@ -12,9 +12,9 @@ public class UITestCaseRunnerAdapter : IXunitTestCaseRunnerWrapper
 
     public async Task<RunSummary> RunAsync(IXunitTestCase testCase, IServiceProvider provider, IMessageSink diagnosticMessageSink, IMessageBus messageBus, object?[] constructorArguments, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
     {
-        var scope = provider.CreateScope();
+        var scope = provider.CreateAsyncScope();
 
-        await using var _ = scope.AsAsyncDisposable().ConfigureAwait(false);
+        await using var _ = scope.ConfigureAwait(false);
 
         var raw = new Dictionary<int, object>();
         foreach (var kv in FromServicesAttribute.CreateFromServices(testCase.Method.ToRuntimeMethod()))
@@ -26,7 +26,7 @@ public class UITestCaseRunnerAdapter : IXunitTestCaseRunnerWrapper
                 : provider.GetService(kv.Value);
         }
 
-        constructorArguments = DependencyInjectionTestMethodRunner.CreateTestClassConstructorArguments(scope.ServiceProvider, constructorArguments, aggregator);
+        constructorArguments = ArgumentsHelper.CreateTestClassConstructorArguments(scope.ServiceProvider, constructorArguments, aggregator);
 
         var summary = await testCase.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource).ConfigureAwait(false);
 

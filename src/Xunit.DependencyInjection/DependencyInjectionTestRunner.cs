@@ -20,14 +20,17 @@ public class DependencyInjectionTestRunner : XunitTestRunner
     /// <inheritdoc />
     protected override async Task<Tuple<decimal, string>> InvokeTestAsync(ExceptionAggregator aggregator)
     {
-        var scope = _provider.CreateScope();
+        var scope = _provider.CreateAsyncScope();
 
-        await using var _ = scope.AsAsyncDisposable().ConfigureAwait(false);
+        await using var _ = scope.ConfigureAwait(false);
 
-        var testOutputHelper = _provider.GetRequiredService<ITestOutputHelperAccessor>().Output as TestOutputHelper;
-        testOutputHelper?.Initialize(MessageBus, Test);
+        var testOutputHelper = new TestOutputHelper();
 
-        var raw = new Dictionary<int, object>();
+        testOutputHelper.Initialize(MessageBus, Test);
+
+        _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = testOutputHelper;
+
+        var raw = new Dictionary<int, object>(TestMethodArguments.Length);
         foreach (var kv in _fromServices)
         {
             raw[kv.Key] = TestMethodArguments[kv.Key];
@@ -38,19 +41,17 @@ public class DependencyInjectionTestRunner : XunitTestRunner
         }
 
         var item = await new DependencyInjectionTestInvoker(scope.ServiceProvider, Test, MessageBus, TestClass,
-                DependencyInjectionTestMethodRunner.CreateTestClassConstructorArguments(scope.ServiceProvider, ConstructorArguments, aggregator),
+                ArgumentsHelper.CreateTestClassConstructorArguments(scope.ServiceProvider,
+                    ConstructorArguments, aggregator),
                 TestMethod, TestMethodArguments, BeforeAfterAttributes, aggregator, CancellationTokenSource)
             .RunAsync().ConfigureAwait(false);
 
         foreach (var kv in raw)
             TestMethodArguments[kv.Key] = kv.Value;
 
-        var output = string.Empty;
-        if (testOutputHelper != null)
-        {
-            output = testOutputHelper.Output;
-            testOutputHelper.Uninitialize();
-        }
+        var output = testOutputHelper.Output;
+
+        testOutputHelper.Uninitialize();
 
         return Tuple.Create(item, output);
     }

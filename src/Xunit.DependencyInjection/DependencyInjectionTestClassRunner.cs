@@ -4,7 +4,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
 {
     private readonly IServiceProvider _provider;
     private readonly IDictionary<Type, object> _collectionFixtureMappings;
-    private IServiceScope? _serviceScope;
+    private AsyncServiceScope? _serviceScope;
 
     public DependencyInjectionTestClassRunner(IServiceProvider provider,
         ITestClass testClass,
@@ -29,12 +29,12 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     {
         _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
 
-        if ((!Class.Type.GetTypeInfo().IsAbstract ? 0 : (Class.Type.GetTypeInfo().IsSealed ? 1 : 0)) != 0)
+        if ((!Class.Type.GetTypeInfo().IsAbstract ? 0 : Class.Type.GetTypeInfo().IsSealed ? 1 : 0) != 0)
             return Array.Empty<object?>();
 
         var constructor = SelectTestClassConstructor();
-        if (constructor == null)
-            return Array.Empty<object?>();
+
+        if (constructor == null) return Array.Empty<object?>();
 
         var parameters = constructor.GetParameters();
 
@@ -45,7 +45,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
             if (TryGetConstructorArgument(constructor, index, parameterInfo, out var argumentValue))
                 objArray[index] = argumentValue;
             else
-                objArray[index] = new DelayArgument(parameterInfo,
+                objArray[index] = new ArgumentsHelper.DelayArgument(parameterInfo,
                     unusedArguments => FormatConstructorArgsMissingMessage(constructor, unusedArguments));
         }
 
@@ -58,7 +58,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     {
         if (parameter.ParameterType == typeof(ITestOutputHelper))
         {
-            argumentValue = _provider.GetRequiredService<ITestOutputHelperAccessor>().Output;
+            argumentValue = ArgumentsHelper.TestOutputHelperArgument.Instance;
             return true;
         }
 
@@ -74,7 +74,9 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     /// <inheritdoc />
     protected override void CreateClassFixture(Type fixtureType)
     {
-        _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+
+        _serviceScope = serviceScope;
 
         var ctors = fixtureType.GetTypeInfo()
             .DeclaredConstructors
@@ -92,7 +94,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
         {
             if (_collectionFixtureMappings.TryGetValue(p.ParameterType, out var arg)) return arg;
 
-            arg = _serviceScope.ServiceProvider.GetService(p.ParameterType);
+            arg = serviceScope.ServiceProvider.GetService(p.ParameterType);
 
             if (arg == null) missingParameters.Add(p);
 
@@ -116,57 +118,9 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
         if (_serviceScope != null) await _serviceScope.DisposeAsync().ConfigureAwait(false);
     }
 
-    internal class DelayArgument
-    {
-        public DelayArgument(ParameterInfo parameter,
-            Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> formatConstructorArgsMissingMessage)
-        {
-            FormatConstructorArgsMissingMessage = formatConstructorArgsMissingMessage;
-            Parameter = parameter;
-        }
-
-        public ParameterInfo Parameter { get; }
-
-        public Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> FormatConstructorArgsMissingMessage { get; }
-
-        public bool TryGetConstructorArgument(IServiceProvider provider, ExceptionAggregator aggregator,
-            out object? argumentValue)
-        {
-            argumentValue = null;
-
-            try
-            {
-                argumentValue = provider.GetService(Parameter.ParameterType);
-            }
-            catch (Exception ex)
-            {
-                aggregator.Add(ex);
-
-                return true;
-            }
-
-            if (argumentValue != null)
-                return true;
-
-            if (Parameter.HasDefaultValue)
-                argumentValue = Parameter.DefaultValue;
-            else if (Parameter.IsOptional)
-                argumentValue = GetDefaultValue(Parameter.ParameterType);
-            else if (Parameter.GetCustomAttribute<ParamArrayAttribute>() != null)
-                argumentValue = Array.CreateInstance(Parameter.ParameterType, new int[1]);
-            else
-                return false;
-
-            return true;
-        }
-    }
-
-    private static object? GetDefaultValue(Type typeInfo) =>
-        typeInfo.GetTypeInfo().IsValueType ? Activator.CreateInstance(typeInfo) : null;
-
     /// <inheritdoc />
     protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod,
-        IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object[] constructorArguments) =>
+        IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object?[] constructorArguments) =>
         new DependencyInjectionTestMethodRunner(_provider, testMethod, Class, method,
                 testCases, DiagnosticMessageSink, MessageBus, new(Aggregator),
                 CancellationTokenSource, constructorArguments)

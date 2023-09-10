@@ -4,7 +4,7 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
 {
     private readonly IServiceProvider _provider;
     private readonly IMessageSink _diagnosticMessageSink;
-    private readonly object[] _constructorArguments;
+    private readonly object?[] _constructorArguments;
 
     public DependencyInjectionTestMethodRunner(IServiceProvider provider,
         ITestMethod testMethod,
@@ -15,39 +15,12 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
         IMessageBus messageBus,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
-        object[] constructorArguments)
+        object?[] constructorArguments)
         : base(testMethod, @class, method, testCases, messageBus, aggregator, cancellationTokenSource)
     {
         _provider = provider;
         _diagnosticMessageSink = diagnosticMessageSink;
         _constructorArguments = constructorArguments;
-    }
-
-    protected internal static object?[] CreateTestClassConstructorArguments(IServiceProvider provider,
-        object?[] constructorArguments, ExceptionAggregator aggregator)
-    {
-        var unusedArguments = new List<Tuple<int, ParameterInfo>>();
-        Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string>? formatConstructorArgsMissingMessage = null;
-
-        var args = new object?[constructorArguments.Length];
-        for (var index = 0; index < constructorArguments.Length; index++)
-        {
-            if (constructorArguments[index] is DependencyInjectionTestClassRunner.DelayArgument delay)
-            {
-                formatConstructorArgsMissingMessage = delay.FormatConstructorArgsMissingMessage;
-
-                if (delay.TryGetConstructorArgument(provider, aggregator, out var arg))
-                    args[index] = arg;
-                else
-                    unusedArguments.Add(Tuple.Create(index, delay.Parameter));
-            }
-            else args[index] = constructorArguments[index];
-        }
-
-        if (unusedArguments.Count > 0 && formatConstructorArgsMissingMessage != null)
-            aggregator.Add(new TestClassException(formatConstructorArgsMissingMessage(unusedArguments)));
-
-        return args;
     }
 
     /// <inheritdoc />
@@ -70,11 +43,11 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
                     .ConfigureAwait(false);
         } while ((type = type.BaseType) != null);
 
-        var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+        var scope = _provider.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
 
-        await using (scope.AsAsyncDisposable().ConfigureAwait(false))
+        await using (scope.ConfigureAwait(false))
             return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
-                    CreateTestClassConstructorArguments(scope.ServiceProvider, _constructorArguments, Aggregator),
+                    ArgumentsHelper.CreateTestClassConstructorArguments(scope.ServiceProvider, _constructorArguments, Aggregator),
                     new(Aggregator), CancellationTokenSource)
                 .ConfigureAwait(false);
     }

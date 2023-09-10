@@ -16,28 +16,4 @@ internal static class DisposableExtensions
                 return default;
         }
     }
-
-    public static IAsyncDisposable AsAsyncDisposable(this IDisposable disposable) =>
-        disposable switch
-        {
-            null => throw new ArgumentNullException(nameof(disposable)),
-            IAsyncDisposable ad => ad,
-            _ => new DisposableWrapper(disposable)
-        };
-
-    private class DisposableWrapper : IDisposable, IAsyncDisposable
-    {
-        private readonly IDisposable _disposable;
-
-        public DisposableWrapper(IDisposable disposable) => _disposable = disposable;
-
-        public void Dispose() => _disposable.Dispose();
-
-        public ValueTask DisposeAsync()
-        {
-            _disposable.Dispose();
-
-            return default;
-        }
-    }
 }

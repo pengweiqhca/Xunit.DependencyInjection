@@ -4,7 +4,7 @@ public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
 {
     private readonly IServiceProvider? _provider;
     private readonly IReadOnlyDictionary<ITestClass, IHost?> _hostMap;
-    private IServiceScope? _serviceScope;
+    private AsyncServiceScope? _serviceScope;
     private readonly IMessageSink _diagnosticMessageSink;
 
     public DependencyInjectionTestCollectionRunner(IServiceProvider? provider,
@@ -35,10 +35,12 @@ public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
         }
         else
         {
-            _serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
+            var serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+
+            _serviceScope = serviceScope;
 
             Aggregator.Run(() => CollectionFixtureMappings[fixtureType] =
-                ActivatorUtilities.GetServiceOrCreateInstance(_serviceScope.ServiceProvider, fixtureType));
+                ActivatorUtilities.GetServiceOrCreateInstance(serviceScope.ServiceProvider, fixtureType));
         }
 
     }
