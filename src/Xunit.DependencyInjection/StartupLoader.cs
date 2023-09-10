@@ -147,6 +147,7 @@ internal static class StartupLoader
         });
     }
 
+    // Not allow async Configure method
     public static void Configure(IServiceProvider provider, object? startup, MethodInfo? method)
     {
         if (method == null) return;
