@@ -59,7 +59,8 @@ public sealed class MethodDataAttribute : DataAttribute
         var method = GetMethodInfo(type);
         if (method == null)
         {
-            var parameterText = Parameters?.Length > 0 ? $" with parameter types: {string.Join(", ", Parameters.Select(p => p?.GetType().FullName ?? "(null)"))}" : "";
+            var parameterText = Parameters is { Length: > 0 } ? $" with parameter types: {string.Join(", ", Parameters.Select(p => p?.GetType().FullName ?? "(null)"))}" : "";
+
             throw new ArgumentException($"Could not find public method named '{MethodName}' on {type.FullName}{parameterText}");
         }
 
