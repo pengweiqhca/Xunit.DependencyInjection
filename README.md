@@ -163,6 +163,34 @@ If you want use a special `Startup`, you can defined `XunitStartupAssembly` and 
 |   | Xyz | Xyz, Your.Test.Project |
 | Abc | Xyz | Xyz, Abc |
 
+## Parallel
+
+By default, xUnit runs all test cases in a test class synchronously. This package can extends the test framework to execute tests in parallel.
+
+``` xml
+<Project>
+
+  <PropertyGroup>
+    <ParallelizationMode></ParallelizationMode>
+  </PropertyGroup>
+
+</Project>
+```
+
+This package has two policy to run test cases in parallel.
+
+1. Enhance or true
+
+   Respect xunit [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior.
+
+2. Force
+
+   Ignore xunit [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior and force running tests in parallel.
+
+If have `[Collection]`, `[CollectionDefinition(DisableParallelization = true)]`, `[DisableParallelization]` declared on test class, the test class will running synchronously. If have `[DisableParallelization]`, `[MemberData(DisableDiscoveryEnumeration = true)]` declared on test method, the test method will running synchronously.
+
+> Thanks [Meziantou.Xunit.ParallelTestFramework](https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework)
+
 ## How to disable Xunit.DependencyInjection
 ``` xml
 <Project>

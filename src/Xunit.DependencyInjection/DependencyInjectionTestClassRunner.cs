@@ -2,11 +2,11 @@
 
 public class DependencyInjectionTestClassRunner : XunitTestClassRunner
 {
-    private readonly IServiceProvider _provider;
+    private readonly DependencyInjectionContext _context;
     private readonly IDictionary<Type, object> _collectionFixtureMappings;
     private AsyncServiceScope? _serviceScope;
 
-    public DependencyInjectionTestClassRunner(IServiceProvider provider,
+    public DependencyInjectionTestClassRunner(DependencyInjectionContext context,
         ITestClass testClass,
         IReflectionTypeInfo @class,
         IEnumerable<IXunitTestCase> testCases,
@@ -20,15 +20,13 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
             messageBus, testCaseOrderer, aggregator,
             cancellationTokenSource, collectionFixtureMappings)
     {
-        _provider = provider;
+        _context = context;
         _collectionFixtureMappings = collectionFixtureMappings;
     }
 
     /// <inheritdoc />
     protected override object?[] CreateTestClassConstructorArguments()
     {
-        _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = new TestOutputHelper();
-
         if ((!Class.Type.GetTypeInfo().IsAbstract ? 0 : Class.Type.GetTypeInfo().IsSealed ? 1 : 0) != 0)
             return Array.Empty<object?>();
 
@@ -42,10 +40,10 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
         for (var index = 0; index < parameters.Length; ++index)
         {
             var parameterInfo = parameters[index];
-            if (TryGetConstructorArgument(constructor, index, parameterInfo, out var argumentValue))
-                objArray[index] = argumentValue;
-            else
-                objArray[index] = new ArgumentsHelper.DelayArgument(parameterInfo,
+
+            objArray[index] = TryGetConstructorArgument(constructor, index, parameterInfo, out var argumentValue)
+                ? argumentValue
+                : new TestHelper.DelayArgument(parameterInfo,
                     unusedArguments => FormatConstructorArgsMissingMessage(constructor, unusedArguments));
         }
 
@@ -58,23 +56,22 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     {
         if (parameter.ParameterType == typeof(ITestOutputHelper))
         {
-            argumentValue = ArgumentsHelper.TestOutputHelperArgument.Instance;
+            argumentValue = TestHelper.TestOutputHelperArgument.Instance;
             return true;
         }
 
-        if (parameter.ParameterType == typeof(CancellationToken))
-        {
-            argumentValue = CancellationTokenSource.Token;
-            return true;
-        }
+        if (parameter.ParameterType != typeof(CancellationToken))
+            return base.TryGetConstructorArgument(constructor, index, parameter, out argumentValue);
 
-        return base.TryGetConstructorArgument(constructor, index, parameter, out argumentValue);
+        argumentValue = CancellationTokenSource.Token;
+
+        return true;
     }
 
     /// <inheritdoc />
     protected override void CreateClassFixture(Type fixtureType)
     {
-        var serviceScope = _provider.GetRequiredService<IServiceScopeFactory>().CreateAsyncScope();
+        var serviceScope = _context.RootServices.CreateAsyncScope();
 
         _serviceScope = serviceScope;
 
@@ -115,13 +112,53 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
         foreach (var fixture in ClassFixtureMappings.Values.OfType<IAsyncDisposable>())
             await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask()).ConfigureAwait(false);
 
-        if (_serviceScope != null) await _serviceScope.DisposeAsync().ConfigureAwait(false);
+        if (_serviceScope is { } disposable) await disposable.DisposeAsync().ConfigureAwait(false);
+    }
+
+    // This method has been slightly modified from the original implementation to run tests in parallel
+    // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/TestClassRunner.cs#L194-L219
+    protected override async Task<RunSummary> RunTestMethodsAsync()
+    {
+        if (_context.DisableParallelization ||
+            TestCases.Count() < 2 ||
+            TestClass.Class.GetCustomAttributes(typeof(CollectionDefinitionAttribute)).FirstOrDefault() is { } attr &&
+            attr.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) ||
+            TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any() ||
+            TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any())
+            return await base.RunTestMethodsAsync().ConfigureAwait(false);
+
+        IEnumerable<IXunitTestCase> orderedTestCases;
+        try
+        {
+            orderedTestCases = TestCaseOrderer.OrderTestCases(TestCases);
+        }
+        catch (Exception ex)
+        {
+            ex = ex.Unwrap();
+
+            DiagnosticMessageSink.OnMessage(new DiagnosticMessage(
+                $"Test case orderer '{TestCaseOrderer.GetType().FullName}' threw '{ex.GetType().FullName}' during ordering: {ex.Message}{Environment.NewLine}{ex.StackTrace}"));
+
+            orderedTestCases = TestCases.ToList();
+        }
+
+        var constructorArguments = CreateTestClassConstructorArguments();
+
+        var methodTasks = orderedTestCases.GroupBy(tc => tc.TestMethod, TestMethodComparer.Instance)
+            .Select(m => RunTestMethodAsync(m.Key, (IReflectionMethodInfo)m.Key.Method, m, constructorArguments));
+
+        var summary = new RunSummary();
+
+        foreach (var methodSummary in await Task.WhenAll(methodTasks).ConfigureAwait(false))
+            summary.Aggregate(methodSummary);
+
+        return summary;
     }
 
     /// <inheritdoc />
     protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod,
         IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object?[] constructorArguments) =>
-        new DependencyInjectionTestMethodRunner(_provider, testMethod, Class, method,
+        new DependencyInjectionTestMethodRunner(_context, testMethod, Class, method,
                 testCases, DiagnosticMessageSink, MessageBus, new(Aggregator),
                 CancellationTokenSource, constructorArguments)
             .RunAsync();

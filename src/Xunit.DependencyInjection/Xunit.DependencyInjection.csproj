@@ -2,8 +2,11 @@
 
   <PropertyGroup>
     <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
-    <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging
+    <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging.
+
 Release notes:
+
+8.9: Extends the test framework to execute tests in parallel.
 8.8: Added support `BuildHost` method in startup.
 8.7: Allow missing default startup in some case.
 8.6: Support any awaitable type of async test method.
@@ -12,17 +15,9 @@ Release notes:
 8.3: Add ActivitySource(name: Xunit.DependencyInjection) and ValueTask/ValueTask&lt;&gt; support.
 8.2: Fix #60: support IAsyncDisposable.
 8.1: Startup allow static method or class (like Asp.Net Core startup).
-8.0: New feature: Support multiple startup.
-7.7: Add [MethodData], like [MemberData], support injection.
-7.6: Fix #48, each TestRunner should have a different scope.
-7.5: Add XunitTestCaseRunnerAdapter, It will be support more XunitTestCase type.
-7.4: Always set applicationName, unwarp TargetInvocationException.
-7.3: Fix #41, activate ITestOutputHelperAccessor on tests without a constructor.
-7.2: Add Startup analyzer.
-7.1: Fix can't run test case when host.StartAsync() throw exception.
-7.0: Add fixture injection and refactor DependencyInjectionTestFramework, you don't have to declare the [assembly: TestFrameworkAttribute] on normal case.</Description>
+8.0: New feature: Support multiple startup.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>8.8.2</Version>
+    <Version>8.9.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 

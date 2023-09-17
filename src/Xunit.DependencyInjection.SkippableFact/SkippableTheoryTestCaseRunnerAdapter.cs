@@ -21,11 +21,13 @@ public class SkippableTheoryTestCaseRunnerWrapper : DependencyInjectionTheoryTes
     public override Type TestCaseType => typeof(SkippableTheoryTestCase);
 
     /// <inheritdoc />
-    public override async Task<RunSummary> RunAsync(IXunitTestCase testCase, IServiceProvider provider, IMessageSink diagnosticMessageSink, IMessageBus messageBus, object?[] constructorArguments, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
+    public override async Task<RunSummary> RunAsync(IXunitTestCase testCase, DependencyInjectionContext context,
+        IMessageSink diagnosticMessageSink, IMessageBus messageBus, object?[] constructorArguments,
+        ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
     {
         var messageBusInterceptor = new SkippableTestMessageBus(messageBus, GetSkippingExceptionNames(testCase));
 
-        var result = await base.RunAsync(testCase, provider, diagnosticMessageSink,
+        var result = await base.RunAsync(testCase, context, diagnosticMessageSink,
                 messageBusInterceptor, constructorArguments, aggregator, cancellationTokenSource)
             .ConfigureAwait(false);
 

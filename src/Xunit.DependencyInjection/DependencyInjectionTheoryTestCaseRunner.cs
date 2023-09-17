@@ -7,7 +7,7 @@ public class DependencyInjectionTheoryTestCaseRunner : XunitTheoryTestCaseRunner
     private static readonly Func<XunitTheoryTestCaseRunner, List<XunitTestRunner>> GetTestRunners;
     private static readonly Func<TestRunner<IXunitTestCase>, ITest> GetTest;
     private static readonly Func<TestRunner<IXunitTestCase>, object[]> GetTestMethodArguments;
-    private readonly IServiceProvider _provider;
+    private readonly DependencyInjectionContext _context;
 
     static DependencyInjectionTheoryTestCaseRunner()
     {
@@ -21,11 +21,17 @@ public class DependencyInjectionTheoryTestCaseRunner : XunitTheoryTestCaseRunner
         GetTestMethodArguments = Expression.Lambda<Func<TestRunner<IXunitTestCase>, object[]>>(Expression.PropertyOrField(testRunner, "TestMethodArguments"), testRunner).Compile();
     }
 
-    public DependencyInjectionTheoryTestCaseRunner(IServiceProvider provider, IXunitTestCase testCase,
-        string displayName, string skipReason, object?[] constructorArguments, IMessageSink diagnosticMessageSink,
-        IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
-        : base(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource) =>
-        _provider = provider;
+    public DependencyInjectionTheoryTestCaseRunner(DependencyInjectionContext context,
+        IXunitTestCase testCase,
+        string displayName,
+        string skipReason,
+        object?[] constructorArguments,
+        IMessageSink diagnosticMessageSink,
+        IMessageBus messageBus,
+        ExceptionAggregator aggregator,
+        CancellationTokenSource cancellationTokenSource)
+        : base(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator,
+            cancellationTokenSource) => _context = context;
 
     /// <inheritdoc />
     protected override async Task AfterTestCaseStartingAsync()
@@ -37,7 +43,7 @@ public class DependencyInjectionTheoryTestCaseRunner : XunitTheoryTestCaseRunner
         for (var index = 0; index < runners.Count; index++)
         {
             if (runners[index] is TestRunner<IXunitTestCase> runner)
-                runners[index] = new DependencyInjectionTestRunner(_provider, GetTest(runner), MessageBus,
+                runners[index] = new DependencyInjectionTestRunner(_context, GetTest(runner), MessageBus,
                     fromServices, TestClass, index == 0 ? ConstructorArguments : Copy(ConstructorArguments),
                     TestMethod, GetTestMethodArguments(runner),
                     SkipReason, BeforeAfterAttributes, Aggregator, CancellationTokenSource);
@@ -55,7 +61,7 @@ public class DependencyInjectionTheoryTestCaseRunner : XunitTheoryTestCaseRunner
 
     public new async Task<RunSummary> RunAsync()
     {
-        await using (TheoryTestCaseDataContext.BeginContext(_provider).ConfigureAwait(false))
+        await using (TheoryTestCaseDataContext.BeginContext(_context.RootServices).ConfigureAwait(false))
             return await base.RunAsync().ConfigureAwait(false);
     }
 }

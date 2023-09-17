@@ -113,15 +113,7 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
         }
         catch (Exception ex)
         {
-            while (ex is TargetInvocationException { InnerException: not null } tie)
-            {
-                ex = tie.InnerException;
-            }
-
-            while (ex is AggregateException { InnerException: not null } ae)
-            {
-                ex = ae.InnerException;
-            }
+            ex = ex.Unwrap();
 
             Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
 

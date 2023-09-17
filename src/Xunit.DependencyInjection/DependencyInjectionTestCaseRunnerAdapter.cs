@@ -7,13 +7,13 @@ public class DependencyInjectionTestCaseRunnerWrapper : IXunitTestCaseRunnerWrap
 
     /// <inheritdoc />
     public virtual Task<RunSummary> RunAsync(IXunitTestCase testCase,
-        IServiceProvider provider,
+        DependencyInjectionContext context,
         IMessageSink diagnosticMessageSink,
         IMessageBus messageBus,
         object?[] constructorArguments,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource) =>
-        new DependencyInjectionTestCaseRunner(provider, testCase, testCase.DisplayName,
+        new DependencyInjectionTestCaseRunner(context, testCase, testCase.DisplayName,
             testCase.SkipReason, constructorArguments, testCase.TestMethodArguments,
             messageBus, aggregator, cancellationTokenSource).RunAsync();
 }

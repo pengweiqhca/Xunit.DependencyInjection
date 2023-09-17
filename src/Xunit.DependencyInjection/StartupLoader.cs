@@ -5,12 +5,14 @@ namespace Xunit.DependencyInjection;
 
 internal static class StartupLoader
 {
-    public static IHost CreateHost(Type startupType, AssemblyName? assemblyName, IMessageSink? diagnosticMessageSink)
+    public static DependencyInjectionContext CreateHost(Type startupType, AssemblyName? assemblyName,
+        IMessageSink? diagnosticMessageSink)
     {
         var (hostBuilder, startup, buildHostMethod, configureMethod) =
             CreateHostBuilder(startupType, assemblyName, diagnosticMessageSink);
 
-        return CreateHost(hostBuilder, startupType, startup, buildHostMethod, configureMethod);
+        return new(CreateHost(hostBuilder, startupType, startup, buildHostMethod, configureMethod),
+            startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
 
     public static (IHostBuilder, object?, MethodInfo?, MethodInfo?) CreateHostBuilder(Type startupType,

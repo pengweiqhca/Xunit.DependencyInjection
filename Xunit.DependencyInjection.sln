@@ -55,6 +55,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApiSample", "test\MinimalApiSample\MinimalApiSample.csproj", "{57B47C72-4F79-4422-BFC7-E37F44899C9F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.Test.Parallelization", "test\Xunit.DependencyInjection.Test.Parallelization\Xunit.DependencyInjection.Test.Parallelization.csproj", "{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -125,6 +127,10 @@ Global
 		{57B47C72-4F79-4422-BFC7-E37F44899C9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57B47C72-4F79-4422-BFC7-E37F44899C9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57B47C72-4F79-4422-BFC7-E37F44899C9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -149,5 +155,6 @@ Global
 		{AC55DBE8-0F24-486D-89E6-E8B39F4ED110} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
 		{57B47C72-4F79-4422-BFC7-E37F44899C9F} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 	EndGlobalSection
 EndGlobal

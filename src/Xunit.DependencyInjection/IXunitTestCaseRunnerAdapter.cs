@@ -11,7 +11,7 @@ public interface IXunitTestCaseRunnerWrapper
     /// Executes the test case, returning 0 or more result messages through the message sink.
     /// </summary>
     /// <param name="testCase">Test case.</param>
-    /// <param name="provider">The service provider.</param>
+    /// <param name="context">The dependency injection context.</param>
     /// <param name="diagnosticMessageSink">The message sink used to send diagnostic messages to.</param>
     /// <param name="messageBus">The message bus to report results to.</param>
     /// <param name="constructorArguments">The arguments to pass to the constructor.</param>
@@ -19,7 +19,7 @@ public interface IXunitTestCaseRunnerWrapper
     /// <param name="cancellationTokenSource">The cancellation token source that indicates whether cancellation has been requested.</param>
     /// <returns>Returns the summary of the test case run.</returns>
     Task<RunSummary> RunAsync(IXunitTestCase testCase,
-        IServiceProvider provider,
+        DependencyInjectionContext context,
         IMessageSink diagnosticMessageSink,
         IMessageBus messageBus,
         object?[] constructorArguments,

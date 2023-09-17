@@ -4,8 +4,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Xunit;
 using Xunit.DependencyInjection.Logging;
 
+[assembly: CollectionBehavior(DisableTestParallelization = true)]
 namespace Xunit.DependencyInjection.Test.AspNetCore;
 
 public class Startup

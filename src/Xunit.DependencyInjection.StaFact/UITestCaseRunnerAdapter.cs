@@ -10,9 +10,11 @@ public class UITestCaseRunnerAdapter : IXunitTestCaseRunnerWrapper
     /// <inheritdoc />
     public virtual Type TestCaseType => typeof(UITestCase);
 
-    public async Task<RunSummary> RunAsync(IXunitTestCase testCase, IServiceProvider provider, IMessageSink diagnosticMessageSink, IMessageBus messageBus, object?[] constructorArguments, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
+    public async Task<RunSummary> RunAsync(IXunitTestCase testCase, DependencyInjectionContext context,
+        IMessageSink diagnosticMessageSink, IMessageBus messageBus, object?[] constructorArguments,
+        ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
     {
-        var scope = provider.CreateAsyncScope();
+        var scope = context.RootServices.CreateAsyncScope();
 
         await using var _ = scope.ConfigureAwait(false);
 
@@ -23,10 +25,10 @@ public class UITestCaseRunnerAdapter : IXunitTestCaseRunnerWrapper
 
             testCase.TestMethodArguments[kv.Key] = kv.Value == typeof(ITestOutputHelper)
                 ? throw new NotSupportedException("Can't inject ITestOutputHelper via method arguments when use StaFact")
-                : provider.GetService(kv.Value);
+                : context.RootServices.GetService(kv.Value);
         }
 
-        constructorArguments = ArgumentsHelper.CreateTestClassConstructorArguments(scope.ServiceProvider, constructorArguments, aggregator);
+        constructorArguments = scope.ServiceProvider.CreateTestClassConstructorArguments(constructorArguments, aggregator);
 
         var summary = await testCase.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource).ConfigureAwait(false);
 
