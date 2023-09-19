@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <RollForward>Major</RollForward>
+    <ParallelizationMode>Force</ParallelizationMode>
     <TargetFrameworks>net6.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
 
@@ -17,7 +18,7 @@
     <Using Include="Microsoft.Extensions.Logging" />
     <Using Include="Xunit.Abstractions" />
     <Using Include="Xunit.Sdk" />
-    <Using Include="Xunit.DependencyInjection.Logging;" />
+    <Using Include="Xunit.DependencyInjection.Logging" />
 
     <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
 

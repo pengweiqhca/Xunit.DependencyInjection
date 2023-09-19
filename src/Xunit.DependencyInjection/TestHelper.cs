@@ -1,8 +1,8 @@
 ﻿namespace Xunit.DependencyInjection;
 
-internal static class ArgumentsHelper
+internal static class TestHelper
 {
-    public static object?[] CreateTestClassConstructorArguments(IServiceProvider provider,
+    public static object?[] CreateTestClassConstructorArguments(this IServiceProvider provider,
         object?[] constructorArguments, ExceptionAggregator aggregator)
     {
         var unusedArguments = new List<Tuple<int, ParameterInfo>>();
@@ -85,5 +85,20 @@ internal static class ArgumentsHelper
         private TestOutputHelperArgument() { }
 
         public static TestOutputHelperArgument Instance { get; } = new();
+    }
+
+    public static Exception Unwrap(this Exception ex)
+    {
+        while (ex is TargetInvocationException { InnerException: not null } tie)
+        {
+            ex = tie.InnerException;
+        }
+
+        while (ex is AggregateException { InnerException: not null } ae)
+        {
+            ex = ae.InnerException;
+        }
+
+        return ex;
     }
 }

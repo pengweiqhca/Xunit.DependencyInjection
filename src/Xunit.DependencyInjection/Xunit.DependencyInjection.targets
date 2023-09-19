@@ -8,7 +8,9 @@
   <ItemGroup>
     <AssemblyAttribute Include="Xunit.TestFramework"
                        Condition="'$(EnableXunitDependencyInjectionDefaultTestFrameworkAttribute)' == '' OR '$(EnableXunitDependencyInjectionDefaultTestFrameworkAttribute)' == 'true'">
-      <_Parameter1>Xunit.DependencyInjection.DependencyInjectionTestFramework</_Parameter1>
+      <_Parameter1 Condition="'$(ParallelizationMode)' != 'true' AND '$(ParallelizationMode)' != 'enhance' AND '$(ParallelizationMode)' != 'force'">Xunit.DependencyInjection.DependencyInjectionTestFramework</_Parameter1>
+      <_Parameter1 Condition="'$(ParallelizationMode)' == 'true' OR '$(ParallelizationMode)' == 'enhance'">Xunit.DependencyInjection.DependencyInjectionEnhancedParallelizationTestFramework</_Parameter1>
+      <_Parameter1 Condition="'$(ParallelizationMode)' == 'force'">Xunit.DependencyInjection.DependencyInjectionForcedParallelizationTestFramework</_Parameter1>
       <_Parameter2>Xunit.DependencyInjection</_Parameter2>
     </AssemblyAttribute>
 

@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <IsPackable>false</IsPackable>
+    <ParallelizationMode>Enhance</ParallelizationMode>
     <GenerateProgramFile>false</GenerateProgramFile>
     <LangVersion>6.0</LangVersion>
     <DisableImplicitSystemValueTupleReference>true</DisableImplicitSystemValueTupleReference>

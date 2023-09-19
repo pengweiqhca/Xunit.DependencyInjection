@@ -2,11 +2,11 @@
 
 internal sealed class HostManager : IHostedService, IDisposable
 {
-    private readonly IDictionary<Type, IHost> _hostMap = new Dictionary<Type, IHost>();
+    private readonly Dictionary<Type, DependencyInjectionContext> _hostMap = new();
     private readonly IList<IHost> _hosts = new List<IHost>();
 
     private Type? _defaultStartupType;
-    private IHost? _defaultHost;
+    private DependencyInjectionContext? _defaultHost;
     private readonly AssemblyName _assemblyName;
     private readonly IMessageSink _diagnosticMessageSink;
 
@@ -16,18 +16,20 @@ internal sealed class HostManager : IHostedService, IDisposable
         _diagnosticMessageSink = diagnosticMessageSink;
     }
 
-    public IHost? BuildDefaultHost()
+    public DependencyInjectionContext? BuildDefaultHost()
     {
         _defaultStartupType = StartupLoader.GetStartupType(_assemblyName);
 
-        if (_defaultStartupType != null)
-            _hosts.Add(_defaultHost =
-                StartupLoader.CreateHost(_defaultStartupType, _assemblyName, _diagnosticMessageSink));
+        if (_defaultStartupType == null) return _defaultHost;
 
-        return _defaultHost;
+        var value = StartupLoader.CreateHost(_defaultStartupType, _assemblyName, _diagnosticMessageSink);
+
+        _hosts.Add(value.Host);
+
+        return _defaultHost = value;
     }
 
-    public IHost GetHost(Type type)
+    public DependencyInjectionContext? GetContext(Type type)
     {
         var startupType = FindStartup(type, out var shared);
         if (startupType == null) return _defaultHost ?? throw MissingDefaultHost("Default startup is required.");
@@ -43,7 +45,7 @@ internal sealed class HostManager : IHostedService, IDisposable
 
         if (shared) _hostMap[startupType] = host;
 
-        _hosts.Add(host);
+        _hosts.Add(host.Host);
 
         return host;
     }
@@ -96,25 +98,22 @@ internal sealed class HostManager : IHostedService, IDisposable
     public Task StartAsync(CancellationToken cancellationToken) =>
         Task.WhenAll(_hosts.Select(x => x.StartAsync(cancellationToken)));
 
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        var tasks = new Task[_hosts.Count];
-
-        for (var index = _hosts.Count - 1; index >= 0; index--)
-            tasks[index] = _hosts[index].StopAsync(cancellationToken);
-
-        return Task.WhenAll(tasks);
-    }
+    public Task StopAsync(CancellationToken cancellationToken) =>
+        Task.WhenAll(_hosts.Reverse().Select(x => x.StopAsync(cancellationToken)));
 
     //DisposalTracker not support IAsyncDisposable
-    public void Dispose()
-    {
-        for (var index = _hosts.Count - 1; index >= 0; index--)
-        {
-            var task = _hosts[index].DisposeAsync();
+    public void Dispose() => Task.WaitAll(_hosts.Select(DisposeAsync).ToArray());
 
-            if (!task.IsCompletedSuccessfully)
-                task.AsTask().GetAwaiter().GetResult();
+    private static Task DisposeAsync(IDisposable disposable)
+    {
+        switch (disposable)
+        {
+            case IAsyncDisposable ad:
+                return ad.DisposeAsync().AsTask();
+            default:
+                disposable.Dispose();
+
+                return Task.CompletedTask;
         }
     }
 }

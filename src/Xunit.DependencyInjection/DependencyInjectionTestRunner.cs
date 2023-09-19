@@ -2,25 +2,31 @@
 
 public class DependencyInjectionTestRunner : XunitTestRunner
 {
-    private readonly IServiceProvider _provider;
+    private readonly DependencyInjectionContext _context;
     private readonly IReadOnlyDictionary<int, Type> _fromServices;
 
-    public DependencyInjectionTestRunner(IServiceProvider provider, ITest test, IMessageBus messageBus,
+    public DependencyInjectionTestRunner(DependencyInjectionContext context,
+        ITest test,
+        IMessageBus messageBus,
         IReadOnlyDictionary<int, Type> fromServices,
-        Type testClass, object[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
-        string skipReason, IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
-        ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
+        Type testClass, object[] constructorArguments,
+        MethodInfo testMethod,
+        object[] testMethodArguments,
+        string skipReason,
+        IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+        ExceptionAggregator aggregator,
+        CancellationTokenSource cancellationTokenSource)
         : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
             skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource)
     {
-        _provider = provider;
+        _context = context;
         _fromServices = fromServices;
     }
 
     /// <inheritdoc />
     protected override async Task<Tuple<decimal, string>> InvokeTestAsync(ExceptionAggregator aggregator)
     {
-        var scope = _provider.CreateAsyncScope();
+        var scope = _context.RootServices.CreateAsyncScope();
 
         await using var _ = scope.ConfigureAwait(false);
 
@@ -28,7 +34,7 @@ public class DependencyInjectionTestRunner : XunitTestRunner
 
         testOutputHelper.Initialize(MessageBus, Test);
 
-        _provider.GetRequiredService<ITestOutputHelperAccessor>().Output = testOutputHelper;
+        _context.RootServices.GetRequiredService<ITestOutputHelperAccessor>().Output = testOutputHelper;
 
         var raw = new Dictionary<int, object>(TestMethodArguments.Length);
         foreach (var kv in _fromServices)
@@ -41,8 +47,7 @@ public class DependencyInjectionTestRunner : XunitTestRunner
         }
 
         var item = await new DependencyInjectionTestInvoker(scope.ServiceProvider, Test, MessageBus, TestClass,
-                ArgumentsHelper.CreateTestClassConstructorArguments(scope.ServiceProvider,
-                    ConstructorArguments, aggregator),
+                scope.ServiceProvider.CreateTestClassConstructorArguments(ConstructorArguments, aggregator),
                 TestMethod, TestMethodArguments, BeforeAfterAttributes, aggregator, CancellationTokenSource)
             .RunAsync().ConfigureAwait(false);
 

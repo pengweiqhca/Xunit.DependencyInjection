@@ -2,14 +2,19 @@
 
 public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecutor
 {
+    private readonly ParallelizationMode _parallelizationMode;
     private readonly HostManager _hostManager;
 
-    public DependencyInjectionTestFrameworkExecutor(
-        AssemblyName assemblyName,
+    public DependencyInjectionTestFrameworkExecutor(AssemblyName assemblyName,
         ISourceInformationProvider sourceInformationProvider,
+        ParallelizationMode parallelizationMode,
         IMessageSink diagnosticMessageSink)
-        : base(assemblyName, sourceInformationProvider, diagnosticMessageSink) =>
+        : base(assemblyName, sourceInformationProvider, diagnosticMessageSink)
+    {
+        _parallelizationMode = parallelizationMode;
+
         DisposalTracker.Add(_hostManager = new(assemblyName, diagnosticMessageSink));
+    }
 
     /// <inheritdoc />
     protected override async void RunTestCases(
@@ -17,31 +22,29 @@ public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecut
         IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions)
     {
-        var exceptions = new List<Exception>();
-        var host = GetHost(exceptions, _hostManager.BuildDefaultHost);
+        testCases = testCases.ToList();
 
-        static IHost? GetHost(ICollection<Exception> exceptions, Func<IHost?> func)
+        var exceptions = new List<Exception>();
+
+        var host = GetHost(exceptions, _hostManager.BuildDefaultHost)?.Host;
+
+        static DependencyInjectionContext? GetHost(ICollection<Exception> exceptions, Func<DependencyInjectionContext?> func)
         {
             try
             {
                 return func();
             }
-            catch (TargetInvocationException tie)
-            {
-                exceptions.Add(tie.InnerException);
-            }
             catch (Exception ex)
             {
-                exceptions.Add(ex);
+                exceptions.Add(ex.Unwrap());
             }
 
-            return null;
+            return default;
         }
 
-        // ReSharper disable once PossibleMultipleEnumeration
-        var hostMap = testCases
+        var contextMap = testCases
             .GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
-            .ToDictionary(group => group.Key, group => GetHost(exceptions, () => _hostManager.GetHost(group.Key.Class.ToRuntimeType())));
+            .ToDictionary(group => group.Key, group => GetHost(exceptions, () => _hostManager.GetContext(group.Key.Class.ToRuntimeType())));
 
         try
         {
@@ -52,9 +55,8 @@ public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecut
             exceptions.Add(ex);
         }
 
-        using var runner = new DependencyInjectionTestAssemblyRunner(host?.Services, TestAssembly,
-            // ReSharper disable once PossibleMultipleEnumeration
-            testCases, hostMap, DiagnosticMessageSink, executionMessageSink, executionOptions, exceptions);
+        using var runner = new DependencyInjectionTestAssemblyRunner(new(host, _parallelizationMode, contextMap), TestAssembly,
+            testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, exceptions);
 
         await runner.RunAsync().ConfigureAwait(false);
 

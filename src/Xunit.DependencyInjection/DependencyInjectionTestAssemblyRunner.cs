@@ -2,13 +2,11 @@
 
 public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
 {
-    private readonly IServiceProvider? _provider;
-    private readonly IReadOnlyDictionary<ITestClass, IHost?> _hostMap;
+    private readonly DependencyInjectionStartupContext _context;
 
-    public DependencyInjectionTestAssemblyRunner(IServiceProvider? provider,
+    public DependencyInjectionTestAssemblyRunner(DependencyInjectionStartupContext context,
         ITestAssembly testAssembly,
         IEnumerable<IXunitTestCase> testCases,
-        IReadOnlyDictionary<ITestClass, IHost?> hostMap,
         IMessageSink diagnosticMessageSink,
         IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions,
@@ -16,19 +14,18 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         : base(testAssembly, testCases, diagnosticMessageSink,
             executionMessageSink, executionOptions)
     {
-        _provider = provider;
-        _hostMap = hostMap;
+        _context = context;
 
         foreach (var exception in exceptions) Aggregator.Add(exception);
     }
+
+    protected override string GetTestFrameworkEnvironment() => base.GetTestFrameworkEnvironment();
 
     /// <inheritdoc />
     protected override Task<RunSummary> RunTestCollectionAsync(IMessageBus messageBus,
         ITestCollection testCollection,
         IEnumerable<IXunitTestCase> testCases,
         CancellationTokenSource cancellationTokenSource) =>
-        new DependencyInjectionTestCollectionRunner(_provider, testCollection,
-                testCases, _hostMap, DiagnosticMessageSink, messageBus, TestCaseOrderer,
-                new(Aggregator), cancellationTokenSource)
-            .RunAsync();
+        new DependencyInjectionTestCollectionRunner(_context, testCollection, testCases, DiagnosticMessageSink,
+            messageBus, TestCaseOrderer, new(Aggregator), cancellationTokenSource).RunAsync();
 }
