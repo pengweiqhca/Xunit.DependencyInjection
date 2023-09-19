@@ -107,12 +107,12 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     /// <inheritdoc />
     protected override async Task BeforeTestClassFinishedAsync()
     {
-        await base.BeforeTestClassFinishedAsync().ConfigureAwait(false);
+        await base.BeforeTestClassFinishedAsync();
 
         foreach (var fixture in ClassFixtureMappings.Values.OfType<IAsyncDisposable>())
-            await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask()).ConfigureAwait(false);
+            await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask());
 
-        if (_serviceScope is { } disposable) await disposable.DisposeAsync().ConfigureAwait(false);
+        if (_serviceScope is { } disposable) await disposable.DisposeAsync();
     }
 
     // This method has been slightly modified from the original implementation to run tests in parallel
@@ -125,7 +125,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
             attr.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) ||
             TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any() ||
             TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any())
-            return await base.RunTestMethodsAsync().ConfigureAwait(false);
+            return await base.RunTestMethodsAsync();
 
         IEnumerable<IXunitTestCase> orderedTestCases;
         try
@@ -149,7 +149,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
 
         var summary = new RunSummary();
 
-        foreach (var methodSummary in await Task.WhenAll(methodTasks).ConfigureAwait(false))
+        foreach (var methodSummary in await Task.WhenAll(methodTasks))
             summary.Aggregate(methodSummary);
 
         return summary;

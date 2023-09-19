@@ -18,7 +18,7 @@ public class MinimalApiTest
     [Fact]
     public async Task ResponseTest()
     {
-        var responseText = await _httpClient.GetStringAsync("/").ConfigureAwait(false);
+        var responseText = await _httpClient.GetStringAsync("/");
         Assert.Equal("Hello world", responseText);
     }
 

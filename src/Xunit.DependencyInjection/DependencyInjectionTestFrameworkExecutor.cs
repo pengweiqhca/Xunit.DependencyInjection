@@ -43,12 +43,12 @@ public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecut
         }
 
         var contextMap = testCases
-            .GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
+            .GroupBy(tc => tc.TestMethod.TestClass)
             .ToDictionary(group => group.Key, group => GetHost(exceptions, () => _hostManager.GetContext(group.Key.Class.ToRuntimeType())));
 
         try
         {
-            await _hostManager.StartAsync(default).ConfigureAwait(false);
+            await _hostManager.StartAsync(default);
         }
         catch (Exception ex)
         {
@@ -58,8 +58,8 @@ public class DependencyInjectionTestFrameworkExecutor : XunitTestFrameworkExecut
         using var runner = new DependencyInjectionTestAssemblyRunner(new(host, _parallelizationMode, contextMap), TestAssembly,
             testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, exceptions);
 
-        await runner.RunAsync().ConfigureAwait(false);
+        await runner.RunAsync();
 
-        await _hostManager.StopAsync(default).ConfigureAwait(false);
+        await _hostManager.StopAsync(default);
     }
 }

@@ -36,7 +36,7 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
             TestMethod.Method.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any() ||
             TestMethod.Method.GetCustomAttributes(typeof(MemberDataAttribute)).Any(a =>
                 a.GetNamedArgument<bool>(nameof(MemberDataAttribute.DisableDiscoveryEnumeration))))
-            return await base.RunTestCasesAsync().ConfigureAwait(false);
+            return await base.RunTestCasesAsync();
 
         // Respect MaxParallelThreads by using the MaxConcurrencySyncContext if it exists, mimicking how collections are run
         // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/XunitTestAssemblyRunner.cs#L169-L176
@@ -50,7 +50,7 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
 
         var summary = new RunSummary();
 
-        foreach (var caseSummary in await Task.WhenAll(tasks).ConfigureAwait(false))
+        foreach (var caseSummary in await Task.WhenAll(tasks))
             summary.Aggregate(caseSummary);
 
         return summary;
@@ -78,10 +78,10 @@ public class DependencyInjectionTestMethodRunner : TestMethodRunner<IXunitTestCa
 
         async Task<RunSummary> BaseRun(AsyncServiceScope scope)
         {
-            await using (scope.ConfigureAwait(false))
+            await using (scope)
                 return await testCase.RunAsync(_diagnosticMessageSink, MessageBus,
                     scope.ServiceProvider.CreateTestClassConstructorArguments(_constructorArguments, Aggregator),
-                    new(Aggregator), CancellationTokenSource).ConfigureAwait(false);
+                    new(Aggregator), CancellationTokenSource);
         }
     }
 }

@@ -16,7 +16,7 @@ public class UITestCaseRunnerAdapter : IXunitTestCaseRunnerWrapper
     {
         var scope = context.RootServices.CreateAsyncScope();
 
-        await using var _ = scope.ConfigureAwait(false);
+        await using var _ = scope;
 
         var raw = new Dictionary<int, object>();
         foreach (var kv in FromServicesAttribute.CreateFromServices(testCase.Method.ToRuntimeMethod()))
@@ -30,7 +30,7 @@ public class UITestCaseRunnerAdapter : IXunitTestCaseRunnerWrapper
 
         constructorArguments = scope.ServiceProvider.CreateTestClassConstructorArguments(constructorArguments, aggregator);
 
-        var summary = await testCase.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource).ConfigureAwait(false);
+        var summary = await testCase.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
 
         foreach (var kv in raw)
             testCase.TestMethodArguments[kv.Key] = kv.Value;

@@ -28,7 +28,7 @@ public class DependencyInjectionTestRunner : XunitTestRunner
     {
         var scope = _context.RootServices.CreateAsyncScope();
 
-        await using var _ = scope.ConfigureAwait(false);
+        await using var _ = scope;
 
         var testOutputHelper = new TestOutputHelper();
 
@@ -49,7 +49,7 @@ public class DependencyInjectionTestRunner : XunitTestRunner
         var item = await new DependencyInjectionTestInvoker(scope.ServiceProvider, Test, MessageBus, TestClass,
                 scope.ServiceProvider.CreateTestClassConstructorArguments(ConstructorArguments, aggregator),
                 TestMethod, TestMethodArguments, BeforeAfterAttributes, aggregator, CancellationTokenSource)
-            .RunAsync().ConfigureAwait(false);
+            .RunAsync();
 
         foreach (var kv in raw)
             TestMethodArguments[kv.Key] = kv.Value;

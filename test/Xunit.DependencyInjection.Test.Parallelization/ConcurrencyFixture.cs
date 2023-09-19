@@ -7,11 +7,11 @@ public class ConcurrencyFixture
     public async Task<int> CheckConcurrencyAsync()
     {
         Interlocked.Increment(ref _concurrency);
-        await Task.Delay(TimeSpan.FromMilliseconds(1000)).ConfigureAwait(false);
+        await Task.Delay(TimeSpan.FromMilliseconds(1000));
 
         var overlap = _concurrency;
 
-        await Task.Delay(TimeSpan.FromMilliseconds(1000)).ConfigureAwait(false);
+        await Task.Delay(TimeSpan.FromMilliseconds(1000));
         Interlocked.Decrement(ref _concurrency);
 
         return overlap;

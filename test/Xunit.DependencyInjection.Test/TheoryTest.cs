@@ -23,7 +23,7 @@ public class TheoryTest
         Assert.Equal("Value", arg3["Key"]);
         Assert.True(delay >= 0);
 
-        await Task.Delay(delay).ConfigureAwait(false);
+        await Task.Delay(delay);
     }
 
     [Theory]

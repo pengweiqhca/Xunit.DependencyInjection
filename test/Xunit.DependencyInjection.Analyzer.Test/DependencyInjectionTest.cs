@@ -22,22 +22,22 @@ public class DependencyInjectionTest
         var task = fixedSource == null
             ? CSharpAnalyzerVerifier.VerifyAnalyzerAsync(
 #if NETFRAMEWORK
-                     File.ReadAllText(Path.Combine("Startup", source)),
+                File.ReadAllText(Path.Combine("Startup", source)),
 #else
-                await File.ReadAllTextAsync(Path.Combine("Startup", source), _cancellationToken).ConfigureAwait(false),
+                await File.ReadAllTextAsync(Path.Combine("Startup", source), _cancellationToken),
 #endif
                 _cancellationToken, expected)
             : CSharpCodeFixVerifier.VerifyCodeFixAsync(
 #if NETFRAMEWORK
-                     File.ReadAllText(Path.Combine("Startup", source)),
-                     File.ReadAllText(Path.Combine("Startup", fixedSource)),
+                File.ReadAllText(Path.Combine("Startup", source)),
+                File.ReadAllText(Path.Combine("Startup", fixedSource)),
 #else
-                await File.ReadAllTextAsync(Path.Combine("Startup", source), _cancellationToken).ConfigureAwait(false),
-                await File.ReadAllTextAsync(Path.Combine("Startup", fixedSource), _cancellationToken).ConfigureAwait(false),
+                await File.ReadAllTextAsync(Path.Combine("Startup", source), _cancellationToken),
+                await File.ReadAllTextAsync(Path.Combine("Startup", fixedSource), _cancellationToken),
 #endif
                 _cancellationToken, expected);
 
-        await task.ConfigureAwait(false);
+        await task;
     }
 
     public static IEnumerable<object?[]> ReadFile()

@@ -7,8 +7,8 @@ public class ParallelCollectionTests : IClassFixture<ConcurrencyFixture>
     public ParallelCollectionTests(ConcurrencyFixture fixture) => this._fixture = fixture;
 
     [Fact]
-    public async Task Fact1() => Assert.Equal(2, await _fixture.CheckConcurrencyAsync().ConfigureAwait(false));
+    public async Task Fact1() => Assert.Equal(2, await _fixture.CheckConcurrencyAsync());
 
     [Fact]
-    public async Task Fact2() => Assert.Equal(2, await _fixture.CheckConcurrencyAsync().ConfigureAwait(false));
+    public async Task Fact2() => Assert.Equal(2, await _fixture.CheckConcurrencyAsync());
 }

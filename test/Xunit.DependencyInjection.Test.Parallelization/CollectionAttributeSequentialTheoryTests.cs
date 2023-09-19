@@ -10,5 +10,5 @@ public class CollectionAttributeSequentialTheoryTests : IClassFixture<Concurrenc
     [Theory]
     [InlineData(1)]
     [InlineData(2)]
-    public async Task Theory(int _) => Assert.Equal(1, await _fixture.CheckConcurrencyAsync().ConfigureAwait(false));
+    public async Task Theory(int _) => Assert.Equal(1, await _fixture.CheckConcurrencyAsync());
 }

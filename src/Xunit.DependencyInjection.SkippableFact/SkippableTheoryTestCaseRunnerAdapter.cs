@@ -28,8 +28,7 @@ public class SkippableTheoryTestCaseRunnerWrapper : DependencyInjectionTheoryTes
         var messageBusInterceptor = new SkippableTestMessageBus(messageBus, GetSkippingExceptionNames(testCase));
 
         var result = await base.RunAsync(testCase, context, diagnosticMessageSink,
-                messageBusInterceptor, constructorArguments, aggregator, cancellationTokenSource)
-            .ConfigureAwait(false);
+                messageBusInterceptor, constructorArguments, aggregator, cancellationTokenSource);
 
         result.Failed -= messageBusInterceptor.SkippedCount;
         result.Skipped += messageBusInterceptor.SkippedCount;

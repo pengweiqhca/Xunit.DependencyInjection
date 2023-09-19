@@ -36,7 +36,7 @@ public class DependencyInjectionTheoryTestCaseRunner : XunitTheoryTestCaseRunner
     /// <inheritdoc />
     protected override async Task AfterTestCaseStartingAsync()
     {
-        await base.AfterTestCaseStartingAsync().ConfigureAwait(false);
+        await base.AfterTestCaseStartingAsync();
 
         var fromServices = FromServicesAttribute.CreateFromServices(TestMethod);
         var runners = GetTestRunners(this);
@@ -61,7 +61,7 @@ public class DependencyInjectionTheoryTestCaseRunner : XunitTheoryTestCaseRunner
 
     public new async Task<RunSummary> RunAsync()
     {
-        await using (TheoryTestCaseDataContext.BeginContext(_context.RootServices).ConfigureAwait(false))
-            return await base.RunAsync().ConfigureAwait(false);
+        await using (TheoryTestCaseDataContext.BeginContext(_context.RootServices))
+            return await base.RunAsync();
     }
 }

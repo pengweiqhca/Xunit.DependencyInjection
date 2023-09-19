@@ -14,10 +14,10 @@ public class TestServerTest
     [Fact]
     public async Task HttpTest()
     {
-        using var response = await _httpClient.GetAsync("/").ConfigureAwait(false);
+        using var response = await _httpClient.GetAsync("/");
 
         response.EnsureSuccessStatusCode();
 
-        Assert.Equal(Key, await response.Content.ReadAsStringAsync().ConfigureAwait(false));
+        Assert.Equal(Key, await response.Content.ReadAsStringAsync());
     }
 }

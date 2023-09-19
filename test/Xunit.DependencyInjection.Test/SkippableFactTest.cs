@@ -17,7 +17,7 @@ public class SkippableFactTest
 
     private static async Task Delay(int index)
     {
-        await Task.Delay(100).ConfigureAwait(false);
+        await Task.Delay(100);
 
         Skip.If(true, "Skip " + index);
     }

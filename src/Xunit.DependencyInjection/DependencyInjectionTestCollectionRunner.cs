@@ -44,12 +44,12 @@ public class DependencyInjectionTestCollectionRunner : XunitTestCollectionRunner
     /// <inheritdoc/>
     protected override async Task BeforeTestCollectionFinishedAsync()
     {
-        await base.BeforeTestCollectionFinishedAsync().ConfigureAwait(false);
+        await base.BeforeTestCollectionFinishedAsync();
 
         foreach (var fixture in CollectionFixtureMappings.Values.OfType<IAsyncDisposable>())
-            await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask()).ConfigureAwait(false);
+            await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask());
 
-        if (_serviceScope is { } disposable) await disposable.DisposeAsync().ConfigureAwait(false);
+        if (_serviceScope is { } disposable) await disposable.DisposeAsync();
     }
 
     /// <inheritdoc />

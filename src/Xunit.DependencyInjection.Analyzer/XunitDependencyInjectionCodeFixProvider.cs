@@ -13,11 +13,8 @@ public class XunitDependencyInjectionCodeFixProvider : CodeFixProvider
 {
     public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.CreateRange(Rules.SupportedDiagnostics.Select(d => d.Id));
 
-    public sealed override FixAllProvider GetFixAllProvider()
-    {
-        // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
-        return WellKnownFixAllProviders.BatchFixer;
-    }
+    // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/FixAllProvider.md for more information on Fix All Providers
+    public sealed override FixAllProvider GetFixAllProvider() => WellKnownFixAllProviders.BatchFixer;
 
     public sealed override async Task RegisterCodeFixesAsync(CodeFixContext context)
     {
@@ -25,7 +22,7 @@ public class XunitDependencyInjectionCodeFixProvider : CodeFixProvider
         if (diagnostic.Id != Rules.ReturnTypeAssignableTo.Id &&
             diagnostic.Id != Rules.NoReturnType.Id) return;
 
-        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken).ConfigureAwait(false);
+        var root = await context.Document.GetSyntaxRootAsync(context.CancellationToken);
 
         if (root?.FindNode(diagnostic.Location.SourceSpan, getInnermostNodeForTie: true) is not MethodDeclarationSyntax method) return;
 
@@ -61,8 +58,7 @@ public class XunitDependencyInjectionCodeFixProvider : CodeFixProvider
 
     private static async Task<Document> ChangeReturnType(Document document, MethodDeclarationSyntax node, TypeSyntax returnType, CancellationToken cancellationToken)
     {
-        var root = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false)
-                   ?? throw new InvalidOperationException();
+        var root = await document.GetSyntaxRootAsync(cancellationToken) ?? throw new InvalidOperationException();
 
         return document.WithSyntaxRoot(root.ReplaceNode(node, node.WithReturnType(returnType)));
     }

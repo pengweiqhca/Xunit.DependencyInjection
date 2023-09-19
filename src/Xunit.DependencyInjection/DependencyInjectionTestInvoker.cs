@@ -107,7 +107,7 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
     {
         try
         {
-            await task.ConfigureAwait(false);
+            await task;
 
             activity?.SetStatus(ActivityStatusCode.Ok);
         }
