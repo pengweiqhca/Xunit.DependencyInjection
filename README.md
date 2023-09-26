@@ -141,11 +141,11 @@ If the class type full name is "A.B.C.TestClass", find Startup in the following 
 ### 4. Default startup
 > Default startup is required before 8.7.0, is optional in some case after 8.7.0.
 >
-> If is required, plaese add a startup class in your test project.
+> If is required, please add a startup class in your test project.
 
-Default is find Your.Test.Project.Startup, Your.Test.Project`.
+Default is find `Your.Test.Project.Startup, Your.Test.Project`.
 
-If you want use a special `Startup`, you can defined `XunitStartupAssembly` and `XunitStartupFullName` in `PropertyGroup` section
+If you want to use a special `Startup`, you can define `XunitStartupAssembly` and `XunitStartupFullName` in the `PropertyGroup` section
 
 ``` xml
 <Project>
