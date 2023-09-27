@@ -11,9 +11,8 @@ public class RetryTheoryDiscoveryAtRuntimeRunnerWrapper : DependencyInjectionThe
 
     /// <inheritdoc />
     public override Task<RunSummary> RunAsync(IXunitTestCase testCase, DependencyInjectionContext context,
-        IMessageSink diagnosticMessageSink,
-        IMessageBus messageBus, object?[] constructorArguments, ExceptionAggregator aggregator,
-        CancellationTokenSource cancellationTokenSource)
+        IMessageSink diagnosticMessageSink, IMessageBus messageBus, object?[] constructorArguments,
+        ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
     {
         if (testCase is not IRetryableTestCase retryableTestCase)
         {
