@@ -9,7 +9,7 @@ public void ConfigureServices(IServiceCollection services)
     services.AddSkippableFactSupport();
 }</Description>
     <PackageTags>xunit ioc di DependencyInjection test skipping</PackageTags>
-    <Version>8.0.1</Version>
+    <Version>8.1.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
