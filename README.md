@@ -1,13 +1,13 @@
-﻿Uses Microsoft.Extensions.DependencyInjection to resolve xUnit test cases.
+﻿# Use `Microsoft.Extensions.DependencyInjection` to resolve xUnit test cases
 
-How to use
-=============
+## How to use
 
 Install the [Nuget](https://www.nuget.org/packages/Xunit.DependencyInjection) package.
 
 ``` bash
 dotnet add package Xunit.DependencyInjection
 ```
+
 In your testing project, add the following framework
 
 ```cs
@@ -69,6 +69,7 @@ public class Startup
 ```
 
 ### MinimalApi
+
 If you use MinimalApi rather than asp.net core Startup class.
 
 ``` bash
@@ -83,12 +84,13 @@ public class Startup
 ```
 
 > Maybe your asp.net core project should InternalsVisibleTo or add `public partial class Program {}` in the end of `Program.cs`;
-
+>
 > Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/test/Xunit.DependencyInjection.Test.AspNetCore)
 
 ## `Startup` limitation
 
-* CreateHostBuilder method
+* `CreateHostBuilder` method
+
 ``` C#
 public class Startup
 {
@@ -96,7 +98,8 @@ public class Startup
 }
 ```
 
-* ConfigureHost method
+* `ConfigureHost` method
+
 ``` C#
 public class Startup
 {
@@ -104,7 +107,8 @@ public class Startup
 }
 ```
 
-* ConfigureServices method
+* `ConfigureServices` method
+
 ``` C#
 public class Startup
 {
@@ -112,16 +116,18 @@ public class Startup
 }
 ```
 
-* Configure method
+* `Configure` method
 
-Anything defined in ConfigureServices, can be specified in the Configure method signature. These services are injected if they're available.
+Anything defined in `ConfigureServices`, can be specified in the `Configure`` method signature. These services are injected if they're available.
 
 ## How to find `Startup`?
 
 ### 1. Specific startup
+
 Declare [Startup] on test class
 
-### 2. Nest startup
+### 2. Nested startup
+
 ``` C#
 public class TestClass1
 {
@@ -132,13 +138,16 @@ public class TestClass1
 ```
 
 ### 3. Closest startup
+
 If the class type full name is "A.B.C.TestClass", find Startup in the following order:
-1. A.B.C.Startup
-2. A.B.Startup
-3. A.Startup
-4. Startup
+
+1. `A.B.C.Startup`
+2. `A.B.Startup`
+3. `A.Startup`
+4. `Startup`
 
 ### 4. Default startup
+
 > Default startup is required before 8.7.0, is optional in some case after 8.7.0.
 >
 > If is required, please add a startup class in your test project.
@@ -192,6 +201,7 @@ If have `[Collection]`, `[CollectionDefinition(DisableParallelization = true)]`,
 > Thanks [Meziantou.Xunit.ParallelTestFramework](https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework)
 
 ## How to disable Xunit.DependencyInjection
+
 ``` xml
 <Project>
     <PropertyGroup>
@@ -214,13 +224,15 @@ internal class DependencyClass : IDependency
 }
 ```
 
-## Write Microsoft.Extensions.Logging to ITestOutputHelper
+## Write `Microsoft.Extensions.Logging` to `ITestOutputHelper`
+
 > The call chain must from test case. If not, this feature will not work.
 
 ``` C#
 public class Startup
 {
-    public void ConfigureServices(IServiceCollection services) => services.AddLogging(lb => lb.AddXunitOutput());
+    public void ConfigureServices(IServiceCollection services)
+        => services.AddLogging(lb => lb.AddXunitOutput());
 }
 ```
 
@@ -234,7 +246,9 @@ public class Startup
             .ConfigureServices((context, services) => { context.XXXX });
 }
 ```
+
 or
+
 ``` C#
 public class Startup
 {
@@ -258,9 +272,10 @@ public class Startup
 ```
 
 ## [MemberData] how to inject?
+
 Use **[MethodData]**
 
-## Integrate opentelemetry
+## Integrate OpenTelemetry
 
 ``` C#
 TracerProviderBuilder builder;
