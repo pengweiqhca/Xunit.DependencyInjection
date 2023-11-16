@@ -2,10 +2,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <PackageType>Template</PackageType>
-    <PackageVersion>1.1.0</PackageVersion>
+    <PackageVersion>1.2.0</PackageVersion>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
     <Description>Xunit.DependencyInjection project template</Description>
-    <PackageReleaseNotes>Update to .NET 6</PackageReleaseNotes>
+    <PackageReleaseNotes>Update to .NET 8</PackageReleaseNotes>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <IncludeSymbols>false</IncludeSymbols>
     <IncludeContentInPack>true</IncludeContentInPack>
