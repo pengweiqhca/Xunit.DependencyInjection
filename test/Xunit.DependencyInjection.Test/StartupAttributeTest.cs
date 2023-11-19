@@ -3,13 +3,11 @@
 namespace Xunit.DependencyInjection.Test;
 
 [Startup(typeof(Startup2))]
-public class StartupAttributeTest
+public class StartupAttributeTest(StartupAttributeTest.Dependency2 dependency)
 {
     private static Type? StartupThatWasUsed { get; set; }
 
-    public Dependency2 Dependency { get; }
-
-    public StartupAttributeTest(Dependency2 dependency) => Dependency = dependency;
+    public Dependency2 Dependency { get; } = dependency;
 
     [Fact]
     public void ProperStartupWasUsed() => Assert.Equal(typeof(Startup2), StartupThatWasUsed);

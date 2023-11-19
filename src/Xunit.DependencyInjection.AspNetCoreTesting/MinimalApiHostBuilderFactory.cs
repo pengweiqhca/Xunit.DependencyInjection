@@ -68,12 +68,12 @@ public static class MinimalApiHostBuilderFactory
             new[] { KeyValuePair.Create(HostDefaults.ApplicationKey, entryAssembly.GetName().Name) }));
 
         // This helper call does the hard work to determine if we can fallback to diagnostic source events to get the host instance
-        var factory = ResolveHostFactory.Invoke(null, BindingFlags.DoNotWrapExceptions, null, new object?[]
-        {
+        var factory = ResolveHostFactory.Invoke(null, BindingFlags.DoNotWrapExceptions, null,
+        [
             entryAssembly, null, false,
             ConfigureHostBuilder.CreateDelegate<Action<object>>(deferredHostBuilder),
             EntryPointCompleted.CreateDelegate<Action<Exception>>(deferredHostBuilder)
-        }, null);
+        ], null);
 
         ArgumentNullException.ThrowIfNull(factory);
 
@@ -85,7 +85,7 @@ public static class MinimalApiHostBuilderFactory
         deferredHostBuilder.ConfigureWebHost(webHostBuilder =>
         {
             setContentRoot.Invoke(setContentRoot.IsStatic ? null : new WebApplicationFactory<TEntryPoint>(),
-                BindingFlags.DoNotWrapExceptions, null, new object?[] { webHostBuilder }, null);
+                BindingFlags.DoNotWrapExceptions, null, [webHostBuilder], null);
 
             configure?.Invoke(webHostBuilder);
 
@@ -97,7 +97,7 @@ public static class MinimalApiHostBuilderFactory
             webHostBuilder.ConfigureServices((context, services) =>
             {
                 var manager = (ApplicationPartManager)GetApplicationPartManager.Invoke(null,
-                    new object?[] { services, context.HostingEnvironment })!;
+                    [services, context.HostingEnvironment])!;
 
                 var partFactory = ApplicationPartFactory.GetApplicationPartFactory(entryAssembly);
 

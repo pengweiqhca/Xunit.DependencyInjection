@@ -3,34 +3,29 @@
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.Internal;
 
-internal readonly struct AwaitableInfo
+internal readonly struct AwaitableInfo(
+    Type awaiterType,
+    PropertyInfo awaiterIsCompletedProperty,
+    MethodInfo awaiterGetResultMethod,
+    MethodInfo awaiterOnCompletedMethod,
+    MethodInfo? awaiterUnsafeOnCompletedMethod,
+    MethodInfo getAwaiterMethod)
 {
     private const BindingFlags Everything = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
     private static readonly MethodInfo OnCompleted = typeof(INotifyCompletion).GetMethod(nameof(INotifyCompletion.OnCompleted), Everything, null, new[] { typeof(Action) }, null)!;
     private static readonly MethodInfo UnsafeOnCompleted = typeof(ICriticalNotifyCompletion).GetMethod(nameof(ICriticalNotifyCompletion.UnsafeOnCompleted), Everything, null, new[] { typeof(Action) }, null)!;
 
-    public Type AwaiterType { get; }
-    public PropertyInfo AwaiterIsCompletedProperty { get; }
-    public MethodInfo AwaiterGetResultMethod { get; }
-    public MethodInfo AwaiterOnCompletedMethod { get; }
-    public MethodInfo? AwaiterUnsafeOnCompletedMethod { get; }
-    public MethodInfo GetAwaiterMethod { get; }
+    public Type AwaiterType { get; } = awaiterType;
 
-    public AwaitableInfo(
-        Type awaiterType,
-        PropertyInfo awaiterIsCompletedProperty,
-        MethodInfo awaiterGetResultMethod,
-        MethodInfo awaiterOnCompletedMethod,
-        MethodInfo? awaiterUnsafeOnCompletedMethod,
-        MethodInfo getAwaiterMethod)
-    {
-        AwaiterType = awaiterType;
-        AwaiterIsCompletedProperty = awaiterIsCompletedProperty;
-        AwaiterGetResultMethod = awaiterGetResultMethod;
-        AwaiterOnCompletedMethod = awaiterOnCompletedMethod;
-        AwaiterUnsafeOnCompletedMethod = awaiterUnsafeOnCompletedMethod;
-        GetAwaiterMethod = getAwaiterMethod;
-    }
+    public PropertyInfo AwaiterIsCompletedProperty { get; } = awaiterIsCompletedProperty;
+
+    public MethodInfo AwaiterGetResultMethod { get; } = awaiterGetResultMethod;
+
+    public MethodInfo AwaiterOnCompletedMethod { get; } = awaiterOnCompletedMethod;
+
+    public MethodInfo? AwaiterUnsafeOnCompletedMethod { get; } = awaiterUnsafeOnCompletedMethod;
+
+    public MethodInfo GetAwaiterMethod { get; } = getAwaiterMethod;
 
     public static bool IsTypeAwaitable(Type type, out AwaitableInfo awaitableInfo)
     {

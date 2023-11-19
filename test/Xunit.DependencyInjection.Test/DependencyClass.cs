@@ -7,20 +7,13 @@ public interface IDependency
     int TestWriteLine(int count);
 }
 
-internal class DependencyClass : IDependency, IAsyncDisposable
+internal class DependencyClass(ITestOutputHelperAccessor testOutputHelperAccessor) : IDependency, IAsyncDisposable
 {
-    private readonly ITestOutputHelperAccessor _testOutputHelperAccessor;
-
-    public DependencyClass(ITestOutputHelperAccessor testOutputHelperAccessor)
-    {
-        _testOutputHelperAccessor = testOutputHelperAccessor;
-    }
-
     public int Value { get; set; }
 
     public int TestWriteLine(int count)
     {
-        var output = _testOutputHelperAccessor.Output;
+        var output = testOutputHelperAccessor.Output;
         if (output != null)
             for (var index = 0; index < count; index++)
             {

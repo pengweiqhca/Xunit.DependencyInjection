@@ -29,11 +29,9 @@ public static class ModuleStartupTest
         }
     }
 
-    public class StartupTest
+    public class StartupTest(Dependency dependency)
     {
-        public Dependency Dependency { get; }
-
-        public StartupTest(Dependency dependency) => Dependency = dependency;
+        public Dependency Dependency { get; } = dependency;
 
         [Fact]
         public void ProperStartupWasUsed() => Assert.Equal(typeof(Startup), StartupThatWasUsed);

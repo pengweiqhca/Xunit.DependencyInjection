@@ -5,20 +5,16 @@ using Xunit.Abstractions;
 
 namespace Xunit.DependencyInjection.Test.Parallelization;
 
-public class TestOutputHelperTests
+public class TestOutputHelperTests(ITestOutputHelper output)
 {
-    private readonly ITestOutputHelper _output;
-
-    public TestOutputHelperTests(ITestOutputHelper output) => this._output = output;
+    [Fact]
+    public void Fact1() => output.WriteLine(nameof(Fact1));
 
     [Fact]
-    public void Fact1() => _output.WriteLine(nameof(Fact1));
-
-    [Fact]
-    public void Fact2() => _output.WriteLine(nameof(Fact2));
+    public void Fact2() => output.WriteLine(nameof(Fact2));
 
     [Theory]
     [InlineData(1)]
     [InlineData(2)]
-    public void Theory(int value) => _output.WriteLine(nameof(Theory) + value);
+    public void Theory(int value) => output.WriteLine(nameof(Theory) + value);
 }

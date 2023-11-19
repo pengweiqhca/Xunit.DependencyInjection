@@ -1,8 +1,8 @@
 ﻿namespace Xunit.DependencyInjection.Test;
 
-public class TheoryTest
+public class TheoryTest(IDependency dependency)
 {
-    public TheoryTest(IDependency _) { }
+    private IDependency Dependency { get; } = dependency;
 
     [Theory]
     [MemberData(nameof(GetComplexData))]
@@ -54,24 +54,17 @@ public class TheoryTest
 
     public static IEnumerable<object[]> GetSimpleData()
     {
-        yield return new object[]
-        {
-            "Test", 1, 0
-        };
-        yield return new object[]
-        {
-            "Test", 1, 10
-        };
-        yield return new object[]
-        {
-            "Test", 1, 1
-        };
+        yield return ["Test", 1, 0];
+
+        yield return ["Test", 1, 10];
+
+        yield return ["Test", 1, 1];
     }
 
     public static IEnumerable<object[]> GetComplexData()
     {
-        yield return new object[]
-        {
+        yield return
+        [
             "Test",
             new Dictionary<string, string>
             {
@@ -82,10 +75,10 @@ public class TheoryTest
                 { "Key", "Value"}
             },
             0
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             "Test",
             new Dictionary<string, string>
             {
@@ -96,10 +89,10 @@ public class TheoryTest
                 { "Key", "Value"}
             },
             10
-        };
+        ];
 
-        yield return new object[]
-        {
+        yield return
+        [
             "Test",
             new Dictionary<string, string>
             {
@@ -110,6 +103,6 @@ public class TheoryTest
                 { "Key", "Value"}
             },
             1
-        };
+        ];
     }
 }

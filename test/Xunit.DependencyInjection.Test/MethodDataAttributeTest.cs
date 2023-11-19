@@ -29,7 +29,7 @@ public class MethodDataAttributeTest
 
             Assert.Equal(_dependency, dependency);
 
-            yield return new object?[] { RandomValue };
+            yield return [RandomValue];
         }
 
         public static IEnumerable<object?[]> StaticMethod([FromServices]IDependency dependency, int value)
@@ -38,7 +38,7 @@ public class MethodDataAttributeTest
 
             Assert.Equal(3, value);
 
-            yield return new object?[] { RandomValue };
+            yield return [RandomValue];
         }
     }
 }

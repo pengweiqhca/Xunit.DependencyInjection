@@ -9,12 +9,8 @@ using CSharpCodeFixVerifier = Xunit.DependencyInjection.Analyzer.Test.Verifiers.
 
 namespace Xunit.DependencyInjection.Analyzer.Test;
 
-public class DependencyInjectionTest
+public class DependencyInjectionTest(CancellationToken cancellationToken)
 {
-    private readonly CancellationToken _cancellationToken;
-
-    public DependencyInjectionTest(CancellationToken cancellationToken) => _cancellationToken = cancellationToken;
-
     [Theory]
     [MemberData(nameof(ReadFile))]
     public async Task VerifyAsync(string source, string? fixedSource, params DiagnosticResult[] expected)
@@ -24,136 +20,136 @@ public class DependencyInjectionTest
 #if NETFRAMEWORK
                 File.ReadAllText(Path.Combine("Startup", source)),
 #else
-                await File.ReadAllTextAsync(Path.Combine("Startup", source), _cancellationToken),
+                await File.ReadAllTextAsync(Path.Combine("Startup", source), cancellationToken),
 #endif
-                _cancellationToken, expected)
+                cancellationToken, expected)
             : CSharpCodeFixVerifier.VerifyCodeFixAsync(
 #if NETFRAMEWORK
                 File.ReadAllText(Path.Combine("Startup", source)),
                 File.ReadAllText(Path.Combine("Startup", fixedSource)),
 #else
-                await File.ReadAllTextAsync(Path.Combine("Startup", source), _cancellationToken),
-                await File.ReadAllTextAsync(Path.Combine("Startup", fixedSource), _cancellationToken),
+                await File.ReadAllTextAsync(Path.Combine("Startup", source), cancellationToken),
+                await File.ReadAllTextAsync(Path.Combine("Startup", fixedSource), cancellationToken),
 #endif
-                _cancellationToken, expected);
+                cancellationToken, expected);
 
         await task;
     }
 
     public static IEnumerable<object?[]> ReadFile()
     {
-        yield return new object?[]
-        {
+        yield return
+        [
             "ConfigureHostTestStartup0.cs", null, new[]
             {
                 new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 34).WithArguments("ConfigureHost", nameof(IHostBuilder))
             }
-        };
-        yield return new object?[]
-        {
+        ];
+        yield return
+        [
             "ConfigureHostTestStartup1.cs", null, new[]
             {
                 new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 34).WithArguments("ConfigureHost", nameof(IHostBuilder))
             }
-        };
-        yield return new object?[]
-        {
+        ];
+        yield return
+        [
             "ConfigureHostTestStartup2.cs", "ConfigureHostTestStartup3.cs", new[]
             {
                 new DiagnosticResult(Rules.NoReturnType).WithSpan(8, 23, 8, 36).WithArguments("ConfigureHost")
             }
-        };
-        yield return new object?[] { "ConfigureHostTestStartup3.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[]
-        {
+        ];
+        yield return ["ConfigureHostTestStartup3.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
             "ConfigureServicesTestStartup0.cs", null, new[]
             {
                 new DiagnosticResult(Rules.NoReturnType).WithSpan(7, 23, 7, 40).WithArguments("ConfigureServices")
             }
-        };
-        yield return new object?[] { "ConfigureServicesTestStartup1.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[] { "ConfigureServicesTestStartup2.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[] { "ConfigureServicesTestStartup3.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[]
-        {
+        ];
+        yield return ["ConfigureServicesTestStartup1.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return ["ConfigureServicesTestStartup2.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return ["ConfigureServicesTestStartup3.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
             "ConfigureServicesTestStartup4.cs", null, new[]
             {
                 new DiagnosticResult(Rules.ConfigureServices).WithSpan(7, 21, 7, 38).WithArguments("ConfigureServices")
             }
-        };
-        yield return new object?[]
-        {
+        ];
+        yield return
+        [
             "ConfigureServicesTestStartup5.cs", null, new[]
             {
                 new DiagnosticResult(Rules.ConfigureServices).WithSpan(8, 21, 8, 38).WithArguments("ConfigureServices")
             }
-        };
-        yield return new object?[]
-        {
+        ];
+        yield return
+        [
             "ConfigureServicesTestStartup6.cs", null, new[]
             {
                 new DiagnosticResult(Rules.ConfigureServices).WithSpan(5, 21, 5, 38).WithArguments("ConfigureServices")
             }
-        };
-        yield return new object?[] { "ConfigureTestStartup0.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[]
-        {
+        ];
+        yield return ["ConfigureTestStartup0.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
             "ConfigureTestStartup1.cs", null, new[]
             {
                 new DiagnosticResult(Rules.NoReturnType).WithSpan(5, 23, 5, 32).WithArguments("Configure")
             }
-        };
-        yield return new object?[]
-        {
+        ];
+        yield return
+        [
             "CreateHostBuilderTestStartup0.cs", "CreateHostBuilderTestStartup2.cs", new[]
             {
                 new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(7, 21, 7, 38).WithArguments("CreateHostBuilder", typeof(IHostBuilder).FullName!)
             }
-        };
-        yield return new object?[]
-        {
+        ];
+        yield return
+        [
             "CreateHostBuilderTestStartup1.cs", null, new[]
             {
                 new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 23, 5, 40).WithArguments("CreateHostBuilder", typeof(IHostBuilder).FullName!)
             }
-        };
-        yield return new object?[] { "CreateHostBuilderTestStartup2.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[] { "CreateHostBuilderTestStartup3.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[]
-        {
+        ];
+        yield return ["CreateHostBuilderTestStartup2.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return ["CreateHostBuilderTestStartup3.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
             "CreateHostBuilderTestStartup4.cs", null, new[]
             {
                 new DiagnosticResult(Rules.ParameterlessOrSingleParameter).WithSpan(7, 29, 7, 46).WithArguments("CreateHostBuilder", nameof(AssemblyName))
             }
-        };
-        yield return new object?[]
-        {
+        ];
+        yield return
+        [
             "CtorError.cs", null, new[]
             {
                 new DiagnosticResult(Rules.ParameterlessConstructor).WithSpan(9, 16, 9, 24).WithArguments(".ctor")
             }
-        };
-        yield return new object?[] { "Empty.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[] { "MultipleCtor.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[]
-        {
+        ];
+        yield return ["Empty.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return ["MultipleCtor.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
             "MultiplePublicCtor.cs", null, new[]
             {
                 new DiagnosticResult(Rules.MultipleConstructor).WithSpan(8, 16, 8, 24).WithArguments(".ctor"),
                 new DiagnosticResult(Rules.MultipleConstructor).WithSpan(9, 16, 9, 24).WithArguments(".ctor"),
                 new DiagnosticResult(Rules.ParameterlessConstructor).WithSpan(9, 16, 9, 24).WithArguments(".ctor")
             }
-        };
-        yield return new object?[] { "NonStartup.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[] { "StaticMethod.cs", null, Array.Empty<DiagnosticResult>() };
-        yield return new object?[]
-        {
+        ];
+        yield return ["NonStartup.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return ["StaticMethod.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
             "BuildHostTestStartup0.cs", null, new[]
             {
                 new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 30).WithArguments("BuildHost", typeof(IHost).FullName!),
                 new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 30).WithArguments("BuildHost", nameof(IHostBuilder))
             }
-        };
-        yield return new object?[] { "BuildHostTestStartup1.cs", null, Array.Empty<DiagnosticResult>() };
+        ];
+        yield return ["BuildHostTestStartup1.cs", null, Array.Empty<DiagnosticResult>()];
     }
 }

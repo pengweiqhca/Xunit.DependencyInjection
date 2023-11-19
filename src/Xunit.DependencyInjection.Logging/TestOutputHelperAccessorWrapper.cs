@@ -2,16 +2,12 @@ using Xunit.Abstractions;
 
 namespace Xunit.DependencyInjection.Logging;
 
-internal sealed class TestOutputHelperAccessorWrapper
+internal sealed class TestOutputHelperAccessorWrapper(ITestOutputHelperAccessor accessor)
     : MartinCostello.Logging.XUnit.ITestOutputHelperAccessor
 {
-    private readonly ITestOutputHelperAccessor _accessor;
-
-    public TestOutputHelperAccessorWrapper(ITestOutputHelperAccessor accessor) => _accessor = accessor;
-
     ITestOutputHelper? MartinCostello.Logging.XUnit.ITestOutputHelperAccessor.OutputHelper
     {
-        get => _accessor.Output;
-        set => _accessor.Output = value;
+        get => accessor.Output;
+        set => accessor.Output = value;
     }
 }

@@ -1,56 +1,48 @@
 ﻿namespace Xunit.DependencyInjection.Test.ClassFixture;
 
 [TestCaseOrderer("Xunit.DependencyInjection.Test." + nameof(TestCaseByMethodNameOrderer), "Xunit.DependencyInjection.Test")]
-public class ClassFixtureAndTestClassDependencyTests : IClassFixture<FixtureWithDependency>
+public class ClassFixtureAndTestClassDependencyTests(FixtureWithDependency fixture, IDependency dependency)
+    : IClassFixture<FixtureWithDependency>
 {
-    private readonly FixtureWithDependency _fixture;
-    private readonly IDependency _dependency;
-
-    public ClassFixtureAndTestClassDependencyTests(FixtureWithDependency fixture, IDependency dependency)
-    {
-        _fixture = fixture;
-        _dependency = dependency;
-    }
-
     [Fact]
     public void FixtureWithDependencyIsInjected()
     {
-        Assert.NotNull(_fixture);
+        Assert.NotNull(fixture);
     }
 
     [Fact]
     public void ClassFixtureContainsInjectedDependency()
     {
-        Assert.IsType<DependencyClass>(_fixture.Dependency);
+        Assert.IsType<DependencyClass>(fixture.Dependency);
     }
 
     [Fact]
     public void TestCaseDependencyIsInjected()
     {
-        Assert.NotNull(_dependency);
-        Assert.Equal(0, _dependency.Value);
+        Assert.NotNull(dependency);
+        Assert.Equal(0, dependency.Value);
     }
 
     [Fact]
     public void TestCaseDependencyInstanceIsDifferentToFixtureDependencyInstance()
     {
-        Assert.NotSame(_dependency, _fixture.Dependency);
+        Assert.NotSame(dependency, fixture.Dependency);
     }
 
     [Fact]
     public void FixtureIsSharedClassDependencyIsNot_1()
     {
-        Assert.Equal(0, _dependency.Value);
-        Assert.Equal(0, _fixture.Dependency.Value);
+        Assert.Equal(0, dependency.Value);
+        Assert.Equal(0, fixture.Dependency.Value);
 
-        _dependency.Value++;
-        _fixture.Dependency.Value++;
+        dependency.Value++;
+        fixture.Dependency.Value++;
     }
 
     [Fact]
     public void FixtureIsSharedClassDependencyIsNot_2()
     {
-        Assert.Equal(0, _dependency.Value);
-        Assert.Equal(1, _fixture.Dependency.Value);
+        Assert.Equal(0, dependency.Value);
+        Assert.Equal(1, fixture.Dependency.Value);
     }
 }

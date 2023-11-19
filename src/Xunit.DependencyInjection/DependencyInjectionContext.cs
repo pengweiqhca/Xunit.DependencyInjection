@@ -1,37 +1,24 @@
 ﻿namespace Xunit.DependencyInjection;
 
-public class DependencyInjectionContext
+public class DependencyInjectionContext(IHost host, bool disableParallelization)
 {
-    public IHost Host { get; }
+    public IHost Host { get; } = host;
 
     public IServiceProvider RootServices => Host.Services;
 
-    public bool DisableParallelization { get; }
-
-    public DependencyInjectionContext(IHost host, bool disableParallelization)
-    {
-        Host = host;
-        DisableParallelization = disableParallelization;
-    }
+    public bool DisableParallelization { get; } = disableParallelization;
 }
 
-public class DependencyInjectionStartupContext
+public class DependencyInjectionStartupContext(
+    IHost? defaultHost,
+    ParallelizationMode parallelizationMode,
+    IReadOnlyDictionary<ITestClass, DependencyInjectionContext?> contextMap)
 {
-    private readonly IHost? _defaultHost;
+    public IServiceProvider? DefaultRootServices => defaultHost?.Services;
 
-    public IServiceProvider? DefaultRootServices => _defaultHost?.Services;
+    public ParallelizationMode ParallelizationMode { get; } = parallelizationMode;
 
-    public ParallelizationMode ParallelizationMode { get; }
-
-    public IReadOnlyDictionary<ITestClass, DependencyInjectionContext?> ContextMap { get; }
-
-    public DependencyInjectionStartupContext(IHost? defaultHost, ParallelizationMode parallelizationMode,
-        IReadOnlyDictionary<ITestClass, DependencyInjectionContext?> contextMap)
-    {
-        _defaultHost = defaultHost;
-        ParallelizationMode = parallelizationMode;
-        ContextMap = contextMap;
-    }
+    public IReadOnlyDictionary<ITestClass, DependencyInjectionContext?> ContextMap { get; } = contextMap;
 }
 
 public enum ParallelizationMode

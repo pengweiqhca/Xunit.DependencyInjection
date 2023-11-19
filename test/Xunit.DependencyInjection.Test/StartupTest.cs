@@ -3,12 +3,9 @@ using System.Text;
 
 namespace Xunit.DependencyInjection.Test;
 
-public class StartupTest
+public class StartupTest(IMessageSink diagnosticMessageSink)
 {
     private static readonly AssemblyName Name = Assembly.GetExecutingAssembly().GetName();
-    private readonly IMessageSink _diagnosticMessageSink;
-
-    public StartupTest(IMessageSink diagnosticMessageSink) => _diagnosticMessageSink = diagnosticMessageSink;
 
     [Fact]
     public void StartupSharedTest() => Assert.Equal(1, Startup.Counter);
@@ -274,11 +271,11 @@ public class StartupTest
     [Fact]
     public void StaticMethodTest()
     {
-        StartupLoader.CreateHost(typeof(StaticStartup), Name, _diagnosticMessageSink);
+        StartupLoader.CreateHost(typeof(StaticStartup), Name, diagnosticMessageSink);
 
         Assert.Equal(0, StaticStartup.Created);
 
-        StartupLoader.CreateHost(typeof(StartupWithStaticMethod), Name, _diagnosticMessageSink);
+        StartupLoader.CreateHost(typeof(StartupWithStaticMethod), Name, diagnosticMessageSink);
 
         Assert.Equal(1, StartupWithStaticMethod.Created);
     }

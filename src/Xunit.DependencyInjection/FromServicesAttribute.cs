@@ -13,9 +13,7 @@ public class FromServicesAttribute : Attribute
             var type = parameters[index].ParameterType;
             if ((type.IsClass || type.IsInterface) &&
                 parameters[index].GetCustomAttribute<FromServicesAttribute>() != null)
-            {
                 dic[index] = type;
-            }
         }
 
         return dic;

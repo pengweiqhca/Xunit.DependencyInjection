@@ -1,8 +1,6 @@
 ﻿namespace Xunit.DependencyInjection.Test.ClassFixture;
 
-public class FixtureWithDependency
+public class FixtureWithDependency(IDependency dependency)
 {
-    public FixtureWithDependency(IDependency dependency) => Dependency = dependency;
-
-    public IDependency Dependency { get; }
+    public IDependency Dependency { get; } = dependency;
 }
