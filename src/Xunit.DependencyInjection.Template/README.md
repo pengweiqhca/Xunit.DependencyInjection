@@ -2,21 +2,7 @@
 
 ## Intro
 
-used for create a xunit test project with Xunit.DependencyInjection
-
-## Package
-
-``` bash
-dotnet pack -o out
-```
-
-publish the nupkg file to nuget for release
-
-## Install
-
-``` bash
-dotnet new install Xunit.DependencyInjection.Template
-```
+Used to create a xunit test project with `Xunit.DependencyInjection`
 
 ## Use
 
@@ -46,14 +32,28 @@ dotnet templating Wiki: <https://github.com/dotnet/templating/wiki>
 
 ``` bash
 # package
-dotnet pack Xunit.DependencyInjection.Template.csproj
+dotnet pack Xunit.DependencyInjection.Template.csproj -o out
 
 # install
-dotnet new install Xunit.DependencyInjection.Template.1.1.0.nupkg
+dotnet new install ./out/Xunit.DependencyInjection.Template.1.2.0.nupkg
 
 # testing
 dotnet new create xunit-di -n TestProject
 
 # uninstall
 dotnet new uninstall Xunit.DependencyInjection.Template
+```
+
+## Package
+
+``` bash
+dotnet pack -o out
+```
+
+publish the nupkg file to nuget for release
+
+## Install
+
+``` bash
+dotnet new install Xunit.DependencyInjection.Template
 ```
