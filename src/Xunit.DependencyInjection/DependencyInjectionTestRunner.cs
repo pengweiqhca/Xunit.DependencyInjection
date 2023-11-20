@@ -1,32 +1,25 @@
 ﻿namespace Xunit.DependencyInjection;
 
-public class DependencyInjectionTestRunner : XunitTestRunner
+public class DependencyInjectionTestRunner(
+    DependencyInjectionContext context,
+    ITest test,
+    IMessageBus messageBus,
+    IReadOnlyDictionary<int, Type> fromServices,
+    Type testClass,
+    object[] constructorArguments,
+    MethodInfo testMethod,
+    object[] testMethodArguments,
+    string skipReason,
+    IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+    ExceptionAggregator aggregator,
+    CancellationTokenSource cancellationTokenSource)
+    : XunitTestRunner(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
+        skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource)
 {
-    private readonly DependencyInjectionContext _context;
-    private readonly IReadOnlyDictionary<int, Type> _fromServices;
-
-    public DependencyInjectionTestRunner(DependencyInjectionContext context,
-        ITest test,
-        IMessageBus messageBus,
-        IReadOnlyDictionary<int, Type> fromServices,
-        Type testClass, object[] constructorArguments,
-        MethodInfo testMethod,
-        object[] testMethodArguments,
-        string skipReason,
-        IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
-        ExceptionAggregator aggregator,
-        CancellationTokenSource cancellationTokenSource)
-        : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
-            skipReason, beforeAfterAttributes, aggregator, cancellationTokenSource)
-    {
-        _context = context;
-        _fromServices = fromServices;
-    }
-
     /// <inheritdoc />
     protected override async Task<Tuple<decimal, string>> InvokeTestAsync(ExceptionAggregator aggregator)
     {
-        var scope = _context.RootServices.CreateAsyncScope();
+        var scope = context.RootServices.CreateAsyncScope();
 
         await using var _ = scope;
 
@@ -34,10 +27,10 @@ public class DependencyInjectionTestRunner : XunitTestRunner
 
         testOutputHelper.Initialize(MessageBus, Test);
 
-        _context.RootServices.GetRequiredService<ITestOutputHelperAccessor>().Output = testOutputHelper;
+        context.RootServices.GetRequiredService<ITestOutputHelperAccessor>().Output = testOutputHelper;
 
         var raw = new Dictionary<int, object>(TestMethodArguments.Length);
-        foreach (var kv in _fromServices)
+        foreach (var kv in fromServices)
         {
             raw[kv.Key] = TestMethodArguments[kv.Key];
 

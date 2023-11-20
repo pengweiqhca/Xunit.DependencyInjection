@@ -26,13 +26,11 @@ public class Startup
     }
 }
 
-public class NamespaceLevelStartupTest
+public class NamespaceLevelStartupTest(ModuleStartupTest.Dependency dependency)
 {
     public static Type? StartupThatWasUsed { get; set; }
 
-    public ModuleStartupTest.Dependency Dependency { get; }
-
-    public NamespaceLevelStartupTest(ModuleStartupTest.Dependency dependency) => Dependency = dependency;
+    public ModuleStartupTest.Dependency Dependency { get; } = dependency;
 
     [Fact]
     public void ProperStartupWasUsed() => Assert.Equal(typeof(Startup), StartupThatWasUsed);

@@ -16,9 +16,9 @@ jobs:
     vmImage: 'ubuntu-latest'
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET sdk 6.0'
+    displayName: 'Use .NET sdk 8.0'
     inputs:
-      version: 6.x
+      version: 8.x
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
@@ -31,9 +31,9 @@ jobs:
     vmImage: 'macOS-latest'
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET sdk 6.0'
+    displayName: 'Use .NET sdk 8.0'
     inputs:
-      version: 6.x
+      version: 8.x
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
@@ -46,9 +46,9 @@ jobs:
     vmImage: 'windows-latest'
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET sdk 6.0'
+    displayName: 'Use .NET sdk 8.0'
     inputs:
-      version: 6.x
+      version: 8.x
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
   - displayName: 'dotnet test'

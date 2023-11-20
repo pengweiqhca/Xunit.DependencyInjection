@@ -7,10 +7,10 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET 6 SDK
+    - name: Setup .NET 8 SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.x'
+        dotnet-version: '8.0.x'
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
@@ -22,10 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET 6 SDK
+    - name: Setup .NET 8 SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.x'
+        dotnet-version: '8.0.x'
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
@@ -37,10 +37,10 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET 6 SDK
+    - name: Setup .NET 8 SDK
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: '6.0.x'
+        dotnet-version: '8.0.x'
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test

@@ -118,7 +118,7 @@ public class Startup
 
 * `Configure` method
 
-Anything defined in `ConfigureServices`, can be specified in the `Configure`` method signature. These services are injected if they're available.
+Anything defined in `ConfigureServices`, can be specified in the `Configure` method signature. These services are injected if they're available.
 
 ## How to find `Startup`?
 
@@ -174,7 +174,7 @@ If you want to use a special `Startup`, you can define `XunitStartupAssembly` an
 
 ## Parallel
 
-By default, xUnit runs all test cases in a test class synchronously. This package can extends the test framework to execute tests in parallel.
+By default, xUnit runs all test cases in a test class synchronously. This package can extend the test framework to execute tests in parallel.
 
 ``` xml
 <Project>
@@ -186,7 +186,7 @@ By default, xUnit runs all test cases in a test class synchronously. This packag
 </Project>
 ```
 
-This package has two policy to run test cases in parallel.
+This package has two policies to run test cases in parallel.
 
 1. Enhance or true
 
@@ -196,7 +196,7 @@ This package has two policy to run test cases in parallel.
 
    Ignore xunit [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior and force running tests in parallel.
 
-If have `[Collection]`, `[CollectionDefinition(DisableParallelization = true)]`, `[DisableParallelization]` declared on test class, the test class will running synchronously. If have `[DisableParallelization]`, `[MemberData(DisableDiscoveryEnumeration = true)]` declared on test method, the test method will running synchronously.
+If have `[Collection]`, `[CollectionDefinition(DisableParallelization = true)]`, `[DisableParallelization]` declared on the test class, the test class will run synchronously. If have `[DisableParallelization]`, `[MemberData(DisableDiscoveryEnumeration = true)]` declared on the test method, the test method will run synchronously.
 
 > Thanks [Meziantou.Xunit.ParallelTestFramework](https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework)
 
@@ -226,7 +226,7 @@ internal class DependencyClass : IDependency
 
 ## Write `Microsoft.Extensions.Logging` to `ITestOutputHelper`
 
-> The call chain must from test case. If not, this feature will not work.
+> The call chain must be from the test case. If not, this feature will not work.
 
 ``` C#
 public class Startup

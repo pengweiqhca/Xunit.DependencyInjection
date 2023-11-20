@@ -2,12 +2,23 @@
 
 namespace Xunit.DependencyInjection;
 
-public class DependencyInjectionTheoryTestCaseRunner : XunitTheoryTestCaseRunner
+public class DependencyInjectionTheoryTestCaseRunner(
+    DependencyInjectionContext context,
+    IXunitTestCase testCase,
+    string displayName,
+    string skipReason,
+    object?[] constructorArguments,
+    IMessageSink diagnosticMessageSink,
+    IMessageBus messageBus,
+    ExceptionAggregator aggregator,
+    CancellationTokenSource cancellationTokenSource)
+    : XunitTheoryTestCaseRunner(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink,
+        messageBus, aggregator,
+        cancellationTokenSource)
 {
     private static readonly Func<XunitTheoryTestCaseRunner, List<XunitTestRunner>> GetTestRunners;
     private static readonly Func<TestRunner<IXunitTestCase>, ITest> GetTest;
     private static readonly Func<TestRunner<IXunitTestCase>, object[]> GetTestMethodArguments;
-    private readonly DependencyInjectionContext _context;
 
     static DependencyInjectionTheoryTestCaseRunner()
     {
@@ -21,18 +32,6 @@ public class DependencyInjectionTheoryTestCaseRunner : XunitTheoryTestCaseRunner
         GetTestMethodArguments = Expression.Lambda<Func<TestRunner<IXunitTestCase>, object[]>>(Expression.PropertyOrField(testRunner, "TestMethodArguments"), testRunner).Compile();
     }
 
-    public DependencyInjectionTheoryTestCaseRunner(DependencyInjectionContext context,
-        IXunitTestCase testCase,
-        string displayName,
-        string skipReason,
-        object?[] constructorArguments,
-        IMessageSink diagnosticMessageSink,
-        IMessageBus messageBus,
-        ExceptionAggregator aggregator,
-        CancellationTokenSource cancellationTokenSource)
-        : base(testCase, displayName, skipReason, constructorArguments, diagnosticMessageSink, messageBus, aggregator,
-            cancellationTokenSource) => _context = context;
-
     /// <inheritdoc />
     protected override async Task AfterTestCaseStartingAsync()
     {
@@ -41,27 +40,16 @@ public class DependencyInjectionTheoryTestCaseRunner : XunitTheoryTestCaseRunner
         var fromServices = FromServicesAttribute.CreateFromServices(TestMethod);
         var runners = GetTestRunners(this);
         for (var index = 0; index < runners.Count; index++)
-        {
             if (runners[index] is TestRunner<IXunitTestCase> runner)
-                runners[index] = new DependencyInjectionTestRunner(_context, GetTest(runner), MessageBus,
-                    fromServices, TestClass, index == 0 ? ConstructorArguments : Copy(ConstructorArguments),
+                runners[index] = new DependencyInjectionTestRunner(context, GetTest(runner), MessageBus,
+                    fromServices, TestClass, index == 0 ? ConstructorArguments : [..ConstructorArguments],
                     TestMethod, GetTestMethodArguments(runner),
                     SkipReason, BeforeAfterAttributes, Aggregator, CancellationTokenSource);
-        }
-
-        static object[] Copy(object[] source)
-        {
-            var array = new object[source.Length];
-
-            source.CopyTo(array, 0);
-
-            return array;
-        }
     }
 
     public new async Task<RunSummary> RunAsync()
     {
-        await using (TheoryTestCaseDataContext.BeginContext(_context.RootServices))
+        await using (TheoryTestCaseDataContext.BeginContext(context.RootServices))
             return await base.RunAsync();
     }
 }

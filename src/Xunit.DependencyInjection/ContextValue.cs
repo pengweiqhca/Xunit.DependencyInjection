@@ -16,17 +16,15 @@ public class ContextValue<T>
         {
             var holder = _value.Value;
             if (holder != null)
-            {
+
                 // Clear current value trapped in the AsyncLocals, as its done.
                 holder.Value = default;
-            }
 
             if (value != null)
-            {
+
                 // Use an object indirection to hold the value in the AsyncLocal,
                 // so it can be cleared in all ExecutionContexts when its cleared.
                 _value.Value = new() { Value = value };
-            }
         }
     }
 

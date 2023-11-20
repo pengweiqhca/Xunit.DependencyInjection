@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ public static class MinimalApiHostBuilderFactory
     private static readonly MethodInfo EntryPointCompleted;
     private static readonly MethodInfo SetHostFactory;
     private static readonly MethodInfo ResolveHostFactory;
+    private static readonly MethodInfo GetApplicationPartManager;
 
     static MinimalApiHostBuilderFactory()
     {
@@ -36,21 +38,25 @@ public static class MinimalApiHostBuilderFactory
         var entryPointCompleted = deferredHostBuilderType.GetMethod("EntryPointCompleted");
         var setHostFactory = deferredHostBuilderType.GetMethod("SetHostFactory");
         var resolveHostFactory = hostFactoryResolverType.GetMethod("ResolveHostFactory");
+        var getApplicationPartManager = typeof(MvcCoreServiceCollectionExtensions)
+            .GetMethod("GetApplicationPartManager", BindingFlags.Static | BindingFlags.NonPublic);
 
         if (configureHostBuilder == null || entryPointCompleted == null || setHostFactory == null ||
-            resolveHostFactory == null) throw NotSupported();
+            resolveHostFactory == null || getApplicationPartManager == null) throw NotSupported();
 
         ConfigureHostBuilder = configureHostBuilder;
         EntryPointCompleted = entryPointCompleted;
         SetHostFactory = setHostFactory;
         ResolveHostFactory = resolveHostFactory;
+        GetApplicationPartManager = getApplicationPartManager;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static NotSupportedException NotSupported() =>
         new("Not support current version of Microsoft.AspNetCore.Mvc.Testing");
 
-    public static IHostBuilder GetHostBuilder<TEntryPoint>(Action<IWebHostBuilder>? configure = null) where TEntryPoint : class
+    public static IHostBuilder GetHostBuilder<TEntryPoint>(Action<IWebHostBuilder>? configure = null)
+        where TEntryPoint : class
     {
         var entryAssembly = typeof(TEntryPoint).Assembly;
         var deferredHostBuilder = CreateHostBuilder();
@@ -62,12 +68,12 @@ public static class MinimalApiHostBuilderFactory
             new[] { KeyValuePair.Create(HostDefaults.ApplicationKey, entryAssembly.GetName().Name) }));
 
         // This helper call does the hard work to determine if we can fallback to diagnostic source events to get the host instance
-        var factory = ResolveHostFactory.Invoke(null, BindingFlags.DoNotWrapExceptions, null, new object?[]
-        {
-            entryAssembly, (TimeSpan?)null, false,
+        var factory = ResolveHostFactory.Invoke(null, BindingFlags.DoNotWrapExceptions, null,
+        [
+            entryAssembly, null, false,
             ConfigureHostBuilder.CreateDelegate<Action<object>>(deferredHostBuilder),
             EntryPointCompleted.CreateDelegate<Action<Exception>>(deferredHostBuilder)
-        }, null);
+        ], null);
 
         ArgumentNullException.ThrowIfNull(factory);
 
@@ -79,16 +85,24 @@ public static class MinimalApiHostBuilderFactory
         deferredHostBuilder.ConfigureWebHost(webHostBuilder =>
         {
             setContentRoot.Invoke(setContentRoot.IsStatic ? null : new WebApplicationFactory<TEntryPoint>(),
-                BindingFlags.DoNotWrapExceptions, null, new object?[] { webHostBuilder }, null);
+                BindingFlags.DoNotWrapExceptions, null, [webHostBuilder], null);
 
             configure?.Invoke(webHostBuilder);
 
             webHostBuilder.UseTestServer(options => options.PreserveExecutionContext = true);
 
-            webHostBuilder.ConfigureServices(x =>
+            webHostBuilder.ConfigureServices(x => x.TryAddSingleton<HttpClient>(sp =>
+                ((TestServer)sp.GetRequiredService<IServer>()).CreateClient()));
+
+            webHostBuilder.ConfigureServices((context, services) =>
             {
-                x.TryAddSingleton<HttpClient>(sp =>
-                    ((TestServer)sp.GetRequiredService<IServer>()).CreateClient());
+                var manager = (ApplicationPartManager)GetApplicationPartManager.Invoke(null,
+                    [services, context.HostingEnvironment])!;
+
+                var partFactory = ApplicationPartFactory.GetApplicationPartFactory(entryAssembly);
+
+                foreach (var applicationPart in partFactory.GetApplicationParts(entryAssembly))
+                    manager.ApplicationParts.Add(applicationPart);
             });
         });
 

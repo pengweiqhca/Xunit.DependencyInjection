@@ -37,10 +37,7 @@ public class CollectionFixtureWithDependencyTests_A
     [Fact]
     public void TestsInCollectionShareCollectionFixture()
     {
-        if (CollectionFixtureWithDependencyTests_B.s_fixture != null)
-        {
-            Assert.Same(CollectionFixtureWithDependencyTests_B.s_fixture, _fixture);
-        }
+        if (CollectionFixtureWithDependencyTests_B.s_fixture != null) Assert.Same(CollectionFixtureWithDependencyTests_B.s_fixture, _fixture);
     }
 }
 

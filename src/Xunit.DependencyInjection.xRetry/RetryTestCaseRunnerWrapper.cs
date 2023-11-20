@@ -15,9 +15,7 @@ public class RetryTestCaseRunnerWrapper : DependencyInjectionTestCaseRunnerWrapp
         ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource)
     {
         if (testCase is not IRetryableTestCase retryableTestCase)
-        {
             throw new ArgumentException("Must be a retryable test case", nameof(testCase));
-        }
 
         return RetryTestCaseRunner.RunAsync(retryableTestCase, diagnosticMessageSink, messageBus,
             cancellationTokenSource,

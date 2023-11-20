@@ -1,28 +1,22 @@
 ﻿namespace Xunit.DependencyInjection;
 
-public class DependencyInjectionTestClassRunner : XunitTestClassRunner
+public class DependencyInjectionTestClassRunner(
+    DependencyInjectionContext context,
+    ITestClass testClass,
+    IReflectionTypeInfo @class,
+    IEnumerable<IXunitTestCase> testCases,
+    IMessageSink diagnosticMessageSink,
+    IMessageBus messageBus,
+    ITestCaseOrderer testCaseOrderer,
+    ExceptionAggregator aggregator,
+    CancellationTokenSource cancellationTokenSource,
+    IDictionary<Type, object> collectionFixtureMappings)
+    : XunitTestClassRunner(testClass, @class, testCases, diagnosticMessageSink,
+        messageBus, testCaseOrderer, aggregator, cancellationTokenSource, collectionFixtureMappings)
 {
-    private readonly DependencyInjectionContext _context;
-    private readonly IDictionary<Type, object> _collectionFixtureMappings;
     private AsyncServiceScope? _serviceScope;
 
-    public DependencyInjectionTestClassRunner(DependencyInjectionContext context,
-        ITestClass testClass,
-        IReflectionTypeInfo @class,
-        IEnumerable<IXunitTestCase> testCases,
-        IMessageSink diagnosticMessageSink,
-        IMessageBus messageBus,
-        ITestCaseOrderer testCaseOrderer,
-        ExceptionAggregator aggregator,
-        CancellationTokenSource cancellationTokenSource,
-        IDictionary<Type, object> collectionFixtureMappings)
-        : base(testClass, @class, testCases, diagnosticMessageSink,
-            messageBus, testCaseOrderer, aggregator,
-            cancellationTokenSource, collectionFixtureMappings)
-    {
-        _context = context;
-        _collectionFixtureMappings = collectionFixtureMappings;
-    }
+    private IDictionary<Type, object> CollectionFixtureMappings { get; } = collectionFixtureMappings;
 
     /// <inheritdoc />
     protected override object?[] CreateTestClassConstructorArguments()
@@ -71,7 +65,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     /// <inheritdoc />
     protected override void CreateClassFixture(Type fixtureType)
     {
-        var serviceScope = _context.RootServices.CreateAsyncScope();
+        var serviceScope = context.RootServices.CreateAsyncScope();
 
         _serviceScope = serviceScope;
 
@@ -89,7 +83,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
         var missingParameters = new List<ParameterInfo>();
         var ctorArgs = ctors[0].GetParameters().Select(p =>
         {
-            if (_collectionFixtureMappings.TryGetValue(p.ParameterType, out var arg)) return arg;
+            if (CollectionFixtureMappings.TryGetValue(p.ParameterType, out var arg)) return arg;
 
             arg = serviceScope.ServiceProvider.GetService(p.ParameterType);
 
@@ -119,7 +113,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/TestClassRunner.cs#L194-L219
     protected override async Task<RunSummary> RunTestMethodsAsync()
     {
-        if (_context.DisableParallelization ||
+        if (context.DisableParallelization ||
             TestCases.Count() < 2 ||
             TestClass.Class.GetCustomAttributes(typeof(CollectionDefinitionAttribute)).FirstOrDefault() is { } attr &&
             attr.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) ||
@@ -158,7 +152,7 @@ public class DependencyInjectionTestClassRunner : XunitTestClassRunner
     /// <inheritdoc />
     protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod,
         IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object?[] constructorArguments) =>
-        new DependencyInjectionTestMethodRunner(_context, testMethod, Class, method,
+        new DependencyInjectionTestMethodRunner(context, testMethod, Class, method,
                 testCases, DiagnosticMessageSink, MessageBus, new(Aggregator),
                 CancellationTokenSource, constructorArguments)
             .RunAsync();

@@ -2,20 +2,11 @@
 
 namespace Xunit.DependencyInjection.Test;
 
-public class HostTest
+public class HostTest(IHostEnvironment environment, IServiceProvider provider)
 {
-    private readonly IHostEnvironment _environment;
-    private readonly IServiceProvider _provider;
-
-    public HostTest(IHostEnvironment environment, IServiceProvider provider)
-    {
-        _environment = environment;
-        _provider = provider;
-    }
+    [Fact]
+    public void ApplicationNameTest() => Assert.Equal(typeof(HostTest).Assembly.GetName().Name, environment.ApplicationName);
 
     [Fact]
-    public void ApplicationNameTest() => Assert.Equal(typeof(HostTest).Assembly.GetName().Name, _environment.ApplicationName);
-
-    [Fact]
-    public void IsAutofac() => Assert.IsType<AutofacServiceProvider>(_provider);
+    public void IsAutofac() => Assert.IsType<AutofacServiceProvider>(provider);
 }

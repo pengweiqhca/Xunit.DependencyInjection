@@ -6,19 +6,22 @@ using System.Linq.Expressions;
 
 namespace Xunit.DependencyInjection;
 
-public class DependencyInjectionTestInvoker : XunitTestInvoker
+public class DependencyInjectionTestInvoker(
+    IServiceProvider provider,
+    ITest test,
+    IMessageBus messageBus,
+    Type testClass,
+    object?[] constructorArguments,
+    MethodInfo testMethod,
+    object[] testMethodArguments,
+    IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes,
+    ExceptionAggregator aggregator,
+    CancellationTokenSource cancellationTokenSource)
+    : XunitTestInvoker(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
+        beforeAfterAttributes, aggregator, cancellationTokenSource)
 {
     private static readonly ActivitySource ActivitySource = new("Xunit.DependencyInjection", typeof(DependencyInjectionTestInvoker).Assembly.GetName().Version.ToString());
     private static readonly MethodInfo AsTaskMethod = new Func<ObjectMethodExecutorAwaitable, Task>(AsTask).Method;
-    private readonly IServiceProvider _provider;
-
-    public DependencyInjectionTestInvoker(IServiceProvider provider, ITest test, IMessageBus messageBus,
-        Type testClass, object?[] constructorArguments, MethodInfo testMethod, object[] testMethodArguments,
-        IReadOnlyList<BeforeAfterTestAttribute> beforeAfterAttributes, ExceptionAggregator aggregator,
-        CancellationTokenSource cancellationTokenSource)
-        : base(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
-            beforeAfterAttributes, aggregator, cancellationTokenSource) =>
-        _provider = provider;
 
     /// <inheritdoc />
     protected override object CallTestMethod(object testClassInstance)
@@ -115,7 +118,7 @@ public class DependencyInjectionTestInvoker : XunitTestInvoker
         {
             ex = ex.Unwrap();
 
-            Aggregator.Add(_provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
+            Aggregator.Add(provider.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
 
             activity?.SetStatus(ActivityStatusCode.Error, ex.Message);
         }

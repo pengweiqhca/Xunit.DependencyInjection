@@ -1,26 +1,22 @@
 ﻿namespace Xunit.DependencyInjection;
 
-public sealed class DependencyInjectionTestFramework : XunitTestFramework
+public sealed class DependencyInjectionTestFramework(IMessageSink messageSink) : XunitTestFramework(messageSink)
 {
-    public DependencyInjectionTestFramework(IMessageSink messageSink) : base(messageSink) { }
-
     protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName) =>
         new DependencyInjectionTestFrameworkExecutor(assemblyName, SourceInformationProvider, ParallelizationMode.None,
             DiagnosticMessageSink);
 }
 
-public sealed class DependencyInjectionEnhancedParallelizationTestFramework : XunitTestFramework
+public sealed class DependencyInjectionEnhancedParallelizationTestFramework(IMessageSink messageSink)
+    : XunitTestFramework(messageSink)
 {
-    public DependencyInjectionEnhancedParallelizationTestFramework(IMessageSink messageSink) : base(messageSink) { }
-
     protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName) =>
         new DependencyInjectionTestFrameworkExecutor(assemblyName, SourceInformationProvider, ParallelizationMode.Enhance, DiagnosticMessageSink);
 }
 
-public sealed class DependencyInjectionForcedParallelizationTestFramework : XunitTestFramework
+public sealed class DependencyInjectionForcedParallelizationTestFramework(IMessageSink messageSink)
+    : XunitTestFramework(messageSink)
 {
-    public DependencyInjectionForcedParallelizationTestFramework(IMessageSink messageSink) : base(messageSink) { }
-
     protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName) =>
         new DependencyInjectionTestFrameworkExecutor(assemblyName, SourceInformationProvider, ParallelizationMode.Force, DiagnosticMessageSink);
 }

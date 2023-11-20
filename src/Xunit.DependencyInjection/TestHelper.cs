@@ -10,7 +10,6 @@ internal static class TestHelper
 
         var args = new object?[constructorArguments.Length];
         for (var index = 0; index < constructorArguments.Length; index++)
-        {
             if (constructorArguments[index] is DelayArgument delay)
             {
                 formatConstructorArgsMissingMessage = delay.FormatConstructorArgsMissingMessage;
@@ -24,7 +23,6 @@ internal static class TestHelper
                 args[index] = constructorArguments[index] is TestOutputHelperArgument
                     ? provider.GetRequiredService<ITestOutputHelperAccessor>().Output
                     : constructorArguments[index];
-        }
 
         if (unusedArguments.Count > 0 && formatConstructorArgsMissingMessage != null)
             aggregator.Add(new TestClassException(formatConstructorArgsMissingMessage(unusedArguments)));
@@ -32,18 +30,13 @@ internal static class TestHelper
         return args;
     }
 
-    public class DelayArgument
+    public class DelayArgument(
+        ParameterInfo parameter,
+        Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> formatConstructorArgsMissingMessage)
     {
-        public DelayArgument(ParameterInfo parameter,
-            Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> formatConstructorArgsMissingMessage)
-        {
-            FormatConstructorArgsMissingMessage = formatConstructorArgsMissingMessage;
-            Parameter = parameter;
-        }
+        public ParameterInfo Parameter { get; } = parameter;
 
-        public ParameterInfo Parameter { get; }
-
-        public Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> FormatConstructorArgsMissingMessage { get; }
+        public Func<IReadOnlyList<Tuple<int, ParameterInfo>>, string> FormatConstructorArgsMissingMessage { get; } = formatConstructorArgsMissingMessage;
 
         public bool TryGetConstructorArgument(IServiceProvider provider, ExceptionAggregator aggregator,
             out object? argumentValue)
@@ -89,15 +82,9 @@ internal static class TestHelper
 
     public static Exception Unwrap(this Exception ex)
     {
-        while (ex is TargetInvocationException { InnerException: not null } tie)
-        {
-            ex = tie.InnerException;
-        }
+        while (ex is TargetInvocationException { InnerException: not null } tie) ex = tie.InnerException;
 
-        while (ex is AggregateException { InnerException: not null } ae)
-        {
-            ex = ae.InnerException;
-        }
+        while (ex is AggregateException { InnerException: not null } ae) ex = ae.InnerException;
 
         return ex;
     }

@@ -1,14 +1,7 @@
 ﻿namespace Xunit.DependencyInjection.Test;
 
-public class ContentRootTest
+public class ContentRootTest(IConfiguration configuration)
 {
-    private readonly IConfiguration _configuration;
-
-    public ContentRootTest(IConfiguration configuration) => _configuration = configuration;
-
     [Fact]
-    public void CanReadAppSettings()
-    {
-        Assert.Equal("testValue", _configuration["testKey"]);
-    }
+    public void CanReadAppSettings() => Assert.Equal("testValue", configuration["testKey"]);
 }

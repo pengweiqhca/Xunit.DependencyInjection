@@ -33,7 +33,6 @@ public class XunitDependencyInjectionCodeFixProvider : CodeFixProvider
                     nameof(CodeFixResources.ModifyReturnType)),
                 diagnostic);
         else if (diagnostic.Id == Rules.ReturnTypeAssignableTo.Id)
-        {
             if (method.Identifier.Text == "CreateHostBuilder")
                 context.RegisterCodeFix(CodeAction.Create(
                         CodeFixResources.ModifyReturnType,
@@ -50,7 +49,6 @@ public class XunitDependencyInjectionCodeFixProvider : CodeFixProvider
                                 GetIdentifierName("IHostBuilder")), c),
                         nameof(CodeFixResources.ModifyReturnType)),
                     diagnostic);
-        }
     }
 
     private static IdentifierNameSyntax GetIdentifierName(string text) =>

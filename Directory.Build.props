@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
     <ImplicitUsings>enable</ImplicitUsings>
     <IncludeSymbols>True</IncludeSymbols>
-    <LangVersion>10.0</LangVersion>
+    <LangVersion>12.0</LangVersion>
     <NoWarn>1591</NoWarn>
     <NeutralLanguage>en-us</NeutralLanguage>
     <Nullable>enable</Nullable>

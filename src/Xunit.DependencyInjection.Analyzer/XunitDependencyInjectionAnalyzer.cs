@@ -188,9 +188,7 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
                 return type.AllInterfaces.Any(i => SymbolComparer.Equals(returnType, i));
 
             do
-            {
                 if (SymbolComparer.Equals(type, returnType)) return true;
-            }
             while ((type = type.BaseType!) != null);
 
             return false;
@@ -199,10 +197,8 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
         private static void AnalyzeCtor(SymbolAnalysisContext context, IMethodSymbol method)
         {
             if (method.Parameters.Length > 0)
-            {
                 context.ReportDiagnostic(Diagnostic.Create(Rules.ParameterlessConstructor, method.Locations[0],
                     method.Name));
-            }
         }
 
         private void AnalyzeCreateHostBuilder(SymbolAnalysisContext context, IMethodSymbol method)

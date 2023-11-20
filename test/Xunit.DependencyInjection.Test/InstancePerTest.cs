@@ -28,8 +28,5 @@ public class InstancePerTest
     }
 
     [Fact]
-    public void Test3()
-    {
-        _d.TestWriteLine(100);
-    }
+    public void Test3() => _d.TestWriteLine(100);
 }

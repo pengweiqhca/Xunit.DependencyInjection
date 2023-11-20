@@ -1,22 +1,26 @@
-﻿namespace Xunit.DependencyInjection;
+﻿using System.ComponentModel;
+
+namespace Xunit.DependencyInjection;
 
 /// <summary>
 /// Provides a data source for a data theory.
 /// The member must return something compatible with IEnumerable&lt;object[]&gt; with the test data.
 /// </summary>
+/// <param name="methodName">The name of the public method on the test class that will provide the test data</param>
+/// <param name="parameters">The parameters for the method</param>
 [DataDiscoverer("Xunit.Sdk.MemberDataDiscoverer", "xunit.core")]
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
-public sealed class MethodDataAttribute : DataAttribute
+public sealed class MethodDataAttribute(string methodName, params object?[] parameters) : DataAttribute
 {
     /// <summary>
     /// Gets the method name.
     /// </summary>
-    public string MethodName { get; }
+    public string MethodName { get; } = methodName;
 
     /// <summary>
     /// Gets or sets the parameters passed to the member. Only supported for static methods.
     /// </summary>
-    public object?[]? Parameters { get; }
+    public object?[]? Parameters { get; } = parameters;
 
     /// <summary>
     /// Gets the type of the class that provides the data.
@@ -27,28 +31,10 @@ public sealed class MethodDataAttribute : DataAttribute
     /// Initializes a new instance of the <see cref="MethodDataAttribute" /> class.
     /// </summary>
     /// <param name="methodName">The name of the public method on the test class that will provide the test data</param>
-    /// <param name="parameters">The parameters for the method</param>
-    public MethodDataAttribute(string methodName, params object?[] parameters)
-    {
-        MethodName = methodName;
-
-        Parameters = parameters;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MethodDataAttribute" /> class.
-    /// </summary>
-    /// <param name="methodName">The name of the public method on the test class that will provide the test data</param>
     /// <param name="classType">The class that provides the data.</param>
     /// <param name="parameters">The parameters for the method</param>
     public MethodDataAttribute(string methodName, Type classType, params object?[] parameters)
-    {
-        MethodName = methodName;
-
-        ClassType = classType;
-
-        Parameters = parameters;
-    }
+        : this(methodName, parameters) => ClassType = classType;
 
     /// <inheritdoc />
     public override IEnumerable<object?[]?>? GetData(MethodInfo testMethod)
@@ -108,25 +94,17 @@ public sealed class MethodDataAttribute : DataAttribute
     {
         var mp = method.GetParameters();
 
-        object?[] parameters;
-        if (Parameters == null || Parameters.Length == 0)
-            parameters = new object?[mp.Length];
-        else
-        {
-            parameters = new object?[Parameters.Length];
+        var param = Parameters == null || Parameters.Length == 0 ? new object?[mp.Length] : [..Parameters];
 
-            Array.Copy(Parameters, parameters, Parameters.Length);
-        }
-
-        for (var index = 0; index < parameters.Length; index++)
+        for (var index = 0; index < param.Length; index++)
         {
-            if (parameters[index] != null) continue;
+            if (param[index] != null) continue;
 
             if (Parameters == null || Parameters.Length == 0 ||
                 mp[index].GetCustomAttribute<FromServicesAttribute>() != null)
-                parameters[index] = serviceProvider.GetService(mp[index].ParameterType);
+                param[index] = serviceProvider.GetService(mp[index].ParameterType);
         }
 
-        return parameters;
+        return param;
     }
 }
