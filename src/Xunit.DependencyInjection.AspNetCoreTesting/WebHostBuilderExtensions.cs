@@ -22,12 +22,13 @@ public static class WebHostBuilderExtensions
         return webHostBuilder;
     }
 
-    public static IWebHostBuilder UseTestServerAndClient(this IWebHostBuilder webHostBuilder, Action<TestServerOptions> testServerConfigure)
+    public static IWebHostBuilder UseTestServerAndClient(this IWebHostBuilder webHostBuilder,
+        Action<TestServerOptions> testServerConfigure)
     {
         ArgumentNullException.ThrowIfNull(testServerConfigure);
 
         webHostBuilder.UseTestServerAndClient()
-            .ConfigureServices(x=> x.Configure(testServerConfigure));
+            .ConfigureServices(x => x.Configure(testServerConfigure));
 
         return webHostBuilder;
     }
