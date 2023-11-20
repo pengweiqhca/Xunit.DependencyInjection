@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Xunit;
+using Xunit.DependencyInjection.AspNetCoreTesting;
 using Xunit.DependencyInjection.Logging;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
@@ -14,7 +15,7 @@ public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) =>
         hostBuilder.ConfigureWebHost(webHostBuilder => webHostBuilder
-            .UseTestServer(options => options.PreserveExecutionContext = true)
+            .UseTestServerAndClient()
             .UseStartup<AspNetCoreStartup>());
 
     private class AspNetCoreStartup

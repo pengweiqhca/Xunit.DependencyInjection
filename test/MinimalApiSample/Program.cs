@@ -8,7 +8,7 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// app.Map("/", () => "Hello world");
+app.Map("/hello", () => "Hello world");
 app.MapDefaultControllerRoute();
 
 await app.RunAsync();

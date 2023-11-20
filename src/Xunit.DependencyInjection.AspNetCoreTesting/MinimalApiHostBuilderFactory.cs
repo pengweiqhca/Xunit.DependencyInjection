@@ -89,10 +89,7 @@ public static class MinimalApiHostBuilderFactory
 
             configure?.Invoke(webHostBuilder);
 
-            webHostBuilder.UseTestServer(options => options.PreserveExecutionContext = true);
-
-            webHostBuilder.ConfigureServices(x => x.TryAddSingleton<HttpClient>(sp =>
-                ((TestServer)sp.GetRequiredService<IServer>()).CreateClient()));
+            webHostBuilder.UseTestServerAndClient();
 
             webHostBuilder.ConfigureServices((context, services) =>
             {
