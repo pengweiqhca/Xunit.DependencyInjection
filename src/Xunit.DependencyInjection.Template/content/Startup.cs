@@ -9,6 +9,8 @@ namespace TProject
         // create custom hostBuilder with this method
         // public IHostBuilder CreateHostBuilder()
         // {
+        //     // minimal API testing, see details: https://github.com/pengweiqhca/Xunit.DependencyInjection#minimalapi
+        //     return MinimalApiHostBuilderFactory.GetHostBuilder<Program>();
         // }
 
         // custom host build
@@ -32,7 +34,7 @@ namespace TProject
         {
             // get configuration by hostBuilderContext.Configuration
             // eg: hostBuilderContext.Configuration["Environment"]
-            
+
             //services.AddSingleton<CustomService>();
         }
 
