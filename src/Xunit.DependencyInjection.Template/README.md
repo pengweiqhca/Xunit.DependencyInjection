@@ -4,17 +4,23 @@
 
 Used to create a xunit test project with `Xunit.DependencyInjection`
 
+## Install
+
+``` bash
+dotnet new install Xunit.DependencyInjection.Template
+```
+
 ## Use
 
-> Create test project within folder:
+> Create a test project within a folder:
 
 ``` bash
 dotnet new create xunit-di
 ```
 
-> Create test project with Specific TargetFramework:
+> Create a test project with Specific TargetFramework:
 
-By default, we create test project targeted at `net8.0`, you can change the target framework via `-f <targetFrameworkName>` or `--framework <targetFrameworkName>`
+By default, we create the test project targeted at `net8.0`, you can change the target framework via `-f <targetFrameworkName>` or `--framework <targetFrameworkName>`
 
 ``` bash
 dotnet new create xunit-di -f net9.0
@@ -51,9 +57,3 @@ dotnet pack -o out
 ```
 
 publish the nupkg file to nuget for release
-
-## Install
-
-``` bash
-dotnet new install Xunit.DependencyInjection.Template
-```
