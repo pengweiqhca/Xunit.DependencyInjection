@@ -7,7 +7,14 @@ namespace Xunit.DependencyInjection.Test.AspNetCore;
 public class MinimalApiTest(HttpClient httpClient, IRandomService randomService)
 {
     [Fact]
-    public async Task ResponseTest()
+    public async Task MinimalApiRouteResponseTest()
+    {
+        var responseText = await httpClient.GetStringAsync("/hello");
+        Assert.Equal("Hello world", responseText);
+    }
+
+    [Fact]
+    public async Task ControllerRouteResponseTest()
     {
         var responseText = await httpClient.GetStringAsync("/");
         Assert.Equal("Hello world", responseText);
