@@ -89,9 +89,7 @@ public static class MinimalApiHostBuilderFactory
 
             configure?.Invoke(webHostBuilder);
 
-            webHostBuilder.UseTestServerAndClient();
-
-            webHostBuilder.ConfigureServices((context, services) =>
+            webHostBuilder.UseTestServerAndAddDefaultHttpClient().ConfigureServices((context, services) =>
             {
                 var manager = (ApplicationPartManager)GetApplicationPartManager.Invoke(null,
                     [services, context.HostingEnvironment])!;

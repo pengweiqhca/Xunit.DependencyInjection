@@ -15,7 +15,7 @@ public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) =>
         hostBuilder.ConfigureWebHost(webHostBuilder => webHostBuilder
-            .UseTestServerAndClient()
+            .UseTestServerAndAddDefaultHttpClient()
             .UseStartup<AspNetCoreStartup>());
 
     private class AspNetCoreStartup

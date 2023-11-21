@@ -8,27 +8,17 @@ namespace Xunit.DependencyInjection.AspNetCoreTesting;
 
 public static class WebHostBuilderExtensions
 {
-    public static IWebHostBuilder UseTestServerAndClient(this IWebHostBuilder webHostBuilder)
-    {
-        ArgumentNullException.ThrowIfNull(webHostBuilder);
+    public static IWebHostBuilder UseTestServerAndAddDefaultHttpClient(this IWebHostBuilder webHostBuilder) =>
+        webHostBuilder.UseTestServerAndAddDefaultHttpClient(x => x.PreserveExecutionContext = true);
 
-        webHostBuilder.UseTestServer(x => x.PreserveExecutionContext = true);
-        webHostBuilder.ConfigureServices(x =>
-        {
-            x.TryAddSingleton<HttpClient>(sp =>
-                ((TestServer)sp.GetRequiredService<IServer>()).CreateClient());
-        });
-
-        return webHostBuilder;
-    }
-
-    public static IWebHostBuilder UseTestServerAndClient(this IWebHostBuilder webHostBuilder,
+    public static IWebHostBuilder UseTestServerAndAddDefaultHttpClient(this IWebHostBuilder webHostBuilder,
         Action<TestServerOptions> testServerConfigure)
     {
         ArgumentNullException.ThrowIfNull(testServerConfigure);
 
-        webHostBuilder.UseTestServerAndClient()
-            .ConfigureServices(x => x.Configure(testServerConfigure));
+        webHostBuilder.UseTestServer(testServerConfigure);
+        webHostBuilder.ConfigureServices(x => x.TryAddSingleton<HttpClient>(sp =>
+            ((TestServer)sp.GetRequiredService<IServer>()).CreateClient()));
 
         return webHostBuilder;
     }
