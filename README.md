@@ -72,6 +72,8 @@ public class Startup
 
 If you use MinimalApi rather than asp.net core Startup class.
 
+Add package reference for `Xunit.DependencyInjection.AspNetCoreTesting`
+
 ``` bash
 dotnet add package Xunit.DependencyInjection.AspNetCoreTesting
 ```
@@ -225,6 +227,12 @@ internal class DependencyClass : IDependency
 ```
 
 ## Write `Microsoft.Extensions.Logging` to `ITestOutputHelper`
+
+Add package reference for `Xunit.DependencyInjection.Logging`
+
+```sh
+dotnet add package Xunit.DependencyInjection.Logging
+```
 
 > The call chain must be from the test case. If not, this feature will not work.
 
