@@ -4,7 +4,7 @@
 
 Install the [Nuget](https://www.nuget.org/packages/Xunit.DependencyInjection) package.
 
-``` bash
+``` sh
 dotnet add package Xunit.DependencyInjection
 ```
 
@@ -54,7 +54,7 @@ public class MyAwesomeTests
 
 ### Asp.Net Core Startup
 
-``` bash
+``` sh
 dotnet add package Microsoft.AspNetCore.TestHost
 ```
 
@@ -74,7 +74,7 @@ If you use MinimalApi rather than asp.net core Startup class.
 
 Add package reference for `Xunit.DependencyInjection.AspNetCoreTesting`
 
-``` bash
+``` sh
 dotnet add package Xunit.DependencyInjection.AspNetCoreTesting
 ```
 
