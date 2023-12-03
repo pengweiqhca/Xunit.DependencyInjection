@@ -19,8 +19,8 @@ public class StartupTest(IMessageSink diagnosticMessageSink)
     }
 
     #region CreateStartupTest
-    public class EmptyStartup { }
-    public class CreateStartupTestStartup1 { }
+    public class EmptyStartup;
+    public class CreateStartupTestStartup1;
     public class CreateStartupTestStartup2 { private CreateStartupTestStartup2() { } }
     public class CreateStartupTestStartup3 { public CreateStartupTestStartup3(AssemblyName name) { } }
 
