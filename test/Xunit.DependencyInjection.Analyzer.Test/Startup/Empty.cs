@@ -1,3 +1,4 @@
 ﻿namespace TestProject
-
-public class Startup;
+{
+    public class Startup { }
+}
