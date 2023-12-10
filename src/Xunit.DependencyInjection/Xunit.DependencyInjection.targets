@@ -2,7 +2,7 @@
   <PropertyGroup>
     <XunitStartupFullName Condition="'$(XunitStartupFullName)' == '' AND '$(XunitStartupAssembly)' == ''">$(AssemblyName).Startup</XunitStartupFullName>
     <XunitStartupFullName Condition="'$(XunitStartupFullName)' == '' AND '$(XunitStartupAssembly)' != ''">$(XunitStartupAssembly).Startup</XunitStartupFullName>
-    <NoWarn>$(NoWarn);xUnit1028;xUnit1012</NoWarn>
+    <NoWarn>$(NoWarn);xUnit1028;xUnit1012;xUnit1041</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
