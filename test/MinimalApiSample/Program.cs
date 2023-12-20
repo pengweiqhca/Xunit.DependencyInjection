@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-var builder = WebApplication.CreateBuilder();
+var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<MinimalApiSample.IRandomService, MinimalApiSample.RandomService>();
 

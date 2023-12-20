@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using MinimalApiSample;
 using Xunit.DependencyInjection.AspNetCoreTesting;
@@ -29,6 +30,8 @@ public class MinimalApiTest(HttpClient httpClient, IRandomService randomService)
 
     public class Startup
     {
-        public IHostBuilder CreateHostBuilder() => MinimalApiHostBuilderFactory.GetHostBuilder<Program>();
+        public IHostBuilder CreateHostBuilder() => MinimalApiHostBuilderFactory.GetHostBuilder<Program>()
+            .ConfigureHostConfiguration(builder =>
+                builder.AddInMemoryCollection([KeyValuePair.Create(HostDefaults.EnvironmentKey, "Testing")]));
     }
 }
