@@ -28,8 +28,8 @@ Release notes:
     <Using Include="Xunit.Abstractions" />
     <Using Include="Xunit.Sdk" />
 
-    <InternalsVisibleTo Include="Xunit.DependencyInjection.StaFact" Key="$(PublicKey)" />
-    <InternalsVisibleTo Include="Xunit.DependencyInjection.Test" Key="$(PublicKey)" />
+    <InternalsVisibleTo Include="Xunit.DependencyInjection.StaFact" />
+    <InternalsVisibleTo Include="Xunit.DependencyInjection.Test" />
 
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="6.0.0" />
