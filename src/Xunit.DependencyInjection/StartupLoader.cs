@@ -144,8 +144,16 @@ internal static class StartupLoader
                 parameters[0].ParameterType == typeof(HostBuilderContext) =>
                 (context, services) =>
                     method.Invoke(method.IsStatic ? null : startup, [context, services]),
+            2 when parameters[0].ParameterType == typeof(IServiceCollection) &&
+                parameters[1].ParameterType == typeof(IConfiguration) =>
+                (context, services) =>
+                    method.Invoke(method.IsStatic ? null : startup, [services, context.Configuration]),
+            2 when parameters[1].ParameterType == typeof(IServiceCollection) &&
+                parameters[0].ParameterType == typeof(IConfiguration) =>
+                (context, services) =>
+                    method.Invoke(method.IsStatic ? null : startup, [context.Configuration, services]),
             _ => throw new InvalidOperationException(
-                $"The '{method.Name}' method in the type '{startupType.FullName}' must have a 'IServiceCollection' parameter and optional 'HostBuilderContext' parameter.")
+                $"The '{method.Name}' method in the type '{startupType.FullName}' must have a 'IServiceCollection' parameter and optional 'HostBuilderContext' or 'IConfiguration' parameter.")
         });
     }
 

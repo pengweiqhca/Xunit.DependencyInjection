@@ -114,7 +114,7 @@ public class Startup
 ``` C#
 public class Startup
 {
-    public void ConfigureServices(IServiceCollection services[, HostBuilderContext context]) { }
+    public void ConfigureServices(IServiceCollection services[, HostBuilderContext context | IConfiguration configuration]) { }
 }
 ```
 
@@ -263,6 +263,18 @@ public class Startup
     public void ConfigureServices(IServiceCollection services, HostBuilderContext context)
     {
         context.XXXX;
+    }
+}
+```
+
+or
+
+``` C#
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+    {
+        configuration;
     }
 }
 ```

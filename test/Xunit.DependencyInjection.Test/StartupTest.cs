@@ -158,6 +158,8 @@ public class StartupTest(IMessageSink diagnosticMessageSink)
         public void ConfigureServices(HostBuilderContext context, IServiceCollection services) { }
     }
     public class ConfigureServicesTestStartup8 { public IServiceCollection ConfigureServices(IServiceCollection services) => services.AddSingleton(this); }
+    public class ConfigureServicesTestStartup9 { public void ConfigureServices(IServiceCollection services, IConfiguration configuration) => services.AddSingleton(this); }
+    public class ConfigureServicesTestStartup10 { public void ConfigureServices(IConfiguration configuration, IServiceCollection services) => services.AddSingleton(this); }
 
     [Fact]
     public void ConfigureServicesTest()
@@ -188,10 +190,16 @@ public class StartupTest(IMessageSink diagnosticMessageSink)
 
         Assert.Throws<InvalidOperationException>(() => ConfigureServices(hostBuilder, new ConfigureServicesTestStartup8()));
 
+        ConfigureServices(hostBuilder, new ConfigureServicesTestStartup9());
+
+        ConfigureServices(hostBuilder, new ConfigureServicesTestStartup10());
+
         var services = hostBuilder.Build().Services;
         Assert.NotNull(services.GetService<ConfigureServicesTestStartup1>());
         Assert.NotNull(services.GetService<ConfigureServicesTestStartup3>());
         Assert.NotNull(services.GetService<ConfigureServicesTestStartup4>());
+        Assert.NotNull(services.GetService<ConfigureServicesTestStartup9>());
+        Assert.NotNull(services.GetService<ConfigureServicesTestStartup10>());
     }
     #endregion
 
