@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 
 namespace Xunit.DependencyInjection.AspNetCoreTesting;
 
@@ -17,8 +18,13 @@ public static class WebHostBuilderExtensions
         ArgumentNullException.ThrowIfNull(testServerConfigure);
 
         webHostBuilder.UseTestServer(testServerConfigure);
-        webHostBuilder.ConfigureServices(x => x.TryAddSingleton<HttpClient>(sp =>
-            ((TestServer)sp.GetRequiredService<IServer>()).CreateClient()));
+        webHostBuilder.ConfigureServices(x =>
+        {
+            x.TryAddSingleton<ITestClientWrapper>(sp => new TestClientWrapper(
+                sp.GetRequiredService<IHost>().GetTestServer()));
+            x.TryAddSingleton<HttpClient>(sp =>
+                sp.GetRequiredService<IHost>().GetTestClient());
+        });
 
         return webHostBuilder;
     }
