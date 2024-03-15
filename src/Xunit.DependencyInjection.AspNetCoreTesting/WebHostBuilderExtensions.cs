@@ -23,7 +23,7 @@ public static class WebHostBuilderExtensions
             x.TryAddSingleton<ITestClientWrapper>(sp => new TestClientWrapper(
                 sp.GetRequiredService<IHost>().GetTestServer()));
             x.TryAddSingleton<HttpClient>(sp =>
-                sp.GetRequiredService<IHost>().GetTestClient());
+                sp.GetRequiredService<ITestClientWrapper>().TestClient);
         });
 
         return webHostBuilder;
