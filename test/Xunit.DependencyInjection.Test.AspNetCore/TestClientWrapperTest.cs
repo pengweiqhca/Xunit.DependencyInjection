@@ -11,6 +11,16 @@ public class TestClientWrapperTest(ITestClientWrapper testClientWrapper)
 
         using var response = await testClientWrapper.TestClient.GetAsync("/");
         response.EnsureSuccessStatusCode();
+
+        Assert.Equal(testClientWrapper.TestClient, testClientWrapper.TestClient);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    public void TestClientSingletonTest([FromServices]HttpClient? httpClient)
+    {
+        Assert.NotNull(httpClient);
+        Assert.Equal(testClientWrapper.TestClient, httpClient);
     }
 
     [Fact]

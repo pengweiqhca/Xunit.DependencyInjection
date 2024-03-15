@@ -11,5 +11,5 @@ public interface ITestClientWrapper
 internal sealed class TestClientWrapper(TestServer testServer) : ITestClientWrapper
 {
     public TestServer TestServer => testServer;
-    public HttpClient TestClient => testServer.CreateClient();
+    public HttpClient TestClient { get; } = testServer.CreateClient();
 }
