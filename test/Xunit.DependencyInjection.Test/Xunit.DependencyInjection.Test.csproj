@@ -25,6 +25,7 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.*" />
     <PackageReference Include="FluentAssertions" Version="6.*" />
     <PackageReference Include="FSharp.Core" Version="6.*" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.*" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
     <PackageReference Include="xunit" Version="2.*" />
