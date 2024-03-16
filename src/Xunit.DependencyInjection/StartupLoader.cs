@@ -30,9 +30,10 @@ internal static class StartupLoader
     private static DependencyInjectionContext CreateHostWithHostApplicationBuilder(Type startupType, MethodInfo methodInfo, AssemblyName? assemblyName,
         IMessageSink? diagnosticMessageSink)
     {
-        var hostApplicationBuilder = new HostApplicationBuilder();
-        if (diagnosticMessageSink != null) hostApplicationBuilder.Services.TryAddSingleton(diagnosticMessageSink);
+        // Remove the `null` assignment when this issue resolved https://github.com/dotnet/runtime/issues/90479
+        var hostApplicationBuilder = Host.CreateEmptyApplicationBuilder(null);
 
+        if (diagnosticMessageSink != null) hostApplicationBuilder.Services.TryAddSingleton(diagnosticMessageSink);
         hostApplicationBuilder.Services.TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
         hostApplicationBuilder.Services.TryAddEnumerable(ServiceDescriptor
             .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
