@@ -36,7 +36,7 @@ public class DependencyInjectionTestMethodRunner(
             : TaskScheduler.FromCurrentSynchronizationContext();
 
         var tasks = TestCases.Select(testCase => Task.Factory.StartNew(
-            state => RunTestCaseAsync((IXunitTestCase)state), testCase, CancellationTokenSource.Token,
+            state => RunTestCaseAsync((IXunitTestCase)state!), testCase, CancellationTokenSource.Token,
             TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler, scheduler).Unwrap());
 
         var summary = new RunSummary();

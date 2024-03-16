@@ -8,12 +8,49 @@ internal static class StartupLoader
     public static DependencyInjectionContext CreateHost(Type startupType, AssemblyName? assemblyName,
         IMessageSink? diagnosticMessageSink)
     {
+#if NET8_0_OR_GREATER
+        var configureHostApplicationBuilderMethodInfo = FindMethod(startupType, "ConfigureHostApplicationBuilder");
+        if (configureHostApplicationBuilderMethodInfo != null)
+        {
+            var parameters = configureHostApplicationBuilderMethodInfo.GetParameters();
+            if (parameters.Length == 1 && parameters[0].ParameterType == typeof(IHostApplicationBuilder))
+            {
+                return CreateHostWithHostApplicationBuilder(startupType, configureHostApplicationBuilderMethodInfo, assemblyName, diagnosticMessageSink);
+            }
+        }
+#endif
         var (hostBuilder, startup, buildHostMethod, configureMethod) =
             CreateHostBuilder(startupType, assemblyName, diagnosticMessageSink);
 
         return new(CreateHost(hostBuilder, startupType, startup, buildHostMethod, configureMethod),
             startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
+
+#if NET8_0_OR_GREATER
+    private static DependencyInjectionContext CreateHostWithHostApplicationBuilder(Type startupType, MethodInfo methodInfo, AssemblyName? assemblyName,
+        IMessageSink? diagnosticMessageSink)
+    {
+        var hostApplicationBuilder = new HostApplicationBuilder();
+        if (diagnosticMessageSink != null) hostApplicationBuilder.Services.TryAddSingleton(diagnosticMessageSink);
+
+        hostApplicationBuilder.Services.TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
+        hostApplicationBuilder.Services.TryAddEnumerable(ServiceDescriptor
+            .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
+        hostApplicationBuilder.Services.TryAddEnumerable(ServiceDescriptor
+            .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
+        hostApplicationBuilder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
+        {
+            { HostDefaults.ApplicationKey, (assemblyName ?? startupType.Assembly.GetName()).Name }
+        });
+
+        var configureMethod = FindMethod(startupType, nameof(Configure));
+        var startupObject = methodInfo.IsStatic && configureMethod is { IsStatic: true } ? null : CreateStartup(startupType);
+        methodInfo.Invoke(startupObject, [hostApplicationBuilder]);
+        var host = hostApplicationBuilder.Build();
+        Configure(host.Services, startupObject, configureMethod);
+        return new(host, startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
+    }
+#endif
 
     public static (IHostBuilder, object?, MethodInfo?, MethodInfo?) CreateHostBuilder(Type startupType,
         AssemblyName? assemblyName, IMessageSink? diagnosticMessageSink)
@@ -47,7 +84,7 @@ internal static class StartupLoader
                 .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
         });
 
-        hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string>
+        hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string?>
         {
             { HostDefaults.ApplicationKey, (assemblyName ?? startupType.Assembly.GetName()).Name }
         }));
@@ -83,7 +120,11 @@ internal static class StartupLoader
 
     public static object? CreateStartup(Type startupType)
     {
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(startupType);
+#else
         if (startupType == null) throw new ArgumentNullException(nameof(startupType));
+#endif
 
         if (startupType.IsAbstract && startupType.IsSealed) return null;
 
@@ -102,7 +143,7 @@ internal static class StartupLoader
 
         var parameters = method.GetParameters();
         if (parameters.Length == 0)
-            return (IHostBuilder)method.Invoke(method.IsStatic ? null : startup, Array.Empty<object>());
+            return (IHostBuilder?)method.Invoke(method.IsStatic ? null : startup, Array.Empty<object>());
 
         if (parameters.Length > 1 || parameters[0].ParameterType != typeof(AssemblyName))
             throw new InvalidOperationException(
@@ -112,7 +153,7 @@ internal static class StartupLoader
             throw new InvalidOperationException(
                 $"The '{method.Name}' method of startup type '{startupType.FullName}' must parameterless when use XunitWebApplicationFactory.");
 
-        return (IHostBuilder)method.Invoke(method.IsStatic ? null : startup, [assemblyName]);
+        return (IHostBuilder?)method.Invoke(method.IsStatic ? null : startup, [assemblyName]);
     }
 
     public static void ConfigureHost(IHostBuilder builder, object? startup, Type startupType, MethodInfo? method)

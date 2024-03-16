@@ -20,7 +20,7 @@ public class DependencyInjectionTestInvoker(
     : XunitTestInvoker(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
         beforeAfterAttributes, aggregator, cancellationTokenSource)
 {
-    private static readonly ActivitySource ActivitySource = new("Xunit.DependencyInjection", typeof(DependencyInjectionTestInvoker).Assembly.GetName().Version.ToString());
+    private static readonly ActivitySource ActivitySource = new("Xunit.DependencyInjection", typeof(DependencyInjectionTestInvoker).Assembly.GetName().Version?.ToString());
     private static readonly MethodInfo AsTaskMethod = new Func<ObjectMethodExecutorAwaitable, Task>(AsTask).Method;
 
     /// <inheritdoc />
