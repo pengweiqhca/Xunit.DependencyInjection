@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
     <Description>Use Ben.Demystifier Formate Exception.
 
 public void ConfigureServices(IServiceCollection services)
@@ -9,7 +9,7 @@ public void ConfigureServices(IServiceCollection services)
     services.UseDemystifyExceptionFilter();
 }</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>8.0.1</Version>
+    <Version>9.0.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 

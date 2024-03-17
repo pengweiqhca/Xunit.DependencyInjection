@@ -16,14 +16,6 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services) =>
         services.AddSingleton<ModuleStartupTest.Dependency>();
-
-    public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)
-    {
-        Assert.NotNull(accessor);
- #pragma warning disable CS0618 // Type or member is obsolete
-        XunitTestOutputLoggerProvider.Register(provider);
- #pragma warning restore CS0618 // Type or member is obsolete
-    }
 }
 
 public class NamespaceLevelStartupTest(ModuleStartupTest.Dependency dependency)

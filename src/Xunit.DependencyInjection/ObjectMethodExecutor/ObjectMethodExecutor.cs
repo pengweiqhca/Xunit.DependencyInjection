@@ -23,11 +23,7 @@ internal sealed class ObjectMethodExecutor
 
     private ObjectMethodExecutor(MethodInfo methodInfo, TypeInfo targetTypeInfo, object?[]? parameterDefaultValues)
     {
-#if NET6_0_OR_GREATER
-        ArgumentNullException.ThrowIfNull(methodInfo);
-#else
         if (methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
-#endif
 
         MethodInfo = methodInfo;
         MethodParameters = methodInfo.GetParameters();

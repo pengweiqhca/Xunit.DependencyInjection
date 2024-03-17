@@ -1,5 +1,4 @@
-﻿#if NET8_0_OR_GREATER
-namespace Xunit.DependencyInjection.Test;
+﻿namespace Xunit.DependencyInjection.Test;
 
 public class HostApplicationBuilderTest(IConfiguration configuration, IServiceProvider serviceProvider)
 {
@@ -46,4 +45,3 @@ file sealed class GuidIdGenerator: IIdGenerator
 {
     public string NewId() => Guid.NewGuid().ToString();
 }
-#endif

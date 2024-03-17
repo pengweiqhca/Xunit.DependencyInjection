@@ -20,13 +20,7 @@ public static class ModuleStartupTest
         public void ConfigureServices(IServiceCollection services) =>
             services.AddSingleton<Dependency>();
 
-        public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)
-        {
-            Assert.NotNull(accessor);
- #pragma warning disable CS0618 // Type or member is obsolete
-            XunitTestOutputLoggerProvider.Register(provider);
- #pragma warning restore CS0618 // Type or member is obsolete
-        }
+        public void Configure(ITestOutputHelperAccessor accessor) => Assert.NotNull(accessor);
     }
 
     public class StartupTest(Dependency dependency)

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
     <Description>Support Microsoft.Extensions.Logging to ITestOutputHelper.
 
 public void Configure(IServiceProvider provider)
@@ -9,13 +9,13 @@ public void Configure(IServiceProvider provider)
       XunitTestOutputLoggerProvider.Register(provider);
 }</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>8.1.0</Version>
+    <Version>9.0.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.*" />
-    
+
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
 

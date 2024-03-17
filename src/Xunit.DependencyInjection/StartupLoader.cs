@@ -8,7 +8,6 @@ internal static class StartupLoader
     public static DependencyInjectionContext CreateHost(Type startupType, AssemblyName? assemblyName,
         IMessageSink? diagnosticMessageSink)
     {
-#if NET8_0_OR_GREATER
         var configureHostApplicationBuilderMethodInfo = FindMethod(startupType, "ConfigureHostApplicationBuilder");
         if (configureHostApplicationBuilderMethodInfo != null)
         {
@@ -18,7 +17,7 @@ internal static class StartupLoader
                 return CreateHostWithHostApplicationBuilder(startupType, configureHostApplicationBuilderMethodInfo, assemblyName, diagnosticMessageSink);
             }
         }
-#endif
+
         var (hostBuilder, startup, buildHostMethod, configureMethod) =
             CreateHostBuilder(startupType, assemblyName, diagnosticMessageSink);
 
@@ -26,7 +25,6 @@ internal static class StartupLoader
             startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
 
-#if NET8_0_OR_GREATER
     private static DependencyInjectionContext CreateHostWithHostApplicationBuilder(Type startupType, MethodInfo methodInfo, AssemblyName? assemblyName,
         IMessageSink? diagnosticMessageSink)
     {
@@ -51,7 +49,6 @@ internal static class StartupLoader
         Configure(host.Services, startupObject, configureMethod);
         return new(host, startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
-#endif
 
     public static (IHostBuilder, object?, MethodInfo?, MethodInfo?) CreateHostBuilder(Type startupType,
         AssemblyName? assemblyName, IMessageSink? diagnosticMessageSink)
@@ -121,11 +118,7 @@ internal static class StartupLoader
 
     public static object? CreateStartup(Type startupType)
     {
-#if NET6_0_OR_GREATER
-        ArgumentNullException.ThrowIfNull(startupType);
-#else
         if (startupType == null) throw new ArgumentNullException(nameof(startupType));
-#endif
 
         if (startupType.IsAbstract && startupType.IsSealed) return null;
 

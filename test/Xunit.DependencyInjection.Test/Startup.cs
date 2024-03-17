@@ -15,7 +15,7 @@ public class Startup
             .UseServiceProviderFactory(new AutofacServiceProviderFactory());
 
     public void ConfigureServices(IServiceCollection services) =>
-        services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug))
+        services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug).AddXunitOutput())
             .AddScoped<IDependency, DependencyClass>()
             .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
             .AddHostedService<HostServiceTest>()
@@ -27,10 +27,6 @@ public class Startup
     public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)
     {
         Assert.NotNull(accessor);
-
- #pragma warning disable CS0618 // Type or member is obsolete
-        XunitTestOutputLoggerProvider.Register(provider);
- #pragma warning restore CS0618 // Type or member is obsolete
 
         var listener = new ActivityListener();
 
