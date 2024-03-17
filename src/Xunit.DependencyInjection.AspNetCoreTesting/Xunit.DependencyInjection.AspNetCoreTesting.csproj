@@ -14,8 +14,7 @@ public class Startup
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Condition="'$(TargetFramework)'=='net6.0'" Include="Microsoft.AspNetCore.Mvc.Testing" Version="6.0" />
-    <PackageReference Condition="'$(TargetFramework)'=='net8.0'" Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(_TargetFrameworkVersionWithoutV)" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
