@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RollForward>Major</RollForward>
     <ParallelizationMode>Force</ParallelizationMode>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
@@ -25,7 +25,8 @@
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.*" />
     <PackageReference Include="FluentAssertions" Version="6.*" />
     <PackageReference Include="FSharp.Core" Version="6.*" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.*" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.*" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
     <PackageReference Include="xunit" Version="2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />

@@ -1,31 +1,28 @@
 name: build
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
 
 jobs:
-  mac-build:
-    runs-on: macos-latest
+  unix-build:
+    name: Running tests on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest]
     steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET 8 SDK
-      uses: actions/setup-dotnet@v3
+    - uses: actions/checkout@v4
+    - name: Setup .NET SDK
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
-    - name: build
-      run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
-    - name: test
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-    - name: 'dotnet test aspnetcore'
-      run: dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-
-  linux-build:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v3
-    - name: Setup .NET 8 SDK
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: '8.0.x'
+        dotnet-version: |
+          6.x
+          8.x
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
@@ -36,11 +33,13 @@ jobs:
   windows-build:
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Setup .NET 8 SDK
-      uses: actions/setup-dotnet@v3
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: '8.0.x'
+        dotnet-version: |
+          6.x
+          8.x
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
