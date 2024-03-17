@@ -32,6 +32,6 @@ public class MinimalApiTest(HttpClient httpClient, IRandomService randomService)
     {
         public IHostBuilder CreateHostBuilder() => MinimalApiHostBuilderFactory.GetHostBuilder<Program>()
             .ConfigureHostConfiguration(builder =>
-                builder.AddInMemoryCollection([KeyValuePair.Create(HostDefaults.EnvironmentKey, "Testing")]));
+                builder.AddInMemoryCollection([new(HostDefaults.EnvironmentKey, "Testing")]));
     }
 }
