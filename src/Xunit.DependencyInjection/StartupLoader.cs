@@ -137,7 +137,7 @@ internal static class StartupLoader
 
         var parameters = method.GetParameters();
         if (parameters.Length == 0)
-            return (IHostBuilder?)method.Invoke(method.IsStatic ? null : startup, Array.Empty<object>());
+            return (IHostBuilder?)method.Invoke(method.IsStatic ? null : startup, []);
 
         if (parameters.Length > 1 || parameters[0].ParameterType != typeof(AssemblyName))
             throw new InvalidOperationException(

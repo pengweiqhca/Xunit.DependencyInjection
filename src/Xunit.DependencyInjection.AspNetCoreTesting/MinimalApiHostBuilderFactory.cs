@@ -77,7 +77,7 @@ public static class MinimalApiHostBuilderFactory
 
         ArgumentNullException.ThrowIfNull(factory);
 
-        SetHostFactory.Invoke(deferredHostBuilder, BindingFlags.DoNotWrapExceptions, null, new[] { factory }, null);
+        SetHostFactory.Invoke(deferredHostBuilder, BindingFlags.DoNotWrapExceptions, null, [factory], null);
 
         var setContentRoot = typeof(WebApplicationFactory<TEntryPoint>).GetMethod("SetContentRoot",
             BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance) ?? throw NotSupported();

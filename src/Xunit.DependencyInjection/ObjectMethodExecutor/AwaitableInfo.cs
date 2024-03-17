@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+using System.Runtime.CompilerServices;
 
 // ReSharper disable once CheckNamespace
 namespace Microsoft.Extensions.Internal;
@@ -12,8 +12,8 @@ internal readonly struct AwaitableInfo(
     MethodInfo getAwaiterMethod)
 {
     private const BindingFlags Everything = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance;
-    private static readonly MethodInfo OnCompleted = typeof(INotifyCompletion).GetMethod(nameof(INotifyCompletion.OnCompleted), Everything, null, new[] { typeof(Action) }, null)!;
-    private static readonly MethodInfo UnsafeOnCompleted = typeof(ICriticalNotifyCompletion).GetMethod(nameof(ICriticalNotifyCompletion.UnsafeOnCompleted), Everything, null, new[] { typeof(Action) }, null)!;
+    private static readonly MethodInfo OnCompleted = typeof(INotifyCompletion).GetMethod(nameof(INotifyCompletion.OnCompleted), Everything, null, [typeof(Action)], null)!;
+    private static readonly MethodInfo UnsafeOnCompleted = typeof(ICriticalNotifyCompletion).GetMethod(nameof(ICriticalNotifyCompletion.UnsafeOnCompleted), Everything, null, [typeof(Action)], null)!;
 
     public Type AwaiterType { get; } = awaiterType;
 

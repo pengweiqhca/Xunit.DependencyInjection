@@ -62,5 +62,5 @@ public static class Rules
         .Where(p => p.PropertyType == typeof(DiagnosticDescriptor))
         .Select(p => p.GetMethod)
         .Where(m => m != null)
-        .Select(m => (DiagnosticDescriptor)m!.Invoke(null, Array.Empty<object?>())!));
+        .Select(m => (DiagnosticDescriptor)m!.Invoke(null, [])!));
 }

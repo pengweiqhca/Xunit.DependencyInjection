@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
@@ -12,14 +12,14 @@ internal sealed class ObjectMethodExecutor
     private readonly MethodExecutor _executor;
 
     private static readonly ConstructorInfo ObjectMethodExecutorAwaitableConstructor =
-        typeof(ObjectMethodExecutorAwaitable).GetConstructor(new[] {
+        typeof(ObjectMethodExecutorAwaitable).GetConstructor([
             typeof(object),                 // customAwaitable
             typeof(Func<object, object>),   // getAwaiterMethod
             typeof(Func<object, bool>),     // isCompletedMethod
             typeof(Func<object, object>),   // getResultMethod
             typeof(Action<object, Action>), // onCompletedMethod
             typeof(Action<object, Action>)  // unsafeOnCompletedMethod
-    })!;
+    ])!;
 
     private ObjectMethodExecutor(MethodInfo methodInfo, TypeInfo targetTypeInfo, object?[]? parameterDefaultValues)
     {

@@ -14,9 +14,10 @@ public static partial class CSharpCodeRefactoringVerifier<TCodeRefactoring>
         {
             TestCode = source,
             FixedCode = fixedSource,
-            ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(ImmutableArray.Create(
-                new PackageIdentity("Microsoft.Extensions.Hosting", "2.1.0"),
-                new PackageIdentity("Xunit.DependencyInjection", "7.1.0"))),
+            ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages([
+                new("Microsoft.Extensions.Hosting", "2.1.0"),
+                new("Xunit.DependencyInjection", "7.1.0")
+            ]),
         };
 
         test.ExpectedDiagnostics.AddRange(expected);

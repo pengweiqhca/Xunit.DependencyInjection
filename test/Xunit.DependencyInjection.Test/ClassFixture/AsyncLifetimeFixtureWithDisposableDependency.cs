@@ -1,13 +1,14 @@
-﻿using Xunit.DependencyInjection.Test.CollectionFixture;
+using Xunit.DependencyInjection.Test.CollectionFixture;
 
 namespace Xunit.DependencyInjection.Test.ClassFixture;
 
-public class AsyncLifetimeFixtureWithDisposableDependency : IAsyncLifetime
+public class AsyncLifetimeFixtureWithDisposableDependency(
+    IDependencyWithManagedLifetime dependency,
+    CollectionFixtureWithDependency collectionFixtureWithDependency) : IAsyncLifetime
 {
-    public AsyncLifetimeFixtureWithDisposableDependency(IDependencyWithManagedLifetime dependency, CollectionFixtureWithDependency _) =>
-        Dependency = dependency;
+    public IDependencyWithManagedLifetime Dependency { get; } = dependency;
 
-    public IDependencyWithManagedLifetime Dependency { get; }
+    public CollectionFixtureWithDependency CollectionFixtureWithDependency { get; } = collectionFixtureWithDependency;
 
     public IList<string> Journal { get; } = new List<string>();
 

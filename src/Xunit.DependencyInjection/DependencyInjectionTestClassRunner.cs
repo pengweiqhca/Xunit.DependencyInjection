@@ -22,11 +22,11 @@ public class DependencyInjectionTestClassRunner(
     protected override object?[] CreateTestClassConstructorArguments()
     {
         if ((!Class.Type.GetTypeInfo().IsAbstract ? 0 : Class.Type.GetTypeInfo().IsSealed ? 1 : 0) != 0)
-            return Array.Empty<object?>();
+            return [];
 
         var constructor = SelectTestClassConstructor();
 
-        if (constructor == null) return Array.Empty<object?>();
+        if (constructor == null) return [];
 
         var parameters = constructor.GetParameters();
 

@@ -1,10 +1,10 @@
-﻿namespace Xunit.DependencyInjection;
+namespace Xunit.DependencyInjection;
 
 internal sealed class HostManager(AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
     : IHostedService, IDisposable
 {
-    private readonly Dictionary<Type, DependencyInjectionContext> _hostMap = new();
-    private readonly List<IHost> _hosts = new();
+    private readonly Dictionary<Type, DependencyInjectionContext> _hostMap = [];
+    private readonly List<IHost> _hosts = [];
 
     private Type? _defaultStartupType;
     private DependencyInjectionContext? _defaultHost;

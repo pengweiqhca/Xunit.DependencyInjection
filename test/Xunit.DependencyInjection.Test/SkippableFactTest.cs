@@ -26,7 +26,7 @@ public class SkippableFactTest(IDependency dependency)
     {
         private bool _isCompleted;
 
-        private readonly List<Action> _onCompletedCallbacks = new();
+        private readonly List<Action> _onCompletedCallbacks = [];
 
         // Simulate a brief delay before completion
         public TestAwaitable() => ThreadPool.QueueUserWorkItem(_ =>
