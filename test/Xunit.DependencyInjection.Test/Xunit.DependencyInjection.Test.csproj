@@ -24,12 +24,11 @@
 
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="8.*" />
     <PackageReference Include="FluentAssertions" Version="6.*" />
-    <PackageReference Include="FSharp.Core" Version="6.*" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.*" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.*" />
+    <PackageReference Include="FSharp.Core" Version="8.*" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
     <PackageReference Include="xunit" Version="2.*" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
+
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj" />
     <ProjectReference Include="..\Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj" />
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
