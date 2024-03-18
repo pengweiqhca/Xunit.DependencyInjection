@@ -32,7 +32,6 @@ Release notes:
     <InternalsVisibleTo Include="Xunit.DependencyInjection.StaFact" />
     <InternalsVisibleTo Include="Xunit.DependencyInjection.Test" />
 
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="8.0.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
     <PackageReference Include="xunit.extensibility.execution" Version="[2.4.2, 3.0.0)" />
 
