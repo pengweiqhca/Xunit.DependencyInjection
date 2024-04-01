@@ -3,7 +3,7 @@
   <PropertyGroup>
     <RollForward>Major</RollForward>
     <ParallelizationMode>Force</ParallelizationMode>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>

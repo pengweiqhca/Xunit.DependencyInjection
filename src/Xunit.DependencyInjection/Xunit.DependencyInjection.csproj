@@ -20,6 +20,7 @@ Release notes:
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
     <Version>9.0.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
+    <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>
 
   <ItemGroup>
