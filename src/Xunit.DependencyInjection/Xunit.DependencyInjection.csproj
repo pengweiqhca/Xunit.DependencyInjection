@@ -18,7 +18,7 @@ Release notes:
 8.1: Startup allow static method or class (like Asp.Net Core startup).
 8.0: New feature: Support multiple startup.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>9.0.1</Version>
+    <Version>9.1.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>

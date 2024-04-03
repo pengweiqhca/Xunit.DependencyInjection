@@ -14,7 +14,7 @@ Not support:
 2. Can't inject ITestOutputHelper
 3. [MethodData]</Description>
     <PackageTags>xunit ioc di DependencyInjection test skipping</PackageTags>
-    <Version>9.0.0</Version>
+    <Version>9.1.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 

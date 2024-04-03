@@ -85,7 +85,7 @@ public class DependencyInjectionTestClassRunner(
         {
             if (CollectionFixtureMappings.TryGetValue(p.ParameterType, out var arg)) return arg;
 
-            arg = serviceScope.ServiceProvider.GetService(p.ParameterType);
+            arg = serviceScope.ServiceProvider.GetService(p);
 
             if (arg == null) missingParameters.Add(p);
 

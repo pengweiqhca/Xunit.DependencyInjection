@@ -21,12 +21,17 @@ public class Startup
             .AddHostedService<HostServiceTest>()
             .AddSkippableFactSupport()
             .AddStaFactSupport()
+            .AddKeyedScoped<IFromKeyedServicesTest, FromSmallKeyedServicesTest>("small")
+            .AddKeyedScoped<IFromKeyedServicesTest, FromLargeKeyedServicesTest>("large")
             .AddXRetrySupport()
             .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
-    public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor)
+    public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor,
+        [FromServices] IAsyncExceptionFilter filter, [FromKeyedServices("small")] IFromKeyedServicesTest test)
     {
         Assert.NotNull(accessor);
+        Assert.IsType<DemystifyExceptionFilter>(filter);
+        Assert.IsType<FromSmallKeyedServicesTest>(test);
 
         var listener = new ActivityListener();
 

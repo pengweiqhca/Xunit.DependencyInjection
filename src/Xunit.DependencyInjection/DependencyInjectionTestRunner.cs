@@ -4,7 +4,7 @@ public class DependencyInjectionTestRunner(
     DependencyInjectionContext context,
     ITest test,
     IMessageBus messageBus,
-    IReadOnlyDictionary<int, Type> fromServices,
+    IReadOnlyDictionary<int, ParameterInfo> fromServices,
     Type testClass,
     object[] constructorArguments,
     MethodInfo testMethod,
@@ -34,7 +34,7 @@ public class DependencyInjectionTestRunner(
         {
             raw[kv.Key] = TestMethodArguments[kv.Key];
 
-            TestMethodArguments[kv.Key] = kv.Value == typeof(ITestOutputHelper)
+            TestMethodArguments[kv.Key] = kv.Value.ParameterType == typeof(ITestOutputHelper)
                 ? testOutputHelper
                 : scope.ServiceProvider.GetService(kv.Value);
         }

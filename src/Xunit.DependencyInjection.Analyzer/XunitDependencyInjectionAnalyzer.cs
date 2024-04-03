@@ -66,8 +66,7 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
                     startupName = $"{st.ContainingNamespace.Name}.{st.Name}";
                 else return;
             }
-            else if (sta.ConstructorArguments.Length == 2 &&
-                     sta.ConstructorArguments[0].Value is string name &&
+            else if (sta.ConstructorArguments is [{ Value: string name } _, _] &&
                      (sta.ConstructorArguments[1].Value == null ||
                          sta.ConstructorArguments[1].Value is string ns &&
                          ns == csac.Compilation.AssemblyName))

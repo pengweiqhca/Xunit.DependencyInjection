@@ -45,7 +45,7 @@ internal static class TestHelper
 
             try
             {
-                argumentValue = provider.GetService(Parameter.ParameterType);
+                argumentValue = provider.GetService(Parameter);
             }
             catch (Exception ex)
             {

@@ -23,18 +23,21 @@ public class UITestCaseRunnerAdapter : IXunitTestCaseRunnerWrapper
         {
             raw[kv.Key] = testCase.TestMethodArguments[kv.Key];
 
-            testCase.TestMethodArguments[kv.Key] = kv.Value == typeof(ITestOutputHelper)
+            testCase.TestMethodArguments[kv.Key] = kv.Value.ParameterType == typeof(ITestOutputHelper)
                 ? throw new NotSupportedException("Can't inject ITestOutputHelper via method arguments when use StaFact")
-                : context.RootServices.GetService(kv.Value);
+                : scope.ServiceProvider.GetService(kv.Value);
         }
 
         constructorArguments = scope.ServiceProvider.CreateTestClassConstructorArguments(constructorArguments, aggregator);
 
-        var summary = await testCase.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
-
-        foreach (var kv in raw)
-            testCase.TestMethodArguments[kv.Key] = kv.Value;
-
-        return summary;
+        try
+        {
+            return await testCase.RunAsync(diagnosticMessageSink, messageBus, constructorArguments, aggregator, cancellationTokenSource);
+        }
+        finally
+        {
+            foreach (var kv in raw)
+                testCase.TestMethodArguments[kv.Key] = kv.Value;
+        }
     }
 }

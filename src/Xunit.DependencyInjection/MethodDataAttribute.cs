@@ -101,8 +101,8 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
             if (param[index] != null) continue;
 
             if (Parameters == null || Parameters.Length == 0 ||
-                mp[index].GetCustomAttribute<FromServicesAttribute>() != null)
-                param[index] = serviceProvider.GetService(mp[index].ParameterType);
+                mp[index].GetCustomAttribute<FromKeyedServicesAttribute>() != null)
+                param[index] = serviceProvider.GetService(mp[index]);
         }
 
         return param;

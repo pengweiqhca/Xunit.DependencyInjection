@@ -120,7 +120,7 @@ internal static class StartupLoader
     {
         if (startupType == null) throw new ArgumentNullException(nameof(startupType));
 
-        if (startupType.IsAbstract && startupType.IsSealed) return null;
+        if (startupType is { IsAbstract: true, IsSealed: true }) return null;
 
         var ctors = startupType.GetConstructors();
         if (ctors.Length != 1 || ctors[0].GetParameters().Length != 0)
@@ -191,10 +191,8 @@ internal static class StartupLoader
 
         using var scope = provider.CreateScope();
 
-        method.Invoke(method.IsStatic ? null : startup, method.GetParameters()
-            .Select(p => p.ParameterType)
-            .Select(scope.ServiceProvider.GetRequiredService)
-            .ToArray());
+        method.Invoke(method.IsStatic ? null : startup,
+            method.GetParameters().Select(scope.ServiceProvider.GetRequiredService).ToArray());
     }
 
     public static IHost? BuildHost(IHostBuilder hostBuilder, object? startup, Type startupType, MethodInfo? method)
