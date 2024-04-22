@@ -61,10 +61,10 @@ dotnet add package Microsoft.AspNetCore.TestHost
 ``` C#
 public class Startup
 {
-    public void ConfigureHost(IHostBuilder hostBuilder) =>
-        hostBuilder.ConfigureWebHost[Defaults](webHostBuilder => webHostBuilder
-            .UseTestServer(options => options.PreserveExecutionContext = true)
-            .UseStartup<AspNetCoreStartup>());
+    public void ConfigureHost(IHostBuilder hostBuilder) => hostBuilder
+        .ConfigureWebHost[Defaults](webHostBuilder => webHostBuilder
+        .UseTestServer(options => options.PreserveExecutionContext = true)
+        .UseStartup<AspNetCoreStartup>());
 }
 ```
 
@@ -198,7 +198,7 @@ This package has two policies to run test cases in parallel.
 
    Ignore xunit [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior and force running tests in parallel.
 
-If have `[Collection]`, `[CollectionDefinition(DisableParallelization = true)]`, `[DisableParallelization]` declared on the test class, the test class will run synchronously. If have `[DisableParallelization]`, `[MemberData(DisableDiscoveryEnumeration = true)]` declared on the test method, the test method will run synchronously.
+If [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-297131879), `[CollectionDefinition(DisableParallelization = true)]`, `[DisableParallelization]` declared on the test class, the test class will run sequentially. If `[DisableParallelization]`, `[MemberData(DisableDiscoveryEnumeration = true)]` declared on the test method, the test method will run sequentially.
 
 > Thanks [Meziantou.Xunit.ParallelTestFramework](https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework)
 
@@ -239,8 +239,8 @@ dotnet add package Xunit.DependencyInjection.Logging
 ``` C#
 public class Startup
 {
-    public void ConfigureServices(IServiceCollection services)
-        => services.AddLogging(lb => lb.AddXunitOutput());
+    public void ConfigureServices(IServiceCollection services) => services
+        .AddLogging(lb => lb.AddXunitOutput());
 }
 ```
 
@@ -249,9 +249,8 @@ public class Startup
 ``` C#
 public class Startup
 {
-    public void ConfigureHost(IHostBuilder hostBuilder) =>
-        hostBuilder
-            .ConfigureServices((context, services) => { context.XXXX });
+    public void ConfigureHost(IHostBuilder hostBuilder) => hostBuilder
+        .ConfigureServices((context, services) => { context.XXXX });
 }
 ```
 
@@ -272,10 +271,9 @@ public class Startup
 ``` C#
 public class Startup
 {
-    public void ConfigureHost(IHostBuilder hostBuilder) =>
-        hostBuilder
-            .ConfigureHostConfiguration(builder => { })
-            .ConfigureAppConfiguration((context, builder) => { });
+    public void ConfigureHost(IHostBuilder hostBuilder) => hostBuilder
+        .ConfigureHostConfiguration(builder => { })
+        .ConfigureAppConfiguration((context, builder) => { });
 }
 ```
 
