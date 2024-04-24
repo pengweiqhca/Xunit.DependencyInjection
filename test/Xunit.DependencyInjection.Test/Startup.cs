@@ -18,6 +18,7 @@ public class Startup
         services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug).AddXunitOutput())
             .AddScoped<IDependency, DependencyClass>()
             .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
+            .AddScoped<BeforeAfterTest, TestBeforeAfterTest>()
             .AddHostedService<HostServiceTest>()
             .AddSkippableFactSupport()
             .AddStaFactSupport()

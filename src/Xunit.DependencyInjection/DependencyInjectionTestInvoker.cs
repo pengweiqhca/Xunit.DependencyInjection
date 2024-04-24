@@ -23,6 +23,22 @@ public class DependencyInjectionTestInvoker(
     private static readonly ActivitySource ActivitySource = new("Xunit.DependencyInjection", typeof(DependencyInjectionTestInvoker).Assembly.GetName().Version?.ToString());
     private static readonly MethodInfo AsTaskMethod = new Func<ObjectMethodExecutorAwaitable, Task>(AsTask).Method;
 
+    /// <inheritdoc/>
+    protected override async Task<decimal> InvokeTestMethodAsync(object? testClassInstance)
+    {
+        var beforeAfterTests = provider.GetServices<BeforeAfterTest>().ToArray();
+
+        foreach (var beforeAfterTest in beforeAfterTests)
+            await beforeAfterTest.BeforeAsync(testClassInstance, TestMethod).ConfigureAwait(false);
+
+        var result = await base.InvokeTestMethodAsync(testClassInstance).ConfigureAwait(false);
+
+        for (var index = beforeAfterTests.Length - 1; index >= 0; index--)
+            await beforeAfterTests[index].BeforeAsync(testClassInstance, TestMethod).ConfigureAwait(false);
+
+        return result;
+    }
+
     /// <inheritdoc />
     protected override object CallTestMethod(object testClassInstance)
     {
