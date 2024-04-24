@@ -118,7 +118,7 @@ public class DependencyInjectionTestClassRunner(
             TestClass.Class.GetCustomAttributes(typeof(CollectionDefinitionAttribute)).FirstOrDefault() is { } attr &&
             attr.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) ||
             TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any() ||
-            TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any())
+            TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any() && !context.ForcedParallelization)
             return await base.RunTestMethodsAsync();
 
         IEnumerable<IXunitTestCase> orderedTestCases;

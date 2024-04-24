@@ -198,7 +198,7 @@ This package has two policies to run test cases in parallel.
 
    Ignore xunit [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior and force running tests in parallel.
 
-If [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-297131879), `[CollectionDefinition(DisableParallelization = true)]`, `[DisableParallelization]` declared on the test class, the test class will run sequentially. If `[DisableParallelization]`, `[MemberData(DisableDiscoveryEnumeration = true)]` declared on the test method, the test method will run sequentially.
+If [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-297131879)(if ParallelizationMode is not `Force`), `[CollectionDefinition(DisableParallelization = true)]`, `[DisableParallelization]` declared on the test class, the test class will run sequentially. If `[DisableParallelization]`, `[MemberData(DisableDiscoveryEnumeration = true)]` declared on the test method, the test method will run sequentially.
 
 > Thanks [Meziantou.Xunit.ParallelTestFramework](https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework)
 
@@ -288,3 +288,9 @@ TracerProviderBuilder builder;
 
 builder.AddSource("Xunit.DependencyInjection");
 ```
+
+## Do something before and after test case
+
+Inherit `BeforeAfterTest` and register as `BeforeAfterTest` service.
+
+[See demo](https://github.com/pengweiqhca/Xunit.DependencyInjection/blob/main/test/Xunit.DependencyInjection.Test/BeforeAfterTestTest.cs#13).

@@ -23,7 +23,7 @@ public class DependencyInjectionTestMethodRunner(
             TestMethod.TestClass.Class.GetCustomAttributes(typeof(CollectionDefinitionAttribute)).FirstOrDefault() is { } attr &&
             attr.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) ||
             TestMethod.TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any() ||
-            TestMethod.TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any() ||
+            TestMethod.TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any() && !context.ForcedParallelization ||
             TestMethod.Method.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any() ||
             TestMethod.Method.GetCustomAttributes(typeof(MemberDataAttribute)).Any(a =>
                 a.GetNamedArgument<bool>(nameof(MemberDataAttribute.DisableDiscoveryEnumeration))))
