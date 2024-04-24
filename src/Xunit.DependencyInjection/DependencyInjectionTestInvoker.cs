@@ -34,7 +34,7 @@ public class DependencyInjectionTestInvoker(
         var result = await base.InvokeTestMethodAsync(testClassInstance).ConfigureAwait(false);
 
         for (var index = beforeAfterTests.Length - 1; index >= 0; index--)
-            await beforeAfterTests[index].BeforeAsync(testClassInstance, TestMethod).ConfigureAwait(false);
+            await beforeAfterTests[index].AfterAsync(testClassInstance, TestMethod).ConfigureAwait(false);
 
         return result;
     }
