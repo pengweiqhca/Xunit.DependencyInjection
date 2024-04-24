@@ -1,7 +1,7 @@
 ﻿namespace Xunit.DependencyInjection;
 
 public class DependencyInjectionTestClassRunner(
-    DependencyInjectionContext context,
+    DependencyInjectionTestContext context,
     ITestClass testClass,
     IReflectionTypeInfo @class,
     IEnumerable<IXunitTestCase> testCases,

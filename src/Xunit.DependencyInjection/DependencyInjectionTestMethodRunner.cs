@@ -1,7 +1,7 @@
 ﻿namespace Xunit.DependencyInjection;
 
 public class DependencyInjectionTestMethodRunner(
-    DependencyInjectionContext context,
+    DependencyInjectionTestContext context,
     ITestMethod testMethod,
     IReflectionTypeInfo @class,
     IReflectionMethodInfo method,

@@ -1,13 +1,16 @@
 ﻿namespace Xunit.DependencyInjection;
 
-public class DependencyInjectionContext(IHost host, bool disableParallelization, bool force)
+public class DependencyInjectionContext(IHost host, bool disableParallelization)
 {
     public IHost Host { get; } = host;
 
     public IServiceProvider RootServices => Host.Services;
 
     public bool DisableParallelization { get; } = disableParallelization;
+}
 
+public class DependencyInjectionTestContext(IHost host, bool disableParallelization, bool force) : DependencyInjectionContext(host, disableParallelization)
+{
     public bool ForcedParallelization { get; } = force;
 }
 
