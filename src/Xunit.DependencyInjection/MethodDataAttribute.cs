@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace Xunit.DependencyInjection;
+﻿namespace Xunit.DependencyInjection;
 
 /// <summary>
 /// Provides a data source for a data theory.

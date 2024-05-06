@@ -4,7 +4,6 @@ using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
-using System.Collections.Immutable;
 
 namespace Xunit.DependencyInjection.Analyzer.Test.Verifiers;
 

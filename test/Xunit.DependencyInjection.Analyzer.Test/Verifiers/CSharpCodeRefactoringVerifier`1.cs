@@ -1,6 +1,5 @@
 ﻿using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Testing;
-using System.Collections.Immutable;
 
 namespace Xunit.DependencyInjection.Analyzer.Test.Verifiers;
 
