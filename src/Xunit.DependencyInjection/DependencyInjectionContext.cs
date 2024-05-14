@@ -9,9 +9,16 @@ public class DependencyInjectionContext(IHost host, bool disableParallelization)
     public bool DisableParallelization { get; } = disableParallelization;
 }
 
-public class DependencyInjectionTestContext(IHost host, bool disableParallelization, bool force) : DependencyInjectionContext(host, disableParallelization)
+public class DependencyInjectionTestContext(
+    IHost host,
+    bool disableParallelization,
+    bool force,
+    SemaphoreSlim? parallelSemaphore)
+    : DependencyInjectionContext(host, disableParallelization)
 {
     public bool ForcedParallelization { get; } = force;
+
+    public SemaphoreSlim? ParallelSemaphore { get; } = parallelSemaphore;
 }
 
 public class DependencyInjectionStartupContext(
@@ -24,6 +31,8 @@ public class DependencyInjectionStartupContext(
     public ParallelizationMode ParallelizationMode { get; } = parallelizationMode;
 
     public IReadOnlyDictionary<ITestClass, DependencyInjectionContext?> ContextMap { get; } = contextMap;
+
+    public SemaphoreSlim? ParallelSemaphore { get; internal set; }
 }
 
 public enum ParallelizationMode

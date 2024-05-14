@@ -35,13 +35,27 @@ public class DependencyInjectionTestMethodRunner(
             ? TaskScheduler.Default
             : TaskScheduler.FromCurrentSynchronizationContext();
 
-        var tasks = TestCases.Select(testCase => Task.Factory.StartNew(
-            state => RunTestCaseAsync((IXunitTestCase)state!), testCase, CancellationTokenSource.Token,
-            TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler, scheduler).Unwrap());
+        Func<IXunitTestCase, Task<RunSummary>> taskRunner = context.ParallelSemaphore == null
+            ? testCase => Task.Factory.StartNew(state => RunTestCaseAsync((IXunitTestCase)state!), testCase,
+                CancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler,
+                scheduler).Unwrap()
+            : async testCase =>
+            {
+                await context.ParallelSemaphore.WaitAsync(CancellationTokenSource.Token).ConfigureAwait(false);
+
+                try
+                {
+                    return await RunTestCaseAsync(testCase).ConfigureAwait(false);
+                }
+                finally
+                {
+                    context.ParallelSemaphore.Release();
+                }
+            };
 
         var summary = new RunSummary();
 
-        foreach (var caseSummary in await Task.WhenAll(tasks))
+        foreach (var caseSummary in await Task.WhenAll(TestCases.Select(taskRunner)))
             summary.Aggregate(caseSummary);
 
         return summary;

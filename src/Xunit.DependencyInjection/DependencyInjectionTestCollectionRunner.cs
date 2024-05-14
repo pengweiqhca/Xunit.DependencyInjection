@@ -53,8 +53,8 @@ public class DependencyInjectionTestCollectionRunner(
                 new(value.Host, value.DisableParallelization ||
                     !(context.ParallelizationMode == ParallelizationMode.Force ||
                         context.ParallelizationMode == ParallelizationMode.Enhance &&
-                        SynchronizationContext.Current is MaxConcurrencySyncContext),
-                    context.ParallelizationMode == ParallelizationMode.Force), testClass, @class, testCases,
+                        (SynchronizationContext.Current is MaxConcurrencySyncContext || context.ParallelSemaphore != null)),
+                    context.ParallelizationMode == ParallelizationMode.Force, context.ParallelSemaphore), testClass, @class, testCases,
                 DiagnosticMessageSink, MessageBus, TestCaseOrderer, new(Aggregator), CancellationTokenSource,
                 CollectionFixtureMappings).RunAsync()
             : base.RunTestClassAsync(testClass, @class, testCases);

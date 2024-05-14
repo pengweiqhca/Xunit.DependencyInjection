@@ -200,6 +200,8 @@ This package has two policies to run test cases in parallel.
 
 If [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-297131879)(if ParallelizationMode is not `Force`), `[CollectionDefinition(DisableParallelization = true)]`, `[DisableParallelization]` declared on the test class, the test class will run sequentially. If `[DisableParallelization]`, `[MemberData(DisableDiscoveryEnumeration = true)]` declared on the test method, the test method will run sequentially.
 
+**It is recommended to use xunit 2.8.0+ and without setting `parallelAlgorithm`**
+
 > Thanks [Meziantou.Xunit.ParallelTestFramework](https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework)
 
 ## How to disable Xunit.DependencyInjection

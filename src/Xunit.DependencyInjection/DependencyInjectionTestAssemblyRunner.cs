@@ -19,8 +19,6 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         foreach (var exception in exceptions) Aggregator.Add(exception);
     }
 
-    protected override string GetTestFrameworkEnvironment() => base.GetTestFrameworkEnvironment();
-
     /// <inheritdoc />
     protected override Task<RunSummary> RunTestCollectionAsync(IMessageBus messageBus,
         ITestCollection testCollection,
@@ -28,4 +26,101 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         CancellationTokenSource cancellationTokenSource) =>
         new DependencyInjectionTestCollectionRunner(_context, testCollection, testCases, DiagnosticMessageSink,
             messageBus, TestCaseOrderer, new(Aggregator), cancellationTokenSource).RunAsync();
+
+    /// <inheritdoc/>
+    protected override async Task<RunSummary> RunTestCollectionsAsync(IMessageBus messageBus,
+        CancellationTokenSource cancellationTokenSource)
+    {
+        var type = typeof(XunitTestAssemblyRunner);
+
+        type.GetField("originalSyncContext", BindingFlags.Instance | BindingFlags.NonPublic)!
+            .SetValue(this, SynchronizationContext.Current);
+
+        if (type.GetField("disableParallelization", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(this) is true)
+            return await base.RunTestCollectionsAsync(messageBus, cancellationTokenSource);
+
+        var maxParallelThreads =
+            (int)type.GetField("maxParallelThreads", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(this);
+
+        if (maxParallelThreads > 0)
+        {
+            var parallelAlgorithm = type.GetField("parallelAlgorithm", BindingFlags.Instance | BindingFlags.NonPublic);
+            if (parallelAlgorithm != null && (int)parallelAlgorithm.GetValue(this) == 0)
+            {
+                _context.ParallelSemaphore = new(maxParallelThreads);
+
+                type.GetField("parallelSemaphore", BindingFlags.Instance | BindingFlags.NonPublic)?
+                    .SetValue(this, _context.ParallelSemaphore);
+
+                ThreadPool.GetMinThreads(out var minThreads, out var minIOPorts);
+                if (minThreads < maxParallelThreads)
+                    ThreadPool.SetMinThreads(maxParallelThreads, minIOPorts);
+            }
+            else
+                SetupSyncContext(maxParallelThreads);
+        }
+
+        Func<Func<Task<RunSummary>>, Task<RunSummary>> taskRunner = SynchronizationContext.Current != null
+            ? code => Task.Factory.StartNew(code, cancellationTokenSource.Token,
+                TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler,
+                TaskScheduler.FromCurrentSynchronizationContext()).Unwrap()
+            : code => Task.Run(code, cancellationTokenSource.Token);
+
+        List<Task<RunSummary>>? parallel = null;
+        List<Func<Task<RunSummary>>>? nonParallel = null;
+        var summaries = new List<RunSummary>();
+
+        foreach (var collection in OrderTestCollections())
+        {
+            var task = () =>
+                RunTestCollectionAsync(messageBus, collection.Item1, collection.Item2, cancellationTokenSource);
+
+            // attr is null here from our new unit test, but I'm not sure if that's expected or there's a cheaper approach here
+            // Current approach is trying to avoid any changes to the abstractions at all
+            var attr = collection.Item1.CollectionDefinition?.GetCustomAttributes(typeof(CollectionDefinitionAttribute))
+                .SingleOrDefault();
+
+            if (attr?.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) == true)
+            {
+                (nonParallel ??= new()).Add(task);
+            }
+            else
+            {
+                (parallel ??= new()).Add(taskRunner(task));
+            }
+        }
+
+        if (parallel?.Count > 0)
+        {
+            foreach (var task in parallel)
+            {
+                try
+                {
+                    summaries.Add(await task);
+                }
+                catch (TaskCanceledException) { }
+            }
+        }
+
+        if (nonParallel?.Count > 0)
+        {
+            foreach (var task in nonParallel)
+            {
+                try
+                {
+                    summaries.Add(await taskRunner(task));
+                    if (cancellationTokenSource.IsCancellationRequested)
+                        break;
+                }
+                catch (TaskCanceledException) { }
+            }
+        }
+
+        return new()
+        {
+            Total = summaries.Sum(s => s.Total),
+            Failed = summaries.Sum(s => s.Failed),
+            Skipped = summaries.Sum(s => s.Skipped)
+        };
+    }
 }

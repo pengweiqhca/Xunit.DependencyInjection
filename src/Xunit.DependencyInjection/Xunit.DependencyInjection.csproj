@@ -6,6 +6,7 @@
 
 Release notes:
 
+9.3: Support xunit 2.8.0.
 9.2: Add BeforeAfterTest.
 9.1: Support [FromKeyedService].
 9.0: Upgrade TargetFramework version and reference package version.
@@ -20,7 +21,7 @@ Release notes:
 8.1: Startup allow static method or class (like Asp.Net Core startup).
 8.0: New feature: Support multiple startup.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>9.2.1</Version>
+    <Version>9.3.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>

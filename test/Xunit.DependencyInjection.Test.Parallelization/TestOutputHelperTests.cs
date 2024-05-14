@@ -1,7 +1,4 @@
-using Xunit;
 using Xunit.Abstractions;
-
-[assembly: CollectionBehavior(DisableTestParallelization = false)]
 
 namespace Xunit.DependencyInjection.Test.Parallelization;
 
