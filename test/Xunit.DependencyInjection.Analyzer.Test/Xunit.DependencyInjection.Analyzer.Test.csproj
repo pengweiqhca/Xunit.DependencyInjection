@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
+  <Import Project="..\TestPackages.targets" />
 
   <ItemGroup>
     <Compile Remove="Startup\**" />
@@ -17,9 +18,6 @@
     </Content>
 
     <PackageReference Include="Microsoft.CodeAnalysis" Version="4.*" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
-    <PackageReference Include="xunit" Version="2.*" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
 
     <!--https://github.com/dotnet/roslyn-sdk/blob/main/src/Microsoft.CodeAnalysis.Testing/README.md-->
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing.XUnit" Version="1.*" />

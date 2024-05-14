@@ -10,10 +10,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		appveyor.yml = appveyor.yml
 		azure-pipelines.yml = azure-pipelines.yml
 		Directory.Build.props = Directory.Build.props
+		global.json = global.json
 		Key.snk = Key.snk
 		LICENSE = LICENSE
 		README.md = README.md
-		global.json = global.json
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection", "src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj", "{3D2ED524-0543-4349-B171-70EC032F82D6}"
@@ -40,7 +40,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.StaFact", "src\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj", "{1AD2C55A-6F20-4B05-BCF1-FD48A3DB1D56}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.xRetry", "src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj", "{47F04277-15B1-4449-93E2-A868953126A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.xRetry", "src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj", "{47F04277-15B1-4449-93E2-A868953126A1}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}"
 	ProjectSection(SolutionItems) = preProject
@@ -48,12 +48,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{A77B7EA7-84F
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{25119119-1FAE-46DF-9722-9E1AA38586D7}"
+	ProjectSection(SolutionItems) = preProject
+		test\TestPackages.targets = test\TestPackages.targets
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.AspNetCoreTesting", "src\Xunit.DependencyInjection.AspNetCoreTesting\Xunit.DependencyInjection.AspNetCoreTesting.csproj", "{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.AspNetCoreTesting", "src\Xunit.DependencyInjection.AspNetCoreTesting\Xunit.DependencyInjection.AspNetCoreTesting.csproj", "{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApiSample", "test\MinimalApiSample\MinimalApiSample.csproj", "{57B47C72-4F79-4422-BFC7-E37F44899C9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApiSample", "test\MinimalApiSample\MinimalApiSample.csproj", "{57B47C72-4F79-4422-BFC7-E37F44899C9F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.Test.Parallelization", "test\Xunit.DependencyInjection.Test.Parallelization\Xunit.DependencyInjection.Test.Parallelization.csproj", "{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Test.Parallelization", "test\Xunit.DependencyInjection.Test.Parallelization\Xunit.DependencyInjection.Test.Parallelization.csproj", "{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,25 +132,25 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {63FC91EA-4C82-472D-AD93-5A073622A8AD}
-	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{3D2ED524-0543-4349-B171-70EC032F82D6} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
-		{7896DD7C-CFB1-430A-8664-C8ECCD1CED16} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
-		{17899397-D576-4DC1-A833-7E289A893A8B} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
-		{3F8D11EF-25C5-4416-9BB5-49A3AB5A188D} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
-		{C92E88E0-9CED-4DE1-AF5F-69990D3B8872} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
-		{1AD2C55A-6F20-4B05-BCF1-FD48A3DB1D56} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
-		{3CD9DE7F-E242-4A2A-A292-23B4E0918A41} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
-		{47F04277-15B1-4449-93E2-A868953126A1} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
-		{EE91A816-AE5C-42D6-9E0F-5E02E6C68250} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
-		{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 		{95A96D26-648F-4E83-B344-85C2E3BA1C0D} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{3F8D11EF-25C5-4416-9BB5-49A3AB5A188D} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{17899397-D576-4DC1-A833-7E289A893A8B} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{E66166F7-7A22-41BB-8794-D9FEE6A1CAB0} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 		{312C08CA-9E3F-4DD6-854B-60C02A9DB6FC} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{7896DD7C-CFB1-430A-8664-C8ECCD1CED16} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{EE91A816-AE5C-42D6-9E0F-5E02E6C68250} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{C92E88E0-9CED-4DE1-AF5F-69990D3B8872} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
 		{AC55DBE8-0F24-486D-89E6-E8B39F4ED110} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+		{3CD9DE7F-E242-4A2A-A292-23B4E0918A41} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{1AD2C55A-6F20-4B05-BCF1-FD48A3DB1D56} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
+		{47F04277-15B1-4449-93E2-A868953126A1} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
 		{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2} = {A77B7EA7-84FB-4D74-A3AB-2DC8F3281CFA}
 		{57B47C72-4F79-4422-BFC7-E37F44899C9F} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
 		{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816} = {25119119-1FAE-46DF-9722-9E1AA38586D7}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {63FC91EA-4C82-472D-AD93-5A073622A8AD}
 	EndGlobalSection
 EndGlobal

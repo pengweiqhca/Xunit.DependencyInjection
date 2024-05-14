@@ -13,6 +13,7 @@
   </PropertyGroup>
 
   <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
+  <Import Project="..\TestPackages.targets" />
 
   <ItemGroup>
     <Compile Include="AssemblyNamespaceTest.fs" />
@@ -22,11 +23,8 @@
     <Compile Include="ScopedTest.fs" />
     <Compile Include="Program.fs" />
 
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.*" />
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.*" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     <PackageReference Include="System.ValueTuple" Version="4.*" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <PackageReference Include="xunit" Version="2.*" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.*" />
 
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
