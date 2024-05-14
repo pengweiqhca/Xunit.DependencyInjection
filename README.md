@@ -296,3 +296,7 @@ builder.AddSource("Xunit.DependencyInjection");
 Inherit `BeforeAfterTest` and register as `BeforeAfterTest` service.
 
 [See demo](https://github.com/pengweiqhca/Xunit.DependencyInjection/blob/main/test/Xunit.DependencyInjection.Test/BeforeAfterTestTest.cs#13).
+
+## Initialize some data.
+
+Use `IHostedService`.
