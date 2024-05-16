@@ -4,7 +4,7 @@
 
 Install the [Nuget](https://www.nuget.org/packages/Xunit.DependencyInjection) package.
 
-``` sh
+```sh
 dotnet add package Xunit.DependencyInjection
 ```
 
@@ -50,15 +50,17 @@ public class MyAwesomeTests
 }
 ```
 
+>  `Xunit.DependencyInjection` is built into the generic host and fully supports its lifecycle, allowing you to use all features supported by the generic host, including but not limited to `IHostedService`.
+
 ## Integration asp.net core TestHost(3.0+)
 
 ### Asp.Net Core Startup
 
-``` sh
+```sh
 dotnet add package Microsoft.AspNetCore.TestHost
 ```
 
-``` C#
+```C#
 public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) => hostBuilder
@@ -74,11 +76,11 @@ If you use MinimalApi rather than asp.net core Startup class.
 
 Add package reference for `Xunit.DependencyInjection.AspNetCoreTesting`
 
-``` sh
+```sh
 dotnet add package Xunit.DependencyInjection.AspNetCoreTesting
 ```
 
-``` C#
+```C#
 public class Startup
 {
     public IHostBuilder CreateHostBuilder() => MinimalApiHostBuilderFactory.GetHostBuilder<Program>();
@@ -93,7 +95,7 @@ public class Startup
 
 * `CreateHostBuilder` method
 
-``` C#
+```C#
 public class Startup
 {
     public IHostBuilder CreateHostBuilder([AssemblyName assemblyName]) { }
@@ -102,7 +104,7 @@ public class Startup
 
 * `ConfigureHost` method
 
-``` C#
+```C#
 public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) { }
@@ -111,7 +113,7 @@ public class Startup
 
 * `ConfigureServices` method
 
-``` C#
+```C#
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services[, HostBuilderContext context]) { }
@@ -120,7 +122,7 @@ public class Startup
 
 * `Configure` method
 
-Anything defined in `ConfigureServices`, can be specified in the `Configure` method signature. These services are injected if they're available.
+  Anything defined in `ConfigureServices`, can be specified in the `Configure` method signature. These services are injected if they're available.
 
 ## How to find `Startup`?
 
@@ -130,7 +132,7 @@ Declare [Startup] on test class
 
 ### 2. Nested startup
 
-``` C#
+```C#
 public class TestClass1
 {
     public class Startup
@@ -158,7 +160,7 @@ Default is find `Your.Test.Project.Startup, Your.Test.Project`.
 
 If you want to use a special `Startup`, you can define `XunitStartupAssembly` and `XunitStartupFullName` in the `PropertyGroup` section
 
-``` xml
+```xml
 <Project>
   <PropertyGroup>
     <XunitStartupAssembly>Abc</XunitStartupAssembly>
@@ -167,18 +169,18 @@ If you want to use a special `Startup`, you can define `XunitStartupAssembly` an
 </Project>
 ```
 
-| XunitStartupAssembly | XunitStartupFullName | Startup |
-| ------- | ------ | ------ |
-|   |   | Your.Test.Project.Startup, Your.Test.Project |
-| Abc |   | Abc.Startup, Abc |
-|   | Xyz | Xyz, Your.Test.Project |
-| Abc | Xyz | Xyz, Abc |
+| XunitStartupAssembly | XunitStartupFullName | Startup                                      |
+| -------------------- | -------------------- | -------------------------------------------- |
+|                      |                      | Your.Test.Project.Startup, Your.Test.Project |
+| Abc                  |                      | Abc.Startup, Abc                             |
+|                      | Xyz                  | Xyz, Your.Test.Project                       |
+| Abc                  | Xyz                  | Xyz, Abc                                     |
 
 ## Parallel
 
 By default, xUnit runs all test cases in a test class synchronously. This package can extend the test framework to execute tests in parallel.
 
-``` xml
+```xml
 <Project>
 
   <PropertyGroup>
@@ -193,7 +195,6 @@ This package has two policies to run test cases in parallel.
 1. Enhance or true
 
    Respect xunit [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior.
-
 2. Force
 
    Ignore xunit [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior and force running tests in parallel.
@@ -206,7 +207,7 @@ If [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-2971
 
 ## How to disable Xunit.DependencyInjection
 
-``` xml
+```xml
 <Project>
     <PropertyGroup>
         <EnableXunitDependencyInjectionDefaultTestFrameworkAttribute>false</EnableXunitDependencyInjectionDefaultTestFrameworkAttribute>
@@ -216,7 +217,7 @@ If [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-2971
 
 ## How to inject ITestOutputHelper
 
-``` C#
+```C#
 internal class DependencyClass : IDependency
 {
     private readonly ITestOutputHelperAccessor _testOutputHelperAccessor;
@@ -238,7 +239,7 @@ dotnet add package Xunit.DependencyInjection.Logging
 
 > The call chain must be from the test case. If not, this feature will not work.
 
-``` C#
+```C#
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services) => services
@@ -248,7 +249,7 @@ public class Startup
 
 ## How to inject `IConfiguration` or `IHostEnvironment` into `Startup`?
 
-``` C#
+```C#
 public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) => hostBuilder
@@ -258,7 +259,7 @@ public class Startup
 
 or
 
-``` C#
+```C#
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services, HostBuilderContext context)
@@ -270,7 +271,7 @@ public class Startup
 
 ## How to configure `IConfiguration`?
 
-``` C#
+```C#
 public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) => hostBuilder
@@ -285,7 +286,7 @@ Use **[MethodData]**
 
 ## Integrate OpenTelemetry
 
-``` C#
+```C#
 TracerProviderBuilder builder;
 
 builder.AddSource("Xunit.DependencyInjection");
@@ -297,6 +298,6 @@ Inherit `BeforeAfterTest` and register as `BeforeAfterTest` service.
 
 [See demo](https://github.com/pengweiqhca/Xunit.DependencyInjection/blob/main/test/Xunit.DependencyInjection.Test/BeforeAfterTestTest.cs#13).
 
-## Initialize some data.
+## Initialize some data on startup.
 
-Use `IHostedService`.
+If it is synchronous initialization, you can use the `Configure` method. If it is asynchronous initialization, you should use `IHostedService`.
