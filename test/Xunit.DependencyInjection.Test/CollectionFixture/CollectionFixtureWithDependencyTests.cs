@@ -1,14 +1,10 @@
 ﻿namespace Xunit.DependencyInjection.Test.CollectionFixture;
 
 [CollectionDefinition(nameof(CollectionFixtureWithDependencyTestsCollection))]
-public class CollectionFixtureWithDependencyTestsCollection : ICollectionFixture<CollectionFixtureWithDependency>
-{
-}
+public class CollectionFixtureWithDependencyTestsCollection : ICollectionFixture<CollectionFixtureWithDependency>;
 
 [CollectionDefinition(nameof(MonitorCollectionFixtureCollection))]
-public class MonitorCollectionFixtureCollection : ICollectionFixture<CollectionFixtureWithDependency>
-{
-}
+public class MonitorCollectionFixtureCollection : ICollectionFixture<CollectionFixtureWithDependency>;
 
 [Collection(nameof(CollectionFixtureWithDependencyTestsCollection))]
 public class CollectionFixtureWithDependencyTests_A

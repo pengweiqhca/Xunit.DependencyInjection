@@ -3,14 +3,10 @@
 namespace Xunit.DependencyInjection.Test.ClassFixture;
 
 [CollectionDefinition(nameof(DisposableFixturesUnderTestCollection))]
-public class DisposableFixturesUnderTestCollection : ICollectionFixture<CollectionFixtureWithDependency>
-{
-}
+public class DisposableFixturesUnderTestCollection : ICollectionFixture<CollectionFixtureWithDependency>;
 
 [CollectionDefinition(nameof(MonitorDisposableFixturesCollection))]
-public class MonitorDisposableFixturesCollection : ICollectionFixture<CollectionFixtureWithDependency>
-{
-}
+public class MonitorDisposableFixturesCollection : ICollectionFixture<CollectionFixtureWithDependency>;
 
 [Collection(nameof(DisposableFixturesUnderTestCollection))]
 public class DisposableFixtureUnderTest : IClassFixture<FixtureWithDisposableDependency>

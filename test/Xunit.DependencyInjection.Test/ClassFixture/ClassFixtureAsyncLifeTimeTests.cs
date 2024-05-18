@@ -3,14 +3,10 @@
 namespace Xunit.DependencyInjection.Test.ClassFixture;
 
 [CollectionDefinition(nameof(ClassFixtureAsyncLifetimeTestsUnderTestCollection))]
-public class ClassFixtureAsyncLifetimeTestsUnderTestCollection : ICollectionFixture<CollectionFixtureWithDependency>
-{
-}
+public class ClassFixtureAsyncLifetimeTestsUnderTestCollection : ICollectionFixture<CollectionFixtureWithDependency>;
 
 [CollectionDefinition(nameof(MonitorlassFixtureAsyncLifetimeCollection))]
-public class MonitorlassFixtureAsyncLifetimeCollection : ICollectionFixture<CollectionFixtureWithDependency>
-{
-}
+public class MonitorlassFixtureAsyncLifetimeCollection : ICollectionFixture<CollectionFixtureWithDependency>;
 
 [Collection(nameof(ClassFixtureAsyncLifetimeTestsUnderTestCollection))]
 public class ClassFixtureAsyncLifetimeTestsUnderTest : IClassFixture<AsyncLifetimeFixtureWithDisposableDependency>
