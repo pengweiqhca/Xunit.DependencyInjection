@@ -45,7 +45,9 @@ internal static class StartupLoader
         var configureMethod = FindMethod(startupType, nameof(Configure));
         var startupObject = methodInfo.IsStatic && configureMethod is { IsStatic: true } ? null : CreateStartup(startupType);
         methodInfo.Invoke(startupObject, [hostApplicationBuilder]);
-        var host = hostApplicationBuilder.Build();
+
+        var buildHostMethod = FindMethod(startupType, "BuildHostApplicationBuilder", typeof(IHost));
+        var host = BuildHostWithHostApplicationBuilder(hostApplicationBuilder, startupObject, startupType, buildHostMethod) ?? hostApplicationBuilder.Build();
         Configure(host.Services, startupObject, configureMethod);
         return new(host, startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
@@ -193,6 +195,23 @@ internal static class StartupLoader
 
         method.Invoke(method.IsStatic ? null : startup,
             method.GetParameters().Select(scope.ServiceProvider.GetRequiredService).ToArray());
+    }
+
+    private static IHost? BuildHostWithHostApplicationBuilder(HostApplicationBuilder hostApplicationBuilder,
+        object? startup, Type startupType, MethodInfo? method)
+    {
+        if (method == null) return null;
+
+        if (!typeof(IHost).IsAssignableFrom(method.ReturnType))
+            throw new InvalidOperationException(
+                $"The '{method.Name}' method in the type '{startupType.FullName}' return type must assignable to '{typeof(IHost)}'.");
+
+        var parameters = method.GetParameters();
+        if (parameters.Length != 1 || parameters[0].ParameterType != typeof(HostApplicationBuilder))
+            throw new InvalidOperationException(
+                $"The '{method.Name}' method of startup type '{startupType.FullName}' must have the single 'IHostBuilder' parameter.");
+
+        return (IHost?)method.Invoke(method.IsStatic ? null : startup, [hostApplicationBuilder]);
     }
 
     public static IHost? BuildHost(IHostBuilder hostBuilder, object? startup, Type startupType, MethodInfo? method)
