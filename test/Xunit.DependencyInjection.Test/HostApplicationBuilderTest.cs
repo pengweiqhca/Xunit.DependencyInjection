@@ -2,16 +2,13 @@
 
 public class HostApplicationBuilderTest(IConfiguration configuration, IServiceProvider serviceProvider)
 {
-    private readonly IConfiguration _configuration = configuration;
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-
     [Fact]
-    public void ConfigurationTest() => Assert.Equal("World", _configuration["Hello"]);
+    public void ConfigurationTest() => Assert.Equal("World", configuration["Hello"]);
 
     [Fact]
     public void ServiceTest()
     {
-        var idGenerator = _serviceProvider.GetService<IIdGenerator>();
+        var idGenerator = serviceProvider.GetService<IIdGenerator>();
         Assert.NotNull(idGenerator);
         Assert.True(idGenerator is GuidIdGenerator);
     }
