@@ -29,7 +29,7 @@ internal static class StartupLoader
         IMessageSink? diagnosticMessageSink)
     {
         // Remove the `null` assignment when this issue resolved https://github.com/dotnet/runtime/issues/90479
-        var hostApplicationBuilder = Host.CreateEmptyApplicationBuilder(null);
+        var hostApplicationBuilder = Host.CreateEmptyApplicationBuilder(new() { ApplicationName = (assemblyName ?? startupType.Assembly.GetName()).Name });
 
         if (diagnosticMessageSink != null) hostApplicationBuilder.Services.TryAddSingleton(diagnosticMessageSink);
         hostApplicationBuilder.Services.TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
@@ -37,10 +37,6 @@ internal static class StartupLoader
             .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
         hostApplicationBuilder.Services.TryAddEnumerable(ServiceDescriptor
             .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
-        hostApplicationBuilder.Configuration.AddInMemoryCollection(new Dictionary<string, string?>
-        {
-            { HostDefaults.ApplicationKey, (assemblyName ?? startupType.Assembly.GetName()).Name }
-        });
 
         var configureMethod = FindMethod(startupType, nameof(Configure));
         var startupObject = methodInfo.IsStatic && configureMethod is { IsStatic: true } ? null : CreateStartup(startupType);

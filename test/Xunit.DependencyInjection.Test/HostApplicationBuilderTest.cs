@@ -29,7 +29,12 @@ public class HostApplicationBuilderTest(IConfiguration configuration, IServicePr
             hostApplicationBuilder.Services.AddSingleton<IIdGenerator, GuidIdGenerator>();
         }
 
-        public static void Configure() => Counter++;
+        public static void Configure(IHostEnvironment environment)
+        {
+            Assert.NotEmpty(environment.ApplicationName);
+
+            Counter++;
+        }
     }
 }
 
