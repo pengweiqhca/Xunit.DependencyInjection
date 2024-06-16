@@ -5,17 +5,16 @@ namespace Xunit.DependencyInjection;
 
 internal static class StartupLoader
 {
-    public static DependencyInjectionContext CreateHost(Type startupType, AssemblyName? assemblyName,
-        IMessageSink? diagnosticMessageSink)
+    public static DependencyInjectionContext CreateHost(Type startupType, AssemblyName assemblyName,
+        IMessageSink diagnosticMessageSink)
     {
         var configureHostApplicationBuilderMethodInfo = FindMethod(startupType, "ConfigureHostApplicationBuilder");
         if (configureHostApplicationBuilderMethodInfo != null)
         {
             var parameters = configureHostApplicationBuilderMethodInfo.GetParameters();
+
             if (parameters.Length == 1 && parameters[0].ParameterType == typeof(IHostApplicationBuilder))
-            {
                 return CreateHostWithHostApplicationBuilder(startupType, configureHostApplicationBuilderMethodInfo, assemblyName, diagnosticMessageSink);
-            }
         }
 
         var (hostBuilder, startup, buildHostMethod, configureMethod) =
@@ -25,29 +24,44 @@ internal static class StartupLoader
             startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
 
-    private static DependencyInjectionContext CreateHostWithHostApplicationBuilder(Type startupType, MethodInfo methodInfo, AssemblyName? assemblyName,
-        IMessageSink? diagnosticMessageSink)
+    private static DependencyInjectionContext CreateHostWithHostApplicationBuilder(Type startupType,
+        MethodInfo methodInfo, AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
     {
-        // Remove the `null` assignment when this issue resolved https://github.com/dotnet/runtime/issues/90479
-        var hostApplicationBuilder = Host.CreateEmptyApplicationBuilder(new() { ApplicationName = (assemblyName ?? startupType.Assembly.GetName()).Name });
+        var hostApplicationBuilder = Host.CreateEmptyApplicationBuilder(new() { ApplicationName = assemblyName.Name });
 
-        if (diagnosticMessageSink != null) hostApplicationBuilder.Services.TryAddSingleton(diagnosticMessageSink);
-        hostApplicationBuilder.Services.TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
-        hostApplicationBuilder.Services.TryAddEnumerable(ServiceDescriptor
-            .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
-        hostApplicationBuilder.Services.TryAddEnumerable(ServiceDescriptor
-            .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
+        new DefaultServices(diagnosticMessageSink).ConfigureServices(hostApplicationBuilder.Services);
 
         var configureMethod = FindMethod(startupType, nameof(Configure));
+
         var startupObject = methodInfo.IsStatic && configureMethod is { IsStatic: true } ? null : CreateStartup(startupType);
+
         methodInfo.Invoke(startupObject, [hostApplicationBuilder]);
+
         var host = hostApplicationBuilder.Build();
+
         Configure(host.Services, startupObject, configureMethod);
+
         return new(host, startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
 
+    private sealed class DefaultServices(IMessageSink diagnosticMessageSink)
+    {
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.TryAddSingleton(diagnosticMessageSink);
+
+            services.TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
+
+            services.TryAddEnumerable(ServiceDescriptor
+                .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
+
+            services.TryAddEnumerable(ServiceDescriptor
+                .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
+        }
+    }
+
     public static (IHostBuilder, object?, MethodInfo?, MethodInfo?) CreateHostBuilder(Type startupType,
-        AssemblyName? assemblyName, IMessageSink? diagnosticMessageSink)
+        AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
     {
         var createHostBuilderMethod = FindMethod(startupType, nameof(CreateHostBuilder), typeof(IHostBuilder));
         var configureHostMethod = FindMethod(startupType, nameof(ConfigureHost));
@@ -63,24 +77,13 @@ internal static class StartupLoader
                 ? CreateStartup(startupType)
                 : null;
 
-        var hostBuilder = CreateHostBuilder(assemblyName, startup, startupType, createHostBuilderMethod) ??
-            new HostBuilder();
+        var hostBuilder = CreateHostBuilder(assemblyName, startup, startupType, createHostBuilderMethod) ?? new HostBuilder();
 
-        hostBuilder.ConfigureServices(services =>
-        {
-            if (diagnosticMessageSink != null) services.TryAddSingleton(diagnosticMessageSink);
-            services.TryAddSingleton<ITestOutputHelperAccessor, TestOutputHelperAccessor>();
-
-            services.TryAddEnumerable(ServiceDescriptor
-                .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
-
-            services.TryAddEnumerable(ServiceDescriptor
-                .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTheoryTestCaseRunnerWrapper>());
-        });
+        hostBuilder.ConfigureServices(new DefaultServices(diagnosticMessageSink).ConfigureServices);
 
         hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string?>
         {
-            { HostDefaults.ApplicationKey, (assemblyName ?? startupType.Assembly.GetName()).Name }
+            { HostDefaults.ApplicationKey, assemblyName.Name }
         }));
 
         ConfigureHost(hostBuilder, startup, startupType, configureHostMethod);
@@ -126,7 +129,7 @@ internal static class StartupLoader
         return Activator.CreateInstance(startupType);
     }
 
-    public static IHostBuilder? CreateHostBuilder(AssemblyName? assemblyName, object? startup, Type startupType,
+    public static IHostBuilder? CreateHostBuilder(AssemblyName assemblyName, object? startup, Type startupType,
         MethodInfo? method)
     {
         if (method == null) return null;
@@ -138,10 +141,6 @@ internal static class StartupLoader
         if (parameters.Length > 1 || parameters[0].ParameterType != typeof(AssemblyName))
             throw new InvalidOperationException(
                 $"The '{method.Name}' method of startup type '{startupType.FullName}' must parameterless or have the single 'AssemblyName' parameter.");
-
-        if (assemblyName == null)
-            throw new InvalidOperationException(
-                $"The '{method.Name}' method of startup type '{startupType.FullName}' must parameterless when use XunitWebApplicationFactory.");
 
         return (IHostBuilder?)method.Invoke(method.IsStatic ? null : startup, [assemblyName]);
     }
