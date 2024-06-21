@@ -14,7 +14,7 @@ public void Configure(IServiceProvider provider)
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MartinCostello.Logging.XUnit" Version="0.*" />
+    <PackageReference Include="MartinCostello.Logging.XUnit" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>

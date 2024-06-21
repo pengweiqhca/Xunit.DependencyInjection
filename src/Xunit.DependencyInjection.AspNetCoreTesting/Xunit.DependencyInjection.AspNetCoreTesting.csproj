@@ -14,7 +14,7 @@ public class Startup
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(_TargetFrameworkVersionWithoutV)" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
