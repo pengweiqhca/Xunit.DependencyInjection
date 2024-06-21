@@ -1,13 +1,13 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Microsoft.CodeAnalysis.Testing.Verifiers;
+using Microsoft.CodeAnalysis.Testing;
 
 namespace Xunit.DependencyInjection.Analyzer.Test.Verifiers;
 
 public static partial class CSharpAnalyzerVerifier<TAnalyzer>
     where TAnalyzer : DiagnosticAnalyzer, new()
 {
-    public class Test : CSharpAnalyzerTest<TAnalyzer, XUnitVerifier>
+    public class Test : CSharpAnalyzerTest<TAnalyzer, DefaultVerifier>
     {
         public Test()
         {
