@@ -27,8 +27,8 @@ public static partial class CSharpAnalyzerVerifier<TAnalyzer>
         {
             TestCode = source,
             ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages([
-                new("Microsoft.Extensions.Hosting", "2.1.0"),
-                new("Xunit.DependencyInjection", "7.1.0")
+                new("Microsoft.Extensions.Hosting", "8.0.0"),
+                new("Xunit.DependencyInjection", "9.3.0")
             ]),
         };
 
