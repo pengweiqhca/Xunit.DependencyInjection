@@ -22,10 +22,8 @@ public class HostApplicationBuilderTest(IConfiguration configuration, IServicePr
 
         public void ConfigureHostApplicationBuilder(IHostApplicationBuilder hostApplicationBuilder)
         {
-            hostApplicationBuilder.Configuration.AddInMemoryCollection(new[]
-            {
-                new KeyValuePair<string, string?>("Hello", "World")
-            });
+            hostApplicationBuilder.Configuration.AddInMemoryCollection([new("Hello", "World")]);
+
             hostApplicationBuilder.Services.AddSingleton<IIdGenerator, GuidIdGenerator>();
         }
 

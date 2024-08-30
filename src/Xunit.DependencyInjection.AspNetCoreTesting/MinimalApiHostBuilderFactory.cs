@@ -62,7 +62,7 @@ public static class MinimalApiHostBuilderFactory
         // set the application name to the target entry point
         // assembly name.
         deferredHostBuilder.ConfigureHostConfiguration(config => config.AddInMemoryCollection(
-            new[] { KeyValuePair.Create(HostDefaults.ApplicationKey, entryAssembly.GetName().Name) }));
+            [KeyValuePair.Create(HostDefaults.ApplicationKey, entryAssembly.GetName().Name)]));
 
         // This helper call does the hard work to determine if we can fallback to diagnostic source events to get the host instance
         var factory = ResolveHostFactory.Invoke(null, BindingFlags.DoNotWrapExceptions, null,

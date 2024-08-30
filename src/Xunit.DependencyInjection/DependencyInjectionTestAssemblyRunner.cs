@@ -81,31 +81,21 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
                 .SingleOrDefault();
 
             if (attr?.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) == true)
-            {
-                (nonParallel ??= new()).Add(task);
-            }
+                (nonParallel ??= []).Add(task);
             else
-            {
-                (parallel ??= new()).Add(taskRunner(task));
-            }
+                (parallel ??= []).Add(taskRunner(task));
         }
 
         if (parallel?.Count > 0)
-        {
             foreach (var task in parallel)
-            {
                 try
                 {
                     summaries.Add(await task);
                 }
                 catch (TaskCanceledException) { }
-            }
-        }
 
         if (nonParallel?.Count > 0)
-        {
             foreach (var task in nonParallel)
-            {
                 try
                 {
                     summaries.Add(await taskRunner(task));
@@ -113,8 +103,6 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
                         break;
                 }
                 catch (TaskCanceledException) { }
-            }
-        }
 
         return new()
         {
