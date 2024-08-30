@@ -10,7 +10,7 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
     <ImplicitUsings>enable</ImplicitUsings>
-    <IncludeSymbols>True</IncludeSymbols>
+    <DebugType>embedded</DebugType>
     <LangVersion>12.0</LangVersion>
     <NoWarn>1591</NoWarn>
     <NeutralLanguage>en-us</NeutralLanguage>
