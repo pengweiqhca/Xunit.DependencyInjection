@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
@@ -19,7 +19,7 @@ Not support:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xunit.StaFact" Version="1.1.11" />
+    <PackageReference Include="Xunit.StaFact" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
