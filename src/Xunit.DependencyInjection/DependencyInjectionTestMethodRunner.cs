@@ -68,7 +68,18 @@ public class DependencyInjectionTestMethodRunner(
             return testCase.RunAsync(diagnosticMessageSink, MessageBus, constructorArguments,
                 new(Aggregator), CancellationTokenSource);
 
-        var wrappers = context.RootServices.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
+        IXunitTestCaseRunnerWrapper[] wrappers;
+        try
+        {
+            wrappers = context.RootServices.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
+        }
+        catch (Exception ex)
+        {
+            Aggregator.Add(ex);
+
+            return testCase.RunAsync(diagnosticMessageSink, MessageBus, constructorArguments,
+                new(Aggregator), CancellationTokenSource);
+        }
 
         var type = testCase.GetType();
         do
