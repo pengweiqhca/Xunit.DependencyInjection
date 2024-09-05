@@ -15,8 +15,8 @@ public void ConfigureServices(IServiceCollection services)
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xRetry" />
-    <PackageReference Include="xunit.core" />
+    <PackageReference Include="xRetry" Version="[1.9.0, 2.0.0)" />
+    <PackageReference Include="xunit.core" Version="[2.4.2, 3.0.0)" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>

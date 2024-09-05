@@ -23,9 +23,9 @@
 
     <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
 
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
-    <PackageReference Include="FluentAssertions" />
-    <PackageReference Include="FSharp.Core" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.*" />
+    <PackageReference Include="FluentAssertions" Version="6.*" />
+    <PackageReference Include="FSharp.Core" Version="8.*" />
 
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj" />
     <ProjectReference Include="..\Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj" />

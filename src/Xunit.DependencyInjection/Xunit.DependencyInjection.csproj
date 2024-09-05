@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
@@ -36,8 +36,8 @@ Release notes:
     <InternalsVisibleTo Include="Xunit.DependencyInjection.StaFact" />
     <InternalsVisibleTo Include="Xunit.DependencyInjection.Test" />
 
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <PackageReference Include="xunit.extensibility.execution" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="xunit.extensibility.execution" Version="[2.4.2, 3.0.0)" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection.Analyzer\Xunit.DependencyInjection.Analyzer.csproj" PrivateAssets="All" ReferenceOutputAssembly="false" />
   </ItemGroup>

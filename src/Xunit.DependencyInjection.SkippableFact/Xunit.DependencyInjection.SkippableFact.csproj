@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
@@ -14,7 +14,7 @@ public void ConfigureServices(IServiceCollection services)
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xunit.SkippableFact" />
+    <PackageReference Include="Xunit.SkippableFact" Version="1.4.13" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>

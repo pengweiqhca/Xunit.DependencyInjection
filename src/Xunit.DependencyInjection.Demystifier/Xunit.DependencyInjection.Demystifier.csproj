@@ -14,7 +14,7 @@ public void ConfigureServices(IServiceCollection services)
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ben.Demystifier" />
+    <PackageReference Include="Ben.Demystifier" Version="0.*" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
