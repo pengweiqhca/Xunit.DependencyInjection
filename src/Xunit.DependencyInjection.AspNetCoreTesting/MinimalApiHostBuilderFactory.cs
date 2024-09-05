@@ -53,7 +53,19 @@ public static class MinimalApiHostBuilderFactory
         new("Not support current version of Microsoft.AspNetCore.Mvc.Testing");
 
     public static IHostBuilder GetHostBuilder<TEntryPoint>(Action<IWebHostBuilder>? configure = null)
-        where TEntryPoint : class
+        where TEntryPoint : class => GetHostBuilder<TEntryPoint>(true, [], configure);
+
+    /// <param name="useTestServer">false: UseUnixSocket. If <paramref name="useTestServer"/> is false will configure all HttpClientFactory use unix socket.</param>
+    /// <param name="configure"></param>
+    public static IHostBuilder GetHostBuilder<TEntryPoint>(bool useTestServer,
+        Action<IWebHostBuilder>? configure = null) where TEntryPoint : class =>
+        GetHostBuilder<TEntryPoint>(useTestServer, [], configure);
+
+    /// <param name="useTestServer">false: UseUnixSocket</param>
+    /// <param name="httpClientNames">If <paramref name="useTestServer"/> is false and httpClientNames is empty, will configure all HttpClientFactory use unix socket.</param>
+    /// <param name="configure"></param>
+    public static IHostBuilder GetHostBuilder<TEntryPoint>(bool useTestServer, string[] httpClientNames,
+        Action<IWebHostBuilder>? configure = null) where TEntryPoint : class
     {
         var entryAssembly = typeof(TEntryPoint).Assembly;
         var deferredHostBuilder = CreateHostBuilder();
@@ -86,7 +98,10 @@ public static class MinimalApiHostBuilderFactory
 
             configure?.Invoke(webHostBuilder);
 
-            webHostBuilder.UseTestServerAndAddDefaultHttpClient().ConfigureServices((context, services) =>
+            if (useTestServer) webHostBuilder.UseTestServerAndAddDefaultHttpClient(httpClientNames);
+            else webHostBuilder.UseUnixSocketServerAndAddDefaultHttpClient(httpClientNames);
+
+            webHostBuilder.ConfigureServices((context, services) =>
             {
                 var manager = (ApplicationPartManager)GetApplicationPartManager.Invoke(null,
                     [services, context.HostingEnvironment])!;
