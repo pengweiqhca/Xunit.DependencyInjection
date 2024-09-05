@@ -44,7 +44,7 @@ public static class WebHostBuilderExtensions
         {
             var path = Path.Combine(Path.GetTempPath(), Path.GetTempFileName()) + ".socket";
 
-            if (!httpClientNames.Contains(Options.DefaultName))
+            if (httpClientNames.Length > 0 && !httpClientNames.Contains(Options.DefaultName))
                 httpClientNames = httpClientNames.Append(Options.DefaultName).ToArray();
 
             services.Configure<KestrelServerOptions>(options => options.ListenUnixSocket(path))
