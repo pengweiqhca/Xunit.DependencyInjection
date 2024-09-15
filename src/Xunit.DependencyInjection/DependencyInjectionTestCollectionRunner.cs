@@ -45,6 +45,33 @@ public class DependencyInjectionTestCollectionRunner(
         if (_serviceScope is { } disposable) await disposable.DisposeAsync();
     }
 
+    protected override async Task<RunSummary> RunTestClassesAsync()
+    {
+        var groups = TestCases
+            .GroupBy(tc => tc.TestMethod.TestClass);
+
+        var selected = groups.Select(g => new
+        {
+            TestClass = g.Key,
+            ReflectionTypeInfo = g.Key.Class as IReflectionTypeInfo ?? throw new ArgumentException($"RunTestClassesAsync - Could not cast class to IReflectionTypeInfo for class name = {g.Key.Class.Name}"),
+            TestCases = g.AsEnumerable()
+        });
+
+        var orderedTestClasses = selected.OrderBy(tc =>
+        {
+            var classOrderAttribute = tc.TestClass.Class.GetCustomAttributes(typeof(TestClassOrderAttribute)).FirstOrDefault();
+            return classOrderAttribute == null ? int.MaxValue : classOrderAttribute.GetNamedArgument<int>("Order");
+        });
+
+        var runSummary = new RunSummary();
+        foreach (var testClass in orderedTestClasses)
+        {
+            runSummary.Aggregate(await RunTestClassAsync(testClass.TestClass, testClass.ReflectionTypeInfo, testClass.TestCases));
+        }
+
+        return runSummary;
+    }
+
     /// <inheritdoc />
     protected override Task<RunSummary> RunTestClassAsync(ITestClass testClass,
         IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases) =>
