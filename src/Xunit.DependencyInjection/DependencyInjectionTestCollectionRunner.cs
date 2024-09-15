@@ -7,6 +7,7 @@ public class DependencyInjectionTestCollectionRunner(
     IMessageSink diagnosticMessageSink,
     IMessageBus messageBus,
     ITestCaseOrderer testCaseOrderer,
+    ITestClassOrderer? testClassOrderer,
     ExceptionAggregator aggregator,
     CancellationTokenSource cancellationTokenSource)
     : XunitTestCollectionRunner(testCollection, testCases, diagnosticMessageSink,
@@ -43,6 +44,49 @@ public class DependencyInjectionTestCollectionRunner(
             await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask());
 
         if (_serviceScope is { } disposable) await disposable.DisposeAsync();
+    }
+
+    protected override async Task<RunSummary> RunTestClassesAsync()
+    {
+        var summary = new RunSummary();
+
+        IEnumerable<Tuple<ITestClass, List<IXunitTestCase>>> testClasses;
+
+        if (testClassOrderer != null)
+        {
+            var dictionary = TestCases.GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
+                .ToDictionary(group => group.Key, group => group.ToList());
+
+            IEnumerable<ITestClass> orderedTestCLasses;
+
+            try
+            {
+                orderedTestCLasses = testClassOrderer.OrderTestClasses(dictionary.Keys);
+            }
+            catch (Exception ex)
+            {
+                var innerEx = ex.Unwrap();
+
+                DiagnosticMessageSink.OnMessage(new DiagnosticMessage($"Test class orderer '{testClassOrderer.GetType().FullName}' threw '{innerEx.GetType().FullName}' during ordering: {innerEx.Message}{Environment.NewLine}{innerEx.StackTrace}"));
+
+                orderedTestCLasses = dictionary.Keys;
+            }
+
+            testClasses = orderedTestCLasses.Select(collection => Tuple.Create(collection, dictionary[collection]));
+        }
+        else
+        {
+            testClasses = TestCases.GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance).Select(group => Tuple.Create(group.Key, group.ToList()));
+        }
+
+        foreach (var testCasesByClass in testClasses)
+        {
+            summary.Aggregate(await RunTestClassAsync(testCasesByClass.Item1, (IReflectionTypeInfo)testCasesByClass.Item1.Class, testCasesByClass.Item2));
+
+            if (CancellationTokenSource.IsCancellationRequested) break;
+        }
+
+        return summary;
     }
 
     /// <inheritdoc />

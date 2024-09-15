@@ -3,6 +3,7 @@
 public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
 {
     private readonly DependencyInjectionStartupContext _context;
+    private readonly ITestClassOrderer? _testClassOrderer;
 
     public DependencyInjectionTestAssemblyRunner(DependencyInjectionStartupContext context,
         ITestAssembly testAssembly,
@@ -17,6 +18,14 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         _context = context;
 
         foreach (var exception in exceptions) Aggregator.Add(exception);
+
+        var testCollectionOrderer = context.DefaultRootServices?.GetService<ITestCollectionOrderer>();
+        if (testCollectionOrderer != null) TestCollectionOrderer = testCollectionOrderer;
+
+        _testClassOrderer = context.DefaultRootServices?.GetService<ITestClassOrderer>();
+
+        var testCaseOrderer = context.DefaultRootServices?.GetService<ITestCaseOrderer>();
+        if (testCaseOrderer != null) TestCaseOrderer = testCaseOrderer;
     }
 
     /// <inheritdoc />
@@ -25,7 +34,7 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         IEnumerable<IXunitTestCase> testCases,
         CancellationTokenSource cancellationTokenSource) =>
         new DependencyInjectionTestCollectionRunner(_context, testCollection, testCases, DiagnosticMessageSink,
-            messageBus, TestCaseOrderer, new(Aggregator), cancellationTokenSource).RunAsync();
+            messageBus, TestCaseOrderer, _testClassOrderer, new(Aggregator), cancellationTokenSource).RunAsync();
 
     /// <inheritdoc/>
     protected override async Task<RunSummary> RunTestCollectionsAsync(IMessageBus messageBus,
