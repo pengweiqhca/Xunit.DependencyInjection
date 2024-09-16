@@ -14,7 +14,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="$(SolutionDir)\README.md" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="$(SolutionDir)\README.md" Pack="true" PackagePath="\" Visible="false" Condition="!Exists('README.md')" />
   </ItemGroup>
 
 </Project>
