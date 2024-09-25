@@ -12,6 +12,23 @@ public class MethodDataAttributeTest
     [MethodData(nameof(TestClassA.StaticMethod), typeof(TestClassA), null, 3)]
     public void StaticMethodTest(Guid value) => Assert.Equal(RandomValue, value);
 
+    [Theory]
+    [MethodData(nameof(GetData))]
+    public void GetDataTest(ComplexType data) => Assert.Equal(RandomValue, data.Value);
+
+    private static IEnumerable<object[]> GetData(IServiceProvider services) => ActivatorUtilities.CreateInstance<MethodTheoryData>(services);
+
+    public record ComplexType(Guid Value);
+
+    private class MethodTheoryData : TheoryData<ComplexType>
+    {
+
+        public MethodTheoryData(IServiceProvider services)
+        {
+            Add(new(RandomValue));
+        }
+    }
+
     private class TestClassA
     {
         private readonly IDependency _dependency;
@@ -32,7 +49,7 @@ public class MethodDataAttributeTest
             yield return [RandomValue];
         }
 
-        public static IEnumerable<object?[]> StaticMethod([FromServices]IDependency dependency, int value)
+        public static IEnumerable<object?[]> StaticMethod([FromServices] IDependency dependency, int value)
         {
             Assert.NotNull(dependency);
 
