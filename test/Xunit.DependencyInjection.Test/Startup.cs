@@ -16,12 +16,16 @@ public class Startup
 
     public void ConfigureServices(IServiceCollection services) =>
         services.AddLogging(builder => builder.SetMinimumLevel(LogLevel.Debug).AddXunitOutput())
+            .AddKeyedSingleton<IDependency, DependencyClass>(KeyedService.AnyKey)
             .AddScoped<IDependency, DependencyClass>()
             .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
             .AddScoped<BeforeAfterTest, TestBeforeAfterTest>()
             .AddHostedService<HostServiceTest>()
             .AddSkippableFactSupport()
             .AddStaFactSupport()
+            .AddSingleton<ITestCollectionOrderer, RunMonitorCollectionLastOrderer>()
+            .AddSingleton<ITestClassOrderer, TestClassByOrderOrderer>()
+            .AddSingleton<ITestCaseOrderer, TestCaseByMethodNameOrderer>()
             .AddKeyedScoped<IFromKeyedServicesTest, FromSmallKeyedServicesTest>("small")
             .AddKeyedScoped<IFromKeyedServicesTest, FromLargeKeyedServicesTest>("large")
             .AddXRetrySupport()

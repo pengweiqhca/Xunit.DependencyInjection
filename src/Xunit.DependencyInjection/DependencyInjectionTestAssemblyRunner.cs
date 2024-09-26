@@ -3,6 +3,7 @@
 public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
 {
     private readonly DependencyInjectionStartupContext _context;
+    private readonly ITestClassOrderer? _testClassOrderer;
 
     public DependencyInjectionTestAssemblyRunner(DependencyInjectionStartupContext context,
         ITestAssembly testAssembly,
@@ -17,6 +18,14 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         _context = context;
 
         foreach (var exception in exceptions) Aggregator.Add(exception);
+
+        var testCollectionOrderer = context.DefaultRootServices?.GetService<ITestCollectionOrderer>();
+        if (testCollectionOrderer != null) TestCollectionOrderer = testCollectionOrderer;
+
+        _testClassOrderer = context.DefaultRootServices?.GetService<ITestClassOrderer>();
+
+        var testCaseOrderer = context.DefaultRootServices?.GetService<ITestCaseOrderer>();
+        if (testCaseOrderer != null) TestCaseOrderer = testCaseOrderer;
     }
 
     /// <inheritdoc />
@@ -25,7 +34,7 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         IEnumerable<IXunitTestCase> testCases,
         CancellationTokenSource cancellationTokenSource) =>
         new DependencyInjectionTestCollectionRunner(_context, testCollection, testCases, DiagnosticMessageSink,
-            messageBus, TestCaseOrderer, new(Aggregator), cancellationTokenSource).RunAsync();
+            messageBus, TestCaseOrderer, _testClassOrderer, new(Aggregator), cancellationTokenSource).RunAsync();
 
     /// <inheritdoc/>
     protected override async Task<RunSummary> RunTestCollectionsAsync(IMessageBus messageBus,
@@ -81,31 +90,21 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
                 .SingleOrDefault();
 
             if (attr?.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) == true)
-            {
-                (nonParallel ??= new()).Add(task);
-            }
+                (nonParallel ??= []).Add(task);
             else
-            {
-                (parallel ??= new()).Add(taskRunner(task));
-            }
+                (parallel ??= []).Add(taskRunner(task));
         }
 
         if (parallel?.Count > 0)
-        {
             foreach (var task in parallel)
-            {
                 try
                 {
                     summaries.Add(await task);
                 }
                 catch (TaskCanceledException) { }
-            }
-        }
 
         if (nonParallel?.Count > 0)
-        {
             foreach (var task in nonParallel)
-            {
                 try
                 {
                     summaries.Add(await taskRunner(task));
@@ -113,8 +112,6 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
                         break;
                 }
                 catch (TaskCanceledException) { }
-            }
-        }
 
         return new()
         {

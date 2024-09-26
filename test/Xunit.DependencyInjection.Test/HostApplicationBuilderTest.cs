@@ -2,16 +2,13 @@
 
 public class HostApplicationBuilderTest(IConfiguration configuration, IServiceProvider serviceProvider)
 {
-    private readonly IConfiguration _configuration = configuration;
-    private readonly IServiceProvider _serviceProvider = serviceProvider;
-
     [Fact]
-    public void ConfigurationTest() => Assert.Equal("World", _configuration["Hello"]);
+    public void ConfigurationTest() => Assert.Equal("World", configuration["Hello"]);
 
     [Fact]
     public void ServiceTest()
     {
-        var idGenerator = _serviceProvider.GetService<IIdGenerator>();
+        var idGenerator = serviceProvider.GetService<IIdGenerator>();
         Assert.NotNull(idGenerator);
         Assert.True(idGenerator is GuidIdGenerator);
     }
@@ -29,10 +26,8 @@ public class HostApplicationBuilderTest(IConfiguration configuration, IServicePr
 
         public void ConfigureHostApplicationBuilder(IHostApplicationBuilder hostApplicationBuilder)
         {
-            hostApplicationBuilder.Configuration.AddInMemoryCollection(new[]
-            {
-                new KeyValuePair<string, string?>("Hello", "World")
-            });
+            hostApplicationBuilder.Configuration.AddInMemoryCollection([new("Hello", "World")]);
+
             hostApplicationBuilder.Services.AddSingleton<IIdGenerator, GuidIdGenerator>();
         }
 
@@ -42,7 +37,12 @@ public class HostApplicationBuilderTest(IConfiguration configuration, IServicePr
             return hostApplicationBuilder.Build();
         }
 
-        public static void Configure() => Counter++;
+        public static void Configure(IHostEnvironment environment)
+        {
+            Assert.NotEmpty(environment.ApplicationName);
+
+            Counter++;
+        }
     }
 }
 

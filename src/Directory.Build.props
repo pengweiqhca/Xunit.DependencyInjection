@@ -8,6 +8,13 @@
     <EnableNETAnalyzers>True</EnableNETAnalyzers>
 
     <PackageProjectUrl>$(RepositoryUrl)/src/$(MSBuildProjectName)</PackageProjectUrl>
+
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="$(SolutionDir)\README.md" Pack="true" PackagePath="\" Visible="false" Condition="!Exists('README.md')" />
+  </ItemGroup>
 
 </Project>

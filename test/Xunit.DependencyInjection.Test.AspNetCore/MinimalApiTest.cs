@@ -32,7 +32,7 @@ public class MinimalApiTest(HttpClient httpClient, IRandomService randomService)
 
     public class Startup
     {
-        public IHostBuilder CreateHostBuilder() => MinimalApiHostBuilderFactory.GetHostBuilder<Program>()
+        public IHostBuilder CreateHostBuilder() => MinimalApiHostBuilderFactory.GetHostBuilder<Program>(false)
             .ConfigureHostConfiguration(builder =>
                 builder.AddInMemoryCollection([new(HostDefaults.EnvironmentKey, "Testing")]));
 

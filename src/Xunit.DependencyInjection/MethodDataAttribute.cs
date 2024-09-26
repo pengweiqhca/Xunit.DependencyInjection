@@ -53,6 +53,8 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
         return result switch
         {
             null => null,
+            // special handling of TheoryData -- TheoryData<T> will not enumerate arrays with the below code
+            TheoryData theoryData => theoryData,
             IEnumerable<object?> dataItems => dataItems.Select(item => item switch
             {
                 null => null,
@@ -92,7 +94,7 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
     {
         var mp = method.GetParameters();
 
-        var param = Parameters == null || Parameters.Length == 0 ? new object?[mp.Length] : [..Parameters];
+        var param = Parameters == null || Parameters.Length == 0 ? new object?[mp.Length] : [.. Parameters];
 
         for (var index = 0; index < param.Length; index++)
         {

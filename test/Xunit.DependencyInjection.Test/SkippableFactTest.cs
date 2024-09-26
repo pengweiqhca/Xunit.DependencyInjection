@@ -4,12 +4,20 @@ using System.Runtime.CompilerServices;
 
 namespace Xunit.DependencyInjection.Test;
 
-public class SkippableFactTest(IDependency dependency)
+public class SkippableFactTest(IDependency dependency, [FromKeyedServices("Test")]IDependency keyedDependency)
 {
     private IDependency Dependency { get; } = dependency;
 
+    private IDependency KeyedDependency { get; } = keyedDependency;
+
     [SkippableFact]
-    public TestAwaitable SkipTest() => new();
+    public TestAwaitable SkipTest()
+    {
+        KeyedDependency.Value++;
+        Assert.InRange(KeyedDependency.Value, 1, 2);
+
+        return new();
+    }
 
     [SkippableTheory]
     [InlineData(1)]
