@@ -1,12 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <RollForward>Major</RollForward>
     <ParallelizationMode>Force</ParallelizationMode>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
-
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
