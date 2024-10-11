@@ -8,6 +8,7 @@ internal sealed class HostManager(AssemblyName assemblyName, IMessageSink diagno
 
     private Type? _defaultStartupType;
     private DependencyInjectionContext? _defaultHost;
+    private bool _disposed;
 
     public DependencyInjectionContext? BuildDefaultHost()
     {
@@ -38,7 +39,7 @@ internal sealed class HostManager(AssemblyName assemblyName, IMessageSink diagno
 
         if (shared) _hostMap[startupType] = host;
 
-        _hosts.Add(host.Host);
+        if (!Volatile.Read(ref _disposed)) _hosts.Add(host.Host);
 
         return host;
     }
@@ -88,18 +89,26 @@ internal sealed class HostManager(AssemblyName assemblyName, IMessageSink diagno
         return null;
     }
 
-    public Task StartAsync(CancellationToken cancellationToken) =>
-        Task.WhenAll(_hosts.Select(x => x.StartAsync(cancellationToken)));
+    public Task StartAsync(CancellationToken cancellationToken) => Volatile.Read(ref _disposed)
+        ? Task.CompletedTask
+        : Task.WhenAll(_hosts.Select(x => x.StartAsync(cancellationToken)));
 
     public Task StopAsync(CancellationToken cancellationToken)
     {
+        if (Volatile.Read(ref _disposed)) return Task.CompletedTask;
+
         _hosts.Reverse();
 
         return Task.WhenAll(_hosts.Select(x => x.StopAsync(cancellationToken)));
     }
 
     //DisposalTracker not support IAsyncDisposable
-    public void Dispose() => Task.WaitAll(_hosts.Select(DisposeAsync).ToArray());
+    public void Dispose()
+    {
+        Volatile.Write(ref _disposed, true);
+
+        Task.WaitAll(_hosts.Select(DisposeAsync).ToArray());
+    }
 
     private static Task DisposeAsync(IDisposable disposable)
     {
