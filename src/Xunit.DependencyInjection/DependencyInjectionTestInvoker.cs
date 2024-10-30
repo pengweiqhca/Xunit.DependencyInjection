@@ -20,8 +20,53 @@ public class DependencyInjectionTestInvoker(
     : XunitTestInvoker(test, messageBus, testClass, constructorArguments, testMethod, testMethodArguments,
         beforeAfterAttributes, aggregator, cancellationTokenSource)
 {
-    private static readonly ActivitySource ActivitySource = new("Xunit.DependencyInjection", typeof(DependencyInjectionTestInvoker).Assembly.GetName().Version?.ToString());
-    private static readonly MethodInfo AsTaskMethod = new Func<ObjectMethodExecutorAwaitable, Task>(AsTask).Method;
+    private static readonly ActivitySource ActivitySource = new("Xunit.DependencyInjection",
+        typeof(DependencyInjectionTestInvoker).Assembly.GetName().Version?.ToString());
+
+    private static readonly MethodInfo AsTaskMethod;
+    private static readonly ConcurrentDictionary<Type, PropertyInfo[]> HasRequiredMembers = [];
+
+    static DependencyInjectionTestInvoker()
+    {
+        var method = AsTask;
+
+        AsTaskMethod = method.Method;
+    }
+
+    protected override object? CreateTestClass()
+    {
+        var testClassInstance = base.CreateTestClass();
+        if (testClassInstance == null ||
+            HasRequiredMembers.GetOrAdd(TestClass, GetRequiredProperties) is not { Length: > 0 } properties)
+            return testClassInstance;
+
+        foreach (var propertyInfo in properties)
+        {
+            if (propertyInfo.CanRead)
+                try
+                {
+                    if (propertyInfo.GetValue(testClassInstance, null) != null) continue;
+                }
+                catch
+                {
+                    continue;
+                }
+
+            propertyInfo.SetValue(testClassInstance, propertyInfo.PropertyType == typeof(ITestOutputHelper)
+                ? provider.GetRequiredService<ITestOutputHelperAccessor>().Output
+                : provider.GetRequiredService(propertyInfo.PropertyType));
+        }
+
+        return testClassInstance;
+    }
+
+    private static PropertyInfo[] GetRequiredProperties(Type testClass) =>
+        !testClass.HasRequiredMemberAttribute() || testClass.GetConstructors().FirstOrDefault(static ci =>
+            !ci.IsStatic && ci.IsPublic) is not { } ci || ci.HasSetsRequiredMembersAttribute()
+            ? []
+            : testClass.GetProperties()
+                .Where(p => p.SetMethod is { IsPublic: true } && p.HasRequiredMemberAttribute())
+                .ToArray();
 
     /// <inheritdoc/>
     protected override async Task<decimal> InvokeTestMethodAsync(object? testClassInstance)
