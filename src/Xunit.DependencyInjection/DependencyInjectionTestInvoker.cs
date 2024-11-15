@@ -41,21 +41,9 @@ public class DependencyInjectionTestInvoker(
             return testClassInstance;
 
         foreach (var propertyInfo in properties)
-        {
-            if (propertyInfo.CanRead)
-                try
-                {
-                    if (propertyInfo.GetValue(testClassInstance, null) != null) continue;
-                }
-                catch
-                {
-                    continue;
-                }
-
             propertyInfo.SetValue(testClassInstance, propertyInfo.PropertyType == typeof(ITestOutputHelper)
                 ? provider.GetRequiredService<ITestOutputHelperAccessor>().Output
                 : provider.GetRequiredService(propertyInfo.PropertyType));
-        }
 
         return testClassInstance;
     }
