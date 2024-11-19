@@ -81,11 +81,11 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
         return null;
     }
 
-    private static bool ParameterTypesCompatible(IReadOnlyCollection<ParameterInfo> parameters, IReadOnlyList<Type?> parameterTypes)
+    private static bool ParameterTypesCompatible(ParameterInfo[] parameters, Type?[] parameterTypes)
     {
-        if (parameterTypes.Count < 1) return true;
+        if (parameterTypes.Length < 1) return true;
 
-        if (parameters.Count != parameterTypes.Count) return false;
+        if (parameters.Length != parameterTypes.Length) return false;
 
         return !parameters.Where((t, idx) => parameterTypes[idx] != null && !t.ParameterType.IsAssignableFrom(parameterTypes[idx])).Any();
     }
