@@ -5,7 +5,7 @@ namespace Xunit.DependencyInjection;
 
 internal static class StartupLoader
 {
-    public static DependencyInjectionContext CreateHost(Type startupType, AssemblyName assemblyName,
+    public static DependencyInjectionContext CreateHost(Type startupType, Assembly assembly,
         IMessageSink diagnosticMessageSink)
     {
         var configureHostApplicationBuilderMethodInfo = FindMethod(startupType, "ConfigureHostApplicationBuilder");
@@ -14,11 +14,11 @@ internal static class StartupLoader
             var parameters = configureHostApplicationBuilderMethodInfo.GetParameters();
 
             if (parameters.Length == 1 && parameters[0].ParameterType == typeof(IHostApplicationBuilder))
-                return CreateHostWithHostApplicationBuilder(startupType, configureHostApplicationBuilderMethodInfo, assemblyName, diagnosticMessageSink);
+                return CreateHostWithHostApplicationBuilder(startupType, configureHostApplicationBuilderMethodInfo, assembly.GetName(), diagnosticMessageSink);
         }
 
         var (hostBuilder, startup, buildHostMethod, configureMethod) =
-            CreateHostBuilder(startupType, assemblyName, diagnosticMessageSink);
+            CreateHostBuilder(startupType, assembly.GetName(), diagnosticMessageSink);
 
         return new(CreateHost(hostBuilder, startupType, startup, buildHostMethod, configureMethod),
             startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
@@ -104,12 +104,11 @@ internal static class StartupLoader
         return host;
     }
 
-    public static Type? GetStartupType(AssemblyName assemblyName)
+    public static Type? GetStartupType(Assembly assembly)
     {
-        var assembly = Assembly.Load(assemblyName);
         var attr = assembly.GetCustomAttribute<StartupTypeAttribute>();
 
-        if (attr == null) return assembly.GetType($"{assemblyName.Name}.Startup");
+        if (attr == null) return assembly.GetType($"{assembly.GetName().Name}.Startup");
 
         if (attr.AssemblyName != null) assembly = Assembly.Load(attr.AssemblyName);
 

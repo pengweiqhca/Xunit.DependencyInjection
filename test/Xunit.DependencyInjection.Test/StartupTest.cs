@@ -13,9 +13,9 @@ public class StartupTest(IMessageSink diagnosticMessageSink)
     [Fact]
     public void GetStartupTypeTest()
     {
-        Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(Name));
+        Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(Assembly.GetExecutingAssembly()));
 
-        Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(new("Xunit.DependencyInjection.FakeTest")));
+        Assert.Equal(typeof(Startup), StartupLoader.GetStartupType(Assembly.Load(new AssemblyName("Xunit.DependencyInjection.FakeTest"))));
     }
 
     #region CreateStartupTest
@@ -271,11 +271,11 @@ public class StartupTest(IMessageSink diagnosticMessageSink)
     [Fact]
     public void StaticMethodTest()
     {
-        StartupLoader.CreateHost(typeof(StaticStartup), Name, diagnosticMessageSink);
+        StartupLoader.CreateHost(typeof(StaticStartup), Assembly.GetExecutingAssembly(), diagnosticMessageSink);
 
         Assert.Equal(0, StaticStartup.Created);
 
-        StartupLoader.CreateHost(typeof(StartupWithStaticMethod), Name, diagnosticMessageSink);
+        StartupLoader.CreateHost(typeof(StartupWithStaticMethod), Assembly.GetExecutingAssembly(), diagnosticMessageSink);
 
         Assert.Equal(1, StartupWithStaticMethod.Created);
     }
