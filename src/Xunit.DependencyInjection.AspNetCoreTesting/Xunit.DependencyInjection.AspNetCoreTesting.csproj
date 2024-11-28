@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net6.0;net8.0</TargetFrameworks>
+    <TargetFrameworks>net6.0;net8.0;net9.0</TargetFrameworks>
     <Description>Integration with MinimalApi
 
 public class Startup
@@ -9,7 +9,7 @@ public class Startup
 	public IHostBuilder CreateHostBuilder() =&gt; MinimalApiHostBuilderFactory.GetHostBuilder&lt;Program&gt;();
 }</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>9.1.1</Version>
+    <Version>9.2.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
