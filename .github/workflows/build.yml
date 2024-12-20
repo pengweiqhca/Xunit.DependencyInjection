@@ -20,9 +20,7 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: |
-          6.x
-          8.x
+        dotnet-version: 9.x
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
@@ -34,12 +32,10 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v4
-    - name: Setup .NET 8 SDK
+    - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: |
-          6.x
-          8.x
+        dotnet-version: 9.x
     - name: build
       run: dotnet build -c Release -v n /p:TreatWarningsAsErrors=True
     - name: test
