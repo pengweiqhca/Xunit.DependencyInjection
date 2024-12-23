@@ -19,7 +19,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="README.md" Pack="true" PackagePath="\" />
     <Content Include="content/**" />
     <Compile Remove="**\*" />
   </ItemGroup>
