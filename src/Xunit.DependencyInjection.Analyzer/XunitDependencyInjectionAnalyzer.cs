@@ -238,10 +238,8 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
             context.ReportDiagnostic(Diagnostic.Create(Rules.ConfigureServices, method.Locations[0], method.Name));
         }
 
-        private static void AnalyzeConfigure(SymbolAnalysisContext context, IMethodSymbol method)
-        {
+        private static void AnalyzeConfigure(SymbolAnalysisContext context, IMethodSymbol method) =>
             AnalyzeReturnType(context, method, null);
-        }
 
         private void AnalyzeBuildHost(SymbolAnalysisContext context, IMethodSymbol method)
         {

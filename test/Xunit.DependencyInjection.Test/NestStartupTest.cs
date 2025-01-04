@@ -52,8 +52,5 @@ public class NestStartupTest(NestStartupTest.Dependency2 dependency)
 public class MonitorNestStartupTest
 {
     [Fact]
-    public void ActivityTest()
-    {
-        Assert.NotEmpty(NestStartupTest.Startup.Activities);
-    }
+    public void ActivityTest() => Assert.NotEmpty(NestStartupTest.Startup.Activities);
 }
