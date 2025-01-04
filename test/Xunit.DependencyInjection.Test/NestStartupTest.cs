@@ -1,4 +1,6 @@
-﻿namespace Xunit.DependencyInjection.Test;
+﻿using System.Diagnostics;
+
+namespace Xunit.DependencyInjection.Test;
 
 public class NestStartupTest(NestStartupTest.Dependency2 dependency)
 {
@@ -19,6 +21,8 @@ public class NestStartupTest(NestStartupTest.Dependency2 dependency)
 
     public class Startup
     {
+        public static List<Activity> Activities { get; } = [];
+
         public void ConfigureHost(IHostBuilder hostBuilder)
         {
             StartupThatWasUsed = GetType();
@@ -28,6 +32,28 @@ public class NestStartupTest(NestStartupTest.Dependency2 dependency)
         public void ConfigureServices(IServiceCollection services) =>
             services.AddSingleton<Dependency2>();
 
-        public void Configure(ITestOutputHelperAccessor accessor) => Assert.NotNull(accessor);
+        public void Configure(ITestOutputHelperAccessor accessor)
+        {
+            Assert.NotNull(accessor);
+
+            Activities.Clear();;
+
+            var listener = new ActivityListener();
+
+            listener.ShouldListenTo += _ => true;
+            listener.ActivityStopped += Activities.Add;
+            listener.Sample += delegate { return ActivitySamplingResult.AllDataAndRecorded; };
+
+            ActivitySource.AddActivityListener(listener);
+        }
+    }
+}
+
+public class MonitorNestStartupTest
+{
+    [Fact]
+    public void ActivityTest()
+    {
+        Assert.NotEmpty(NestStartupTest.Startup.Activities);
     }
 }

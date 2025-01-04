@@ -37,12 +37,5 @@ public class Startup
         Assert.NotNull(accessor);
         Assert.IsType<DemystifyExceptionFilter>(filter);
         Assert.IsType<FromSmallKeyedServicesTest>(test);
-
-        var listener = new ActivityListener();
-
-        listener.ShouldListenTo += _ => true;
-        listener.Sample += delegate { return ActivitySamplingResult.AllDataAndRecorded; };
-
-        ActivitySource.AddActivityListener(listener);
     }
 }
