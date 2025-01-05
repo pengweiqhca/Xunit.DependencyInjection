@@ -1,4 +1,6 @@
-﻿namespace Xunit.DependencyInjection.Test.Parallelization;
+﻿using Xunit.Sdk;
+
+namespace Xunit.DependencyInjection.Test.Parallelization;
 
 public class ConcurrencyFixture
 {
@@ -21,7 +23,7 @@ public class ConcurrencyFixture
         static ValueTask Delay(int millisecondsDelay)
         {
             // xunit 2.8.0+ and `parallelAlgorithm` is not `aggressive`
-            if (SynchronizationContext.Current == null)
+            if (SynchronizationContext.Current is null or not AsyncTestSyncContext)
                 return new(Task.Delay(millisecondsDelay));
 
             // xunit lt 2.8.0+ or `parallelAlgorithm` is `aggressive`
