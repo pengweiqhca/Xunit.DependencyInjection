@@ -1,4 +1,4 @@
-namespace Xunit.DependencyInjection;
+﻿namespace Xunit.DependencyInjection;
 
 internal sealed class HostManager(Assembly assembly, IMessageSink diagnosticMessageSink)
     : IHostedService, IAsyncDisposable
@@ -97,7 +97,6 @@ internal sealed class HostManager(Assembly assembly, IMessageSink diagnosticMess
 
         return Task.WhenAll(_hosts.Select(x => x.StopAsync(cancellationToken)));
     }
-
 
     public ValueTask DisposeAsync() => new(Task.WhenAll(_hosts.Select(DisposeAsync)));
 
