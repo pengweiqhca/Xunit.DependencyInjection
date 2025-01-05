@@ -12,7 +12,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <DebugType>embedded</DebugType>
     <LangVersion>12.0</LangVersion>
-    <NoWarn>$(NoWarn);1591;NU1903</NoWarn>
+    <NoWarn>$(NoWarn);1591;NU1903;NU5104</NoWarn>
     <NeutralLanguage>en-us</NeutralLanguage>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
