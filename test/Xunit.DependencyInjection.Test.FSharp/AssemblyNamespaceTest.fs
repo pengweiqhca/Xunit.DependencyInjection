@@ -3,6 +3,10 @@
 open System
 open Microsoft.Extensions.DependencyInjection
 open Xunit
+open Xunit.DependencyInjection
+
+[<assembly: TestFramework(typeof<DependencyInjectionEnhancedParallelizationTestFramework>)>]
+do()
 
 type Dependency1 = {
     Value: string

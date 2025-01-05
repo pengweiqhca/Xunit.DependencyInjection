@@ -23,7 +23,7 @@ public class ConcurrencyFixture
         static ValueTask Delay(int millisecondsDelay)
         {
             // xunit 2.8.0+ and `parallelAlgorithm` is not `aggressive`
-            if (SynchronizationContext.Current is null or not AsyncTestSyncContext)
+            if (SynchronizationContext.Current is null)
                 return new(Task.Delay(millisecondsDelay));
 
             // xunit lt 2.8.0+ or `parallelAlgorithm` is `aggressive`

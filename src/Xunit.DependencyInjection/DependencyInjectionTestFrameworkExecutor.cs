@@ -1,32 +1,44 @@
 ﻿namespace Xunit.DependencyInjection;
 
 public class DependencyInjectionTestFrameworkExecutor(
-    AssemblyName assemblyName,
-    ISourceInformationProvider sourceInformationProvider,
-    ParallelizationMode parallelizationMode,
-    IMessageSink diagnosticMessageSink)
-    : XunitTestFrameworkExecutor(assemblyName, sourceInformationProvider, diagnosticMessageSink)
+    IXunitTestAssembly testAssembly,
+    ParallelizationMode parallelizationMode)
+    : XunitTestFrameworkExecutor(testAssembly)
 {
     /// <inheritdoc />
-    protected override void RunTestCases(IEnumerable<IXunitTestCase> testCases,
-        IMessageSink executionMessageSink,
-        ITestFrameworkExecutionOptions executionOptions) =>
-        RunTestCasesAsync(testCases, executionMessageSink, executionOptions).GetAwaiter().GetResult();
-
-    private async Task RunTestCasesAsync(
-        IEnumerable<IXunitTestCase> testCases,
+    public override async ValueTask RunTestCases(IReadOnlyCollection<IXunitTestCase> testCases,
         IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions)
     {
-        testCases = testCases.ToList();
-
         var exceptions = new List<Exception>();
 
-        await using var hostManager = new HostManager(((ReflectionAssemblyInfo)AssemblyInfo).Assembly, DiagnosticMessageSink);
+        await using var hostManager = new HostManager(TestAssembly.Assembly, executionMessageSink);
 
         var host = GetHost(exceptions, hostManager.BuildDefaultHost)?.Host;
 
-        static DependencyInjectionContext? GetHost(ICollection<Exception> exceptions, Func<DependencyInjectionContext?> func)
+        var contextMap = testCases
+            .GroupBy(tc => tc.TestMethod.TestClass)
+            .ToDictionary(group => group.Key,
+                group => GetHost(exceptions, () => hostManager.GetContext(group.Key.Class)));
+
+        try
+        {
+            await hostManager.StartAsync(default);
+        }
+        catch (Exception ex)
+        {
+            exceptions.Add(ex);
+        }
+
+        await new DependencyInjectionTestAssemblyRunner(new(host, parallelizationMode, contextMap), exceptions)
+            .Run(new(TestAssembly, host?.Services), testCases, executionMessageSink,
+                executionOptions);
+
+        await hostManager.StopAsync(default);
+        return;
+
+        static DependencyInjectionContext? GetHost(ICollection<Exception> exceptions,
+            Func<DependencyInjectionContext?> func)
         {
             try
             {
@@ -39,25 +51,48 @@ public class DependencyInjectionTestFrameworkExecutor(
 
             return default;
         }
-
-        var contextMap = testCases
-            .GroupBy(tc => tc.TestMethod.TestClass)
-            .ToDictionary(group => group.Key, group => GetHost(exceptions, () => hostManager.GetContext(group.Key.Class.ToRuntimeType())));
-
-        try
-        {
-            await hostManager.StartAsync(default);
-        }
-        catch (Exception ex)
-        {
-            exceptions.Add(ex);
-        }
-
-        using var runner = new DependencyInjectionTestAssemblyRunner(new(host, parallelizationMode, contextMap), TestAssembly,
-            testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, exceptions);
-
-        await runner.RunAsync();
-
-        await hostManager.StopAsync(default);
     }
+}
+
+public sealed class DependencyInjectionTestAssembly(
+    IXunitTestAssembly testAssembly,
+    IServiceProvider? defaultRootServices) : IXunitTestAssembly
+{
+    public string AssemblyName => testAssembly.AssemblyName;
+
+    public string AssemblyPath => testAssembly.AssemblyPath;
+
+    public string? ConfigFilePath => testAssembly.ConfigFilePath;
+
+    public IReadOnlyDictionary<string, IReadOnlyCollection<string>> Traits => testAssembly.Traits;
+
+    public string UniqueID => testAssembly.UniqueID;
+
+    public Guid ModuleVersionID => testAssembly.ModuleVersionID;
+
+    public Assembly Assembly => testAssembly.Assembly;
+
+    IReadOnlyCollection<Type> IXunitTestAssembly.AssemblyFixtureTypes { get; } = testAssembly.AssemblyFixtureTypes
+        .Where(TestHelper.GenericTypeArgumentIsGenericParameter).ToArray();
+
+    public IReadOnlyCollection<Type> AssemblyFixtureTypes { get; } = testAssembly.AssemblyFixtureTypes
+        .WhereNot(TestHelper.GenericTypeArgumentIsGenericParameter).ToArray();
+
+    public IReadOnlyCollection<IBeforeAfterTestAttribute> BeforeAfterTestAttributes =>
+        testAssembly.BeforeAfterTestAttributes;
+
+    public ICollectionBehaviorAttribute? CollectionBehavior => testAssembly.CollectionBehavior;
+
+    public IReadOnlyDictionary<string, (Type Type, CollectionDefinitionAttribute Attribute)>
+        CollectionDefinitions => testAssembly.CollectionDefinitions;
+
+    public string TargetFramework => testAssembly.TargetFramework;
+
+    public ITestCaseOrderer? TestCaseOrderer =>
+        defaultRootServices?.GetService<ITestCaseOrderer>() ?? testAssembly.TestCaseOrderer;
+
+    public ITestCollectionOrderer? TestCollectionOrderer =>
+        defaultRootServices?.GetService<ITestCollectionOrderer>() ?? testAssembly.TestCollectionOrderer;
+
+    public Version Version => testAssembly.Version;
 }

@@ -7,11 +7,12 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="Xunit.TestFramework"
-                       Condition="'$(EnableXunitDependencyInjectionDefaultTestFrameworkAttribute)' == '' OR '$(EnableXunitDependencyInjectionDefaultTestFrameworkAttribute)' == 'true'">
+                       Condition="'$(Language)' != 'F#' AND ('$(EnableXunitDependencyInjectionDefaultTestFrameworkAttribute)' == '' OR '$(EnableXunitDependencyInjectionDefaultTestFrameworkAttribute)' == 'true')">
       <_Parameter1 Condition="'$(ParallelizationMode)' != 'true' AND '$(ParallelizationMode)' != 'enhance' AND '$(ParallelizationMode)' != 'force'">Xunit.DependencyInjection.DependencyInjectionTestFramework</_Parameter1>
       <_Parameter1 Condition="'$(ParallelizationMode)' == 'true' OR '$(ParallelizationMode)' == 'enhance'">Xunit.DependencyInjection.DependencyInjectionEnhancedParallelizationTestFramework</_Parameter1>
       <_Parameter1 Condition="'$(ParallelizationMode)' == 'force'">Xunit.DependencyInjection.DependencyInjectionForcedParallelizationTestFramework</_Parameter1>
-      <_Parameter2>Xunit.DependencyInjection</_Parameter2>
+      <!--https://learn.microsoft.com/zh-cn/visualstudio/msbuild/writecodefragment-task?view=vs-2022#generate-assembly-level-attributes-->
+      <_Parameter1_TypeName>System.Type</_Parameter1_TypeName>
     </AssemblyAttribute>
 
     <AssemblyAttribute Include="Xunit.DependencyInjection.StartupType"

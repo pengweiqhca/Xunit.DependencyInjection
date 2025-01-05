@@ -1,8 +1,9 @@
-﻿namespace Xunit.DependencyInjection.Test;
+﻿using Xunit.v3;
+
+namespace Xunit.DependencyInjection.Test;
 
 public class TestCaseByMethodNameOrderer : ITestCaseOrderer
 {
-    public IEnumerable<TTestCase> OrderTestCases<TTestCase>(IEnumerable<TTestCase> testCases)
-        where TTestCase : ITestCase =>
-        testCases.OrderBy(t => t.TestMethod.Method.Name);
+    public IReadOnlyCollection<TTestCase> OrderTestCases<TTestCase>(IReadOnlyCollection<TTestCase> testCases) where TTestCase : notnull, ITestCase =>
+        testCases.OrderBy(t => t.TestMethod?.MethodName).ToArray();
 }

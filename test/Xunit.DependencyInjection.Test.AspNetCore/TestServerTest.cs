@@ -7,10 +7,10 @@ public class TestServerTest(HttpClient httpClient)
     [Fact]
     public async Task HttpTest()
     {
-        using var response = await httpClient.GetAsync("/");
+        using var response = await httpClient.GetAsync("/", TestContext.Current.CancellationToken);
 
         response.EnsureSuccessStatusCode();
 
-        Assert.Equal(Key, await response.Content.ReadAsStringAsync());
+        Assert.Equal(Key, await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
     }
 }

@@ -23,7 +23,7 @@ public class TheoryTest(IDependency dependency)
         Assert.Equal("Value", arg3["Key"]);
         Assert.True(delay >= 0);
 
-        await Task.Delay(delay);
+        await Task.Delay(delay, TestContext.Current.CancellationToken);
     }
 
     [Theory]

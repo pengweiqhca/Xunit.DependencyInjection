@@ -2,21 +2,10 @@
 
 public interface ITestOutputHelperAccessor
 {
-    ITestOutputHelper? Output { get; set; }
+    ITestOutputHelper? Output { get; }
 }
 
-public class TestOutputHelperAccessor : ContextValue<ITestOutputHelper>, ITestOutputHelperAccessor, IDisposable
+public class TestOutputHelperAccessor : ContextValue<ITestOutputHelper>, ITestOutputHelperAccessor
 {
-    public ITestOutputHelper? Output
-    {
-        get => Value;
-        set => Value = value;
-    }
-
-    public void Dispose()
-    {
-        Value = null;
-
-        GC.SuppressFinalize(this);
-    }
+    public ITestOutputHelper? Output => TestContext.Current.TestOutputHelper;
 }

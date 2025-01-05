@@ -26,7 +26,7 @@ public sealed class StartupTypeAttribute : Attribute
     /// (f.e., 'Xunit.DependencyInjection.Test.Startup')</param>
     public StartupTypeAttribute(Type startupType)
     {
-        if (startupType?.FullName == null) throw new ArgumentNullException(nameof(startupType));
+        if (startupType.FullName == null) throw new ArgumentNullException(nameof(startupType));
 
         TypeName = startupType.FullName;
         AssemblyName = startupType.Assembly.FullName;

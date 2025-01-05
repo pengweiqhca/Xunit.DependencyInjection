@@ -12,17 +12,17 @@ public class AsyncLifetimeFixtureWithDisposableDependency(
 
     public IList<string> Journal { get; } = new List<string>();
 
-    public Task InitializeAsync()
+    public ValueTask InitializeAsync()
     {
         Journal.Add(nameof(InitializeAsync));
 
-        return Task.CompletedTask;
+        return default;
     }
 
-    public Task DisposeAsync()
+    public ValueTask DisposeAsync()
     {
         Journal.Add(nameof(DisposeAsync));
 
-        return Task.CompletedTask;
+        return default;
     }
 }

@@ -9,14 +9,12 @@ public class Startup
 	public IHostBuilder CreateHostBuilder() =&gt; MinimalApiHostBuilderFactory.GetHostBuilder&lt;Program&gt;();
 }</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>9.2.0</Version>
+    <Version>9.3.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(_TargetFrameworkVersionWithoutV)" />
-
-    <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
 
 </Project>

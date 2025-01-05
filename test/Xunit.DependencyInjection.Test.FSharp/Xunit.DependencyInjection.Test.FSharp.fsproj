@@ -18,7 +18,6 @@
     <Compile Include="ModuleTest2.fs" />
     <Compile Include="ModuleTest3.fs" />
     <Compile Include="ScopedTest.fs" />
-    <Compile Include="Program.fs" />
 
     <PackageReference Include="System.Threading.Tasks.Extensions" Version="4.*" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
     <PackageReference Include="System.ValueTuple" Version="4.*" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />

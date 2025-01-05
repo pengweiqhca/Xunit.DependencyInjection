@@ -16,17 +16,14 @@ public class MethodDataAttributeTest
     [MethodData(nameof(GetData))]
     public void GetDataTest(ComplexType data) => Assert.Equal(RandomValue, data.Value);
 
-    private static IEnumerable<object[]> GetData(IServiceProvider services) => ActivatorUtilities.CreateInstance<MethodTheoryData>(services);
+    private static IEnumerable<TheoryDataRow<ComplexType>> GetData(IServiceProvider services) =>
+        ActivatorUtilities.CreateInstance<MethodTheoryData>(services);
 
     public record ComplexType(Guid Value);
 
     private class MethodTheoryData : TheoryData<ComplexType>
     {
-
-        public MethodTheoryData(IServiceProvider services)
-        {
-            Add(new(RandomValue));
-        }
+        public MethodTheoryData(IServiceProvider services) => Add(new ComplexType(RandomValue));
     }
 
     private class TestClassA

@@ -1,5 +1,5 @@
 ﻿using Xunit;
-using Xunit.DependencyInjection.Test;
+using Xunit.v3;
 
 [assembly: CollectionBehavior(DisableTestParallelization = true)]
 
@@ -7,6 +7,6 @@ namespace Xunit.DependencyInjection.Test;
 
 public class RunMonitorCollectionLastOrderer : ITestCollectionOrderer
 {
-    public IEnumerable<ITestCollection> OrderTestCollections(IEnumerable<ITestCollection> testCollections) =>
-        testCollections.OrderBy(c => c.DisplayName.StartsWith("Monitor"));
+    public IReadOnlyCollection<TTestCollection> OrderTestCollections<TTestCollection>(IReadOnlyCollection<TTestCollection> testCollections) where TTestCollection : ITestCollection =>
+        testCollections.OrderBy(c => c.TestCollectionDisplayName.StartsWith("Monitor")).ToArray();
 }

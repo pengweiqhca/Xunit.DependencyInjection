@@ -24,13 +24,13 @@ public class DependencyInjectionTestContext(
 public class DependencyInjectionStartupContext(
     IHost? defaultHost,
     ParallelizationMode parallelizationMode,
-    IReadOnlyDictionary<ITestClass, DependencyInjectionContext?> contextMap)
+    IReadOnlyDictionary<IXunitTestClass, DependencyInjectionContext?> contextMap)
 {
     public IServiceProvider? DefaultRootServices => defaultHost?.Services;
 
     public ParallelizationMode ParallelizationMode { get; } = parallelizationMode;
 
-    public IReadOnlyDictionary<ITestClass, DependencyInjectionContext?> ContextMap { get; } = contextMap;
+    public IReadOnlyDictionary<IXunitTestClass, DependencyInjectionContext?> ContextMap { get; } = contextMap;
 
     public SemaphoreSlim? ParallelSemaphore { get; internal set; }
 }

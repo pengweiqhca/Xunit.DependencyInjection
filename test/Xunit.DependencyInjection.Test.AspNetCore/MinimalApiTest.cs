@@ -12,14 +12,14 @@ public class MinimalApiTest(HttpClient httpClient, IRandomService randomService)
     [Fact]
     public async Task MinimalApiRouteResponseTest()
     {
-        var responseText = await httpClient.GetStringAsync("/hello");
+        var responseText = await httpClient.GetStringAsync("/hello", TestContext.Current.CancellationToken);
         Assert.Equal("Hello world", responseText);
     }
 
     [Fact]
     public async Task ControllerRouteResponseTest()
     {
-        var responseText = await httpClient.GetStringAsync("/");
+        var responseText = await httpClient.GetStringAsync("/", TestContext.Current.CancellationToken);
         Assert.Equal("Hello world", responseText);
     }
 

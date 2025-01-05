@@ -5,15 +5,18 @@ public class DependencyInjectionTestCaseRunnerWrapper : IXunitTestCaseRunnerWrap
     /// <inheritdoc />
     public virtual Type TestCaseType => typeof(XunitTestCase);
 
-    /// <inheritdoc />
-    public virtual Task<RunSummary> RunAsync(IXunitTestCase testCase,
-        DependencyInjectionContext context,
-        IMessageSink diagnosticMessageSink,
-        IMessageBus messageBus,
-        object?[] constructorArguments,
-        ExceptionAggregator aggregator,
-        CancellationTokenSource cancellationTokenSource) =>
-        new DependencyInjectionTestCaseRunner(context, testCase, testCase.DisplayName,
-            testCase.SkipReason, constructorArguments, testCase.TestMethodArguments,
-            messageBus, aggregator, cancellationTokenSource).RunAsync();
+    public ValueTask<RunSummary> RunAsync(DependencyInjectionContext context, IXunitTestCase testCase,
+        IReadOnlyCollection<IXunitTest> tests,
+        IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource,
+        string displayName, string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments) =>
+        new DependencyInjectionTestCaseRunner(context).Run(
+            testCase,
+            tests,
+            messageBus,
+            aggregator,
+            cancellationTokenSource,
+            displayName,
+            skipReason,
+            explicitOption,
+            constructorArguments);
 }

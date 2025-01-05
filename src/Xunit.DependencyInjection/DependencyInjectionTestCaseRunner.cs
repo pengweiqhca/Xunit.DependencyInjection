@@ -1,23 +1,17 @@
 ﻿namespace Xunit.DependencyInjection;
 
-public class DependencyInjectionTestCaseRunner(
-    DependencyInjectionContext context,
-    IXunitTestCase testCase,
-    string displayName,
-    string skipReason,
-    object?[] constructorArguments,
-    object[] testMethodArguments,
-    IMessageBus messageBus,
-    ExceptionAggregator aggregator,
-    CancellationTokenSource cancellationTokenSource)
-    : XunitTestCaseRunner(testCase, displayName, skipReason, constructorArguments, testMethodArguments, messageBus,
-        aggregator, cancellationTokenSource)
+public class DependencyInjectionTestCaseRunner(DependencyInjectionContext context)
+    : XunitTestCaseRunner
 {
     /// <inheritdoc />
-    protected override Task<RunSummary> RunTestAsync() =>
-        new DependencyInjectionTestRunner(context, new XunitTest(TestCase, DisplayName), MessageBus,
-                FromServicesAttribute.CreateFromServices(TestMethod),
-                TestClass, ConstructorArguments, TestMethod, TestMethodArguments, SkipReason,
-                BeforeAfterAttributes, new(Aggregator), CancellationTokenSource)
-            .RunAsync();
+    protected override ValueTask<RunSummary> RunTest(XunitTestCaseRunnerContext ctxt, IXunitTest test) =>
+        new DependencyInjectionTestRunner(context,
+            FromServicesAttribute.CreateFromServices(ctxt.TestCase.TestMethod.Method)).Run(
+            test,
+            ctxt.MessageBus,
+            ctxt.ConstructorArguments,
+            ctxt.ExplicitOption,
+            ctxt.Aggregator.Clone(),
+            ctxt.CancellationTokenSource,
+            ctxt.BeforeAfterTestAttributes);
 }

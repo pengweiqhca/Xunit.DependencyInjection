@@ -1,6 +1,7 @@
 ﻿using Autofac.Extensions.DependencyInjection;
 using System.Diagnostics;
 using Xunit.DependencyInjection.Demystifier;
+using Xunit.v3;
 
 namespace Xunit.DependencyInjection.Test;
 
@@ -21,14 +22,13 @@ public class Startup
             .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
             .AddScoped<BeforeAfterTest, TestBeforeAfterTest>()
             .AddHostedService<HostServiceTest>()
-            .AddSkippableFactSupport()
-            .AddStaFactSupport()
+            //.AddStaFactSupport()
             .AddSingleton<ITestCollectionOrderer, RunMonitorCollectionLastOrderer>()
             .AddSingleton<ITestClassOrderer, TestClassByOrderOrderer>()
             .AddSingleton<ITestCaseOrderer, TestCaseByMethodNameOrderer>()
             .AddKeyedScoped<IFromKeyedServicesTest, FromSmallKeyedServicesTest>("small")
             .AddKeyedScoped<IFromKeyedServicesTest, FromLargeKeyedServicesTest>("large")
-            .AddXRetrySupport()
+            //.AddXRetrySupport()
             .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
     public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor,

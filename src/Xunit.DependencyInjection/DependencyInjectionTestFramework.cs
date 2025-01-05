@@ -1,22 +1,45 @@
 ﻿namespace Xunit.DependencyInjection;
 
-public sealed class DependencyInjectionTestFramework(IMessageSink messageSink) : XunitTestFramework(messageSink)
+public sealed class DependencyInjectionTestFramework : XunitTestFramework
 {
-    protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName) =>
-        new DependencyInjectionTestFrameworkExecutor(assemblyName, SourceInformationProvider, ParallelizationMode.None,
-            DiagnosticMessageSink);
+    private readonly string? _configFileName;
+
+    public DependencyInjectionTestFramework() { }
+
+    public DependencyInjectionTestFramework(string? configFileName) : base(configFileName) =>
+        _configFileName = configFileName;
+
+    protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly) =>
+        new DependencyInjectionTestFrameworkExecutor(
+            new XunitTestAssembly(assembly, _configFileName, assembly.GetName().Version), ParallelizationMode.None);
 }
 
-public sealed class DependencyInjectionEnhancedParallelizationTestFramework(IMessageSink messageSink)
-    : XunitTestFramework(messageSink)
+public sealed class DependencyInjectionEnhancedParallelizationTestFramework
+    : XunitTestFramework
 {
-    protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName) =>
-        new DependencyInjectionTestFrameworkExecutor(assemblyName, SourceInformationProvider, ParallelizationMode.Enhance, DiagnosticMessageSink);
+    private readonly string? _configFileName;
+
+    public DependencyInjectionEnhancedParallelizationTestFramework() { }
+
+    public DependencyInjectionEnhancedParallelizationTestFramework(string? configFileName) : base(configFileName) =>
+        _configFileName = configFileName;
+
+    protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly) =>
+        new DependencyInjectionTestFrameworkExecutor(
+            new XunitTestAssembly(assembly, _configFileName, assembly.GetName().Version), ParallelizationMode.Enhance);
 }
 
-public sealed class DependencyInjectionForcedParallelizationTestFramework(IMessageSink messageSink)
-    : XunitTestFramework(messageSink)
+public sealed class DependencyInjectionForcedParallelizationTestFramework
+    : XunitTestFramework
 {
-    protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName) =>
-        new DependencyInjectionTestFrameworkExecutor(assemblyName, SourceInformationProvider, ParallelizationMode.Force, DiagnosticMessageSink);
+    private readonly string? _configFileName;
+
+    public DependencyInjectionForcedParallelizationTestFramework() { }
+
+    public DependencyInjectionForcedParallelizationTestFramework(string? configFileName) : base(configFileName) =>
+        _configFileName = configFileName;
+
+    protected override ITestFrameworkExecutor CreateExecutor(Assembly assembly) =>
+        new DependencyInjectionTestFrameworkExecutor(
+            new XunitTestAssembly(assembly, _configFileName, assembly.GetName().Version), ParallelizationMode.Force);
 }

@@ -6,7 +6,6 @@
 /// </summary>
 /// <param name="methodName">The name of the public method on the test class that will provide the test data</param>
 /// <param name="parameters">The parameters for the method</param>
-[DataDiscoverer("Xunit.Sdk.MemberDataDiscoverer", "xunit.core")]
 [AttributeUsage(AttributeTargets.Method, AllowMultiple = true)]
 public sealed class MethodDataAttribute(string methodName, params object?[] parameters) : DataAttribute
 {
@@ -35,7 +34,7 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
         : this(methodName, parameters) => ClassType = classType;
 
     /// <inheritdoc />
-    public override IEnumerable<object?[]?>? GetData(MethodInfo testMethod)
+    public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
     {
         var provider = TheoryTestCaseDataContext.Services ?? throw new InvalidOperationException("Please use MethodDataAttribute in injected class by Xunit.DependencyInjection");
 
@@ -48,20 +47,20 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
             throw new ArgumentException($"Could not find public method named '{MethodName}' on {type.FullName}{parameterText}");
         }
 
-        var result = method.Invoke(method.IsStatic ? null : ActivatorUtilities.CreateInstance(provider, type), GetParameters(provider, method));
+        var result = await TestHelper.TryAwait(method.ReturnType,
+            method.Invoke(method.IsStatic ? null : ActivatorUtilities.CreateInstance(provider, type),
+                GetParameters(provider, method)));
 
         return result switch
         {
-            null => null,
-            // special handling of TheoryData -- TheoryData<T> will not enumerate arrays with the below code
+            null => [],
             TheoryData theoryData => theoryData,
-            IEnumerable<object?> dataItems => dataItems.Select(item => item switch
-            {
-                null => null,
-                object?[] array => array,
-                _ => throw new ArgumentException($"Method {MethodName} on {type.FullName} yielded an item that is not an object[]")
-            }),
-            _ => throw new ArgumentException($"Method {MethodName} on {type.FullName} did not return IEnumerable<object>")
+            IReadOnlyCollection<ITheoryDataRow> theoryDataRows => theoryDataRows,
+            IEnumerable<ITheoryDataRow> theoryDataRows => theoryDataRows.ToArray(),
+            IEnumerable<object?> dataItems => dataItems.OfType<object?[]>()
+                .Select(ITheoryDataRow (item) => new TheoryDataRow(item)).ToArray(),
+            _ => throw new ArgumentException(
+                $"Method {MethodName} on {type.FullName} did not return IEnumerable<object>")
         };
     }
 
@@ -107,4 +106,6 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
 
         return param;
     }
+
+    public override bool SupportsDiscoveryEnumeration() => true;
 }

@@ -1,5 +1,3 @@
-using Xunit.Abstractions;
-
 namespace Xunit.DependencyInjection.Test.Parallelization;
 
 public class TestOutputHelperTests(ITestOutputHelper output)

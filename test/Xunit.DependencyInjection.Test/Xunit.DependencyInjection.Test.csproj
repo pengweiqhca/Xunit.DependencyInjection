@@ -13,22 +13,21 @@
     <Using Include="Microsoft.Extensions.DependencyInjection" />
     <Using Include="Microsoft.Extensions.Hosting" />
     <Using Include="Microsoft.Extensions.Logging" />
-    <Using Include="Xunit.Abstractions" />
     <Using Include="Xunit.Sdk" />
     <Using Include="Xunit.DependencyInjection.Logging" />
 
+    <Compile Remove="StaFactTest.cs" />
+    <Compile Remove="XRetryTest.cs" />
+
     <None Update="appsettings.json" CopyToOutputDirectory="PreserveNewest" />
 
-    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.*" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.*" />
     <PackageReference Include="FluentAssertions" Version="6.*" />
     <PackageReference Include="FSharp.Core" Version="8.*" />
 
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj" />
     <ProjectReference Include="..\Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj" />
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
-    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.SkippableFact\Xunit.DependencyInjection.SkippableFact.csproj" />
-    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj" />
-    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj" />
   </ItemGroup>
 
 </Project>

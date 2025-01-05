@@ -1,13 +1,11 @@
-﻿namespace Xunit.DependencyInjection.Test;
+﻿using System.Reflection;
+
+namespace Xunit.DependencyInjection.Test;
 
 public class TestClassByOrderOrderer : ITestClassOrderer
 {
     public IEnumerable<ITestClass> OrderTestClasses(IEnumerable<ITestClass> testCases) => testCases.OrderBy(tc =>
-    {
-        var classOrderAttribute = tc.Class.GetCustomAttributes(typeof(TestClassOrderAttribute)).FirstOrDefault();
-
-        return classOrderAttribute?.GetNamedArgument<int>(nameof(TestClassOrderAttribute.Order)) ?? int.MaxValue;
-    });
+        Type.GetType(tc.TestClassName)?.GetCustomAttribute<TestClassOrderAttribute>()?.Order ?? int.MaxValue);
 }
 
 [AttributeUsage(AttributeTargets.Class)]

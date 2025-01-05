@@ -1,5 +1,7 @@
 ﻿# Use `Microsoft.Extensions.DependencyInjection` to resolve xUnit test cases
 
+> xunit v2 please use [v2](/pengweiqhca/Xunit.DependencyInjection/tree/v2) branch, Xunit.DependencyInjection.StaFact and Xunit.DependencyInjection.xRetry depend on upstream packages, waiting for update.
+
 ## How to use
 
 Install the [Nuget](https://www.nuget.org/packages/Xunit.DependencyInjection) package.
