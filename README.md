@@ -122,6 +122,16 @@ public class Startup
 }
 ```
 
+* `BuildHost` method
+  
+  > **NOTE**: If this method signature is not found, the host is built by simply calling `hostBuilder.Build();`.
+```C#
+public class Startup
+{
+    public IHost BuildHost([IHostBuilder hostBuilder]) { return hostBuilder.Build(); }
+}
+```
+
 * `Configure` method
 
   Anything defined in `ConfigureServices`, can be specified in the `Configure` method signature. These services are injected if they're available.
