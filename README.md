@@ -1,6 +1,6 @@
 ﻿# Use `Microsoft.Extensions.DependencyInjection` to resolve xUnit test cases
 
-> xunit v2 please use [v2](/pengweiqhca/Xunit.DependencyInjection/tree/v2) branch, Xunit.DependencyInjection.StaFact and Xunit.DependencyInjection.xRetry depend on upstream packages, waiting for update.
+> XUnit v2 users: please use [v2](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/v2) branch, Xunit.DependencyInjection.StaFact and Xunit.DependencyInjection.xRetry depend on upstream packages, waiting for update.
 
 ## How to use
 
@@ -119,6 +119,16 @@ public class Startup
 public class Startup
 {
     public void ConfigureServices(IServiceCollection services[, HostBuilderContext context]) { }
+}
+```
+
+* `BuildHost` method
+  
+  > **NOTE**: If this method signature is not found, the host is built by simply calling `hostBuilder.Build();`.
+```C#
+public class Startup
+{
+    public IHost BuildHost([IHostBuilder hostBuilder]) { return hostBuilder.Build(); }
 }
 ```
 
