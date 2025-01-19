@@ -1,6 +1,4 @@
-﻿using Xunit.Sdk;
-
-namespace Xunit.DependencyInjection;
+﻿namespace Xunit.DependencyInjection;
 
 public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext context)
     : XunitTestMethodRunner
@@ -71,18 +69,41 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
 
     /// <inheritdoc />
     protected override ValueTask<RunSummary> RunTestCase(XunitTestMethodRunnerContext ctxt,
-        IXunitTestCase testCase) => testCase is ISelfExecutingXunitTestCase selfExecutingTestCase
-        ? selfExecutingTestCase.Run(ctxt.ExplicitOption, ctxt.MessageBus, ctxt.ConstructorArguments,
-            ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource)
-        : RunXunitTestCase(
-            testCase,
-            ctxt.MessageBus,
-            ctxt.CancellationTokenSource,
-            ctxt.Aggregator.Clone(),
-            ctxt.ExplicitOption,
-            ctxt.ConstructorArguments);
+        IXunitTestCase testCase)
+    {
+        IXunitTestCaseRunnerWrapper[] wrappers;
+        try
+        {
+            wrappers = context.RootServices.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
+        }
+        catch (Exception ex)
+        {
+            ctxt.Aggregator.Add(ex);
+
+            return base.RunTestCase(ctxt, testCase);
+        }
+
+        IXunitTestCaseRunnerWrapper? wrapper;
+        var type = testCase.GetType();
+        do
+            wrapper = wrappers.FirstOrDefault(w => w.TestCaseType == type);
+        while (wrapper == null && (type = type.BaseType) != null);
+
+        return wrapper== null && testCase is ISelfExecutingXunitTestCase selfExecutingTestCase
+            ? selfExecutingTestCase.Run(ctxt.ExplicitOption, ctxt.MessageBus, ctxt.ConstructorArguments,
+                ctxt.Aggregator.Clone(), ctxt.CancellationTokenSource)
+            : RunXunitTestCase(
+                testCase,
+                wrapper,
+                ctxt.MessageBus,
+                ctxt.CancellationTokenSource,
+                ctxt.Aggregator.Clone(),
+                ctxt.ExplicitOption,
+                ctxt.ConstructorArguments);
+    }
 
     private async ValueTask<RunSummary> RunXunitTestCase(IXunitTestCase testCase,
+        IXunitTestCaseRunnerWrapper? adapter,
         IMessageBus messageBus,
         CancellationTokenSource cancellationTokenSource,
         ExceptionAggregator aggregator,
@@ -121,61 +142,21 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
             );
         }
 
-        return await RunXunitTestCase(testCase, tests, messageBus, cancellationTokenSource, aggregator, explicitOption,
-            constructorArguments);
-    }
+        if (adapter != null)
+            return await adapter.RunAsync(context, testCase, tests, messageBus, aggregator, cancellationTokenSource,
+                testCase.TestCaseDisplayName, testCase.SkipReason, explicitOption, constructorArguments);
 
-    private ValueTask<RunSummary> RunXunitTestCase(IXunitTestCase testCase,
-        IReadOnlyCollection<IXunitTest> tests,
-        IMessageBus messageBus,
-        CancellationTokenSource cancellationTokenSource,
-        ExceptionAggregator aggregator,
-        ExplicitOption explicitOption,
-        object?[] constructorArguments)
-    {
-        IXunitTestCaseRunnerWrapper[] wrappers;
-        try
-        {
-            wrappers = context.RootServices.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
-        }
-        catch (Exception ex)
-        {
-            aggregator.Add(ex);
+        await using var scope = context.RootServices.CreateAsyncScope();
 
-            return XunitTestCaseRunner.Instance.Run(
-                testCase,
-                tests,
-                messageBus,
-                aggregator,
-                cancellationTokenSource,
-                testCase.TestCaseDisplayName,
-                testCase.SkipReason,
-                explicitOption,
-                constructorArguments);
-        }
-
-        var type = testCase.GetType();
-        do
-            if (wrappers.FirstOrDefault(w => w.TestCaseType == type) is { } adapter)
-                return adapter.RunAsync(context, testCase, tests, messageBus, aggregator, cancellationTokenSource,
-                    testCase.TestCaseDisplayName, testCase.SkipReason, explicitOption, constructorArguments);
-        while ((type = type.BaseType) != null);
-
-        return BaseRun(context.RootServices.CreateAsyncScope());
-
-        async ValueTask<RunSummary> BaseRun(AsyncServiceScope scope)
-        {
-            await using (scope)
-                return await XunitTestCaseRunner.Instance.Run(
-                    testCase,
-                    tests,
-                    messageBus,
-                    aggregator,
-                    cancellationTokenSource,
-                    testCase.TestCaseDisplayName,
-                    testCase.SkipReason,
-                    explicitOption,
-                    scope.ServiceProvider.CreateTestClassConstructorArguments(constructorArguments, aggregator));
-        }
+        return await XunitTestCaseRunner.Instance.Run(
+            testCase,
+            tests,
+            messageBus,
+            aggregator,
+            cancellationTokenSource,
+            testCase.TestCaseDisplayName,
+            testCase.SkipReason,
+            explicitOption,
+            scope.ServiceProvider.CreateTestClassConstructorArguments(constructorArguments, aggregator));
     }
 }

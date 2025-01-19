@@ -11,8 +11,6 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, UITestCaseRunnerAdapter>());
 
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, UITheoryTestCaseRunnerAdapter>());
-
         return services;
     }
 }

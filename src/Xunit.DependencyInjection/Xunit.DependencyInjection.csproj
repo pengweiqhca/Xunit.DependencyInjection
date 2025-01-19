@@ -8,7 +8,7 @@ Release notes:
 
 10.0: Upgrade xunit to v3.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>10.0.0</Version>
+    <Version>10.0.1-preview.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>
@@ -33,7 +33,7 @@ Release notes:
     <None Include="$(PackageId).targets" Pack="True" PackagePath="build\net472;build\netstandard2.1;buildTransitive\net472;buildTransitive\netstandard2.1;buildMultiTargeting" />
 
     <None Include="..\Xunit.DependencyInjection.Analyzer\tools\*.*" PackagePath="tools" Pack="true" />
-    <None Include="..\Xunit.DependencyInjection.Analyzer\bin\$(Configuration)\netstandard2.0\Xunit.DependencyInjection.Analyzer.dll" PackagePath="analyzers\dotnet\cs" Pack="true" />
+    <None Include="..\Xunit.DependencyInjection.Analyzer\bin\$(Configuration)\netstandard2.0\Xunit.DependencyInjection.Analyzer.dll" PackagePath="analyzers\dotnet\cs" Pack="true" Visible="false" />
   </ItemGroup>
 
 </Project>

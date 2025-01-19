@@ -22,7 +22,7 @@ public class Startup
             .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
             .AddScoped<BeforeAfterTest, TestBeforeAfterTest>()
             .AddHostedService<HostServiceTest>()
-            //.AddStaFactSupport()
+            .AddStaFactSupport()
             .AddSingleton<ITestCollectionOrderer, RunMonitorCollectionLastOrderer>()
             .AddSingleton<ITestClassOrderer, TestClassByOrderOrderer>()
             .AddSingleton<ITestCaseOrderer, TestCaseByMethodNameOrderer>()

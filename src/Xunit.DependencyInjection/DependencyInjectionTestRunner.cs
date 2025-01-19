@@ -46,9 +46,7 @@ public class DependencyInjectionTestRunner(
 
     protected override async ValueTask<TimeSpan> RunTest(XunitTestRunnerContext ctxt)
     {
-        var scope = context.RootServices.CreateAsyncScope();
-
-        await using var _ = scope;
+        await using var scope = context.RootServices.CreateAsyncScope();
 
         var raw = new Dictionary<int, object?>(ctxt.TestMethodArguments.Length);
         foreach (var kv in fromServices)

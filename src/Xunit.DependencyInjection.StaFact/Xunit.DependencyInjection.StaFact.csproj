@@ -13,13 +13,13 @@ Not support:
 1. ITestOutputHelperAccessor.Output is alway null. so, ILogger can't output to xunit output.
 2. Can't inject ITestOutputHelper
 3. [MethodData]</Description>
-    <PackageTags>xunit ioc di DependencyInjection test skipping</PackageTags>
-    <Version>9.1.0</Version>
+    <PackageTags>xunit ioc di DependencyInjection test stafact</PackageTags>
+    <Version>10.0.0-preview.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xunit.StaFact" Version="1.1.11" />
+    <PackageReference Include="Xunit.StaFact" Version="2.*-*" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
