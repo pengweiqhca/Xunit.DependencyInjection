@@ -6,6 +6,7 @@
 
 Release notes:
 
+9.8: Allow the default startup to be missing anywhere.
 9.7: Fix #133 #134, IHost.StopAsync might not have been invoked.
 9.6: Support required property on test class.
 9.5: Add support for BuildHostApplicationBuilder, fixing TheoryData of T evaluation.
@@ -25,7 +26,7 @@ Release notes:
 8.1: Startup allow static method or class (like Asp.Net Core startup).
 8.0: New feature: Support multiple startup.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>9.7.2</Version>
+    <Version>9.8.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>
@@ -50,7 +51,7 @@ Release notes:
     <None Include="$(PackageId).targets" Pack="True" PackagePath="build\net472;build\netstandard2.1;buildTransitive\net472;buildTransitive\netstandard2.1;buildMultiTargeting" />
 
     <None Include="..\Xunit.DependencyInjection.Analyzer\tools\*.*" PackagePath="tools" Pack="true" />
-    <None Include="..\Xunit.DependencyInjection.Analyzer\bin\$(Configuration)\netstandard2.0\Xunit.DependencyInjection.Analyzer.dll" PackagePath="analyzers\dotnet\cs" Pack="true" />
+    <None Include="..\Xunit.DependencyInjection.Analyzer\bin\$(Configuration)\netstandard2.0\Xunit.DependencyInjection.Analyzer.dll" PackagePath="analyzers\dotnet\cs" Pack="true" Visible="false" />
   </ItemGroup>
 
 </Project>

@@ -49,6 +49,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{25119119-1FAE-46DF-9722-9E1AA38586D7}"
 	ProjectSection(SolutionItems) = preProject
 		test\TestPackages.targets = test\TestPackages.targets
+		test\Directory.Build.props = test\Directory.Build.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.AspNetCoreTesting", "src\Xunit.DependencyInjection.AspNetCoreTesting\Xunit.DependencyInjection.AspNetCoreTesting.csproj", "{8E57DE30-9A8B-4501-9EB7-9DAC3A267FF2}"
