@@ -45,6 +45,15 @@ internal static class StartupLoader
         return new(host, startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
 
+    public static DependencyInjectionContext CreateEmptyStartup(AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
+    {
+        var hostApplicationBuilder = Host.CreateEmptyApplicationBuilder(new() { ApplicationName = assemblyName.Name });
+
+        new DefaultServices(diagnosticMessageSink).ConfigureServices(hostApplicationBuilder.Services);
+
+        return new(hostApplicationBuilder.Build(), false);
+    }
+
     private sealed class DefaultServices(IMessageSink diagnosticMessageSink)
     {
         public void ConfigureServices(IServiceCollection services)

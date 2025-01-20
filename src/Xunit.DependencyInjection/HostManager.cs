@@ -9,13 +9,13 @@ internal sealed class HostManager(Assembly assembly, IMessageSink diagnosticMess
     private Type? _defaultStartupType;
     private DependencyInjectionContext? _defaultHost;
 
-    public DependencyInjectionContext? BuildDefaultHost()
+    public DependencyInjectionContext BuildDefaultHost()
     {
         _defaultStartupType = StartupLoader.GetStartupType(assembly);
 
-        if (_defaultStartupType == null) return _defaultHost;
-
-        var value = StartupLoader.CreateHost(_defaultStartupType, assembly, diagnosticMessageSink);
+        var value = _defaultStartupType == null
+            ? StartupLoader.CreateEmptyStartup(assembly.GetName(), diagnosticMessageSink)
+            : StartupLoader.CreateHost(_defaultStartupType, assembly, diagnosticMessageSink);
 
         _hosts.Add(value.Host);
 
