@@ -2,22 +2,25 @@
 
 public class DependencyInjectionTestAssemblyRunner(
     DependencyInjectionStartupContext context,
-    IEnumerable<Exception> exceptions)
+    IReadOnlyCollection<Exception> exceptions)
     : XunitTestAssemblyRunnerBase<DependencyInjectionAssemblyRunnerContext, DependencyInjectionTestAssembly,
         IXunitTestCollection,
         IXunitTestCase>
 {
     protected override async ValueTask<bool> OnTestAssemblyStarting(DependencyInjectionAssemblyRunnerContext ctxt)
     {
-        if (ctxt.TestAssembly.AssemblyFixtureTypes.Count > 0)
+        if (exceptions.Count > 0)
+        {
+            foreach (var ex in exceptions)
+                ctxt.Aggregator.Add(ex);
+        }
+        else if (ctxt.TestAssembly.AssemblyFixtureTypes.Count > 0)
         {
             if (context.DefaultRootServices == null)
                 ctxt.Aggregator.Add(HostManager.MissingDefaultHost("Assembly fixture require a default startup."));
             else
-            {
                 await ctxt.AssemblyFixtureMappings.CreateFixtures(ctxt.TestAssembly.AssemblyFixtureTypes,
                     ctxt.Aggregator, context.DefaultRootServices);
-            }
         }
 
         return await base.OnTestAssemblyStarting(ctxt);
@@ -45,7 +48,7 @@ public class DependencyInjectionTestAssemblyRunner(
         IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions)
     {
-        await using var ctxt = new DependencyInjectionAssemblyRunnerContext(context, exceptions, testAssembly,
+        await using var ctxt = new DependencyInjectionAssemblyRunnerContext(context, testAssembly,
             testCases, executionMessageSink, executionOptions);
 
         await ctxt.InitializeAsync();
@@ -63,7 +66,6 @@ public class DependencyInjectionTestAssemblyRunner(
 
 public class DependencyInjectionAssemblyRunnerContext(
     DependencyInjectionStartupContext context,
-    IEnumerable<Exception> exceptions,
     DependencyInjectionTestAssembly testAssembly,
     IReadOnlyCollection<IXunitTestCase> testCases,
     IMessageSink executionMessageSink,
@@ -73,8 +75,6 @@ public class DependencyInjectionAssemblyRunnerContext(
 {
     public override void SetupParallelism()
     {
-        foreach (var ex in exceptions) Aggregator.Add(ex);
-
         base.SetupParallelism();
 
         if (ParallelAlgorithm != default) return;
