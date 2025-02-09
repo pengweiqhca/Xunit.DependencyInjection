@@ -12,5 +12,5 @@ public class ParallelTheoryTests(ConcurrencyFixture fixture) : IClassFixture<Con
     [InlineData(7)]
     [InlineData(8)]
     [InlineData(9)]
-    public async Task Theory(int _) => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Theory(int _) => fixture.CheckConcurrencyAsync();
 }

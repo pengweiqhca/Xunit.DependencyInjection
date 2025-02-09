@@ -48,25 +48,25 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         if (type.GetField("disableParallelization", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(this) is true)
             return await base.RunTestCollectionsAsync(messageBus, cancellationTokenSource);
 
-        var maxParallelThreads =
+        _context.MaxParallelThreads =
             (int)type.GetField("maxParallelThreads", BindingFlags.Instance | BindingFlags.NonPublic)!.GetValue(this);
 
-        if (maxParallelThreads > 0)
+        if (_context.MaxParallelThreads > 0)
         {
             var parallelAlgorithm = type.GetField("parallelAlgorithm", BindingFlags.Instance | BindingFlags.NonPublic);
             if (parallelAlgorithm != null && (int)parallelAlgorithm.GetValue(this) == 0)
             {
-                _context.ParallelSemaphore = new(maxParallelThreads);
+                _context.ParallelSemaphore = new(_context.MaxParallelThreads);
 
                 type.GetField("parallelSemaphore", BindingFlags.Instance | BindingFlags.NonPublic)?
                     .SetValue(this, _context.ParallelSemaphore);
 
                 ThreadPool.GetMinThreads(out var minThreads, out var minIOPorts);
-                if (minThreads < maxParallelThreads)
-                    ThreadPool.SetMinThreads(maxParallelThreads, minIOPorts);
+                if (minThreads < _context.MaxParallelThreads)
+                    ThreadPool.SetMinThreads(_context.MaxParallelThreads, minIOPorts);
             }
             else
-                SetupSyncContext(maxParallelThreads);
+                SetupSyncContext(_context.MaxParallelThreads);
         }
 
         Func<Func<Task<RunSummary>>, Task<RunSummary>> taskRunner = SynchronizationContext.Current != null
@@ -78,6 +78,8 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         List<Task<RunSummary>>? parallel = null;
         List<Func<Task<RunSummary>>>? nonParallel = null;
         var summaries = new List<RunSummary>();
+
+        var previous = new SemaphoreSlim(1, 1);
 
         foreach (var collection in OrderTestCollections())
         {
@@ -92,7 +94,27 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
             if (attr?.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) == true)
                 (nonParallel ??= []).Add(task);
             else
-                (parallel ??= []).Add(taskRunner(task));
+            {
+                var current = previous;
+                var next = new SemaphoreSlim(0, 1);
+                previous = next;
+
+                (parallel ??= []).Add(taskRunner(async () =>
+                {
+                    // Keep TestCollection order
+                    await current.WaitAsync();
+
+                    try
+                    {
+                        return await task();
+                    }
+                    finally
+                    {
+                        next.Release();
+                        current.Dispose();
+                    }
+                }));
+            }
         }
 
         if (parallel?.Count > 0)

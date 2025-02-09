@@ -40,7 +40,9 @@ public class DependencyInjectionTestCollectionRunner(
     {
         await base.BeforeTestCollectionFinishedAsync();
 
-        foreach (var fixture in CollectionFixtureMappings.Values.OfType<IAsyncDisposable>())
+        foreach (var fixture in CollectionFixtureMappings.Values
+                     .Where(x => x is not IDisposable and not IAsyncLifetime)
+                     .OfType<IAsyncDisposable>())
             await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask());
 
         if (_serviceScope is { } disposable) await disposable.DisposeAsync();
@@ -90,16 +92,33 @@ public class DependencyInjectionTestCollectionRunner(
     }
 
     /// <inheritdoc />
-    protected override Task<RunSummary> RunTestClassAsync(ITestClass testClass,
-        IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases) =>
-        context.ContextMap.TryGetValue(testClass, out var value) && value != null
-            ? new DependencyInjectionTestClassRunner(
+    protected override async Task<RunSummary> RunTestClassAsync(ITestClass testClass,
+        IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases)
+    {
+        if (context.ContextMap.TryGetValue(testClass, out var value) && value != null)
+            return await new DependencyInjectionTestClassRunner(
                 new(value.Host, value.DisableParallelization ||
                     !(context.ParallelizationMode == ParallelizationMode.Force ||
                         context.ParallelizationMode == ParallelizationMode.Enhance &&
-                        (SynchronizationContext.Current is MaxConcurrencySyncContext || context.ParallelSemaphore != null)),
-                    context.ParallelizationMode == ParallelizationMode.Force, context.ParallelSemaphore), testClass, @class, testCases,
+                        (SynchronizationContext.Current is MaxConcurrencySyncContext ||
+                            context.ParallelSemaphore != null)),
+                    context.ParallelizationMode == ParallelizationMode.Force,
+                    context.MaxParallelThreads,
+                    context.ParallelSemaphore), testClass,
+                @class, testCases,
                 DiagnosticMessageSink, MessageBus, TestCaseOrderer, new(Aggregator), CancellationTokenSource,
-                CollectionFixtureMappings).RunAsync()
-            : base.RunTestClassAsync(testClass, @class, testCases);
+                CollectionFixtureMappings).RunAsync();
+
+        if (context.ParallelSemaphore is not null)
+            await context.ParallelSemaphore.WaitAsync(CancellationTokenSource.Token);
+
+        try
+        {
+            return await base.RunTestClassAsync(testClass, @class, testCases);
+        }
+        finally
+        {
+            context.ParallelSemaphore?.Release();
+        }
+    }
 }

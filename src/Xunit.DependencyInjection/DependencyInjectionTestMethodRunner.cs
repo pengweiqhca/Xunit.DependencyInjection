@@ -20,17 +20,30 @@ public class DependencyInjectionTestMethodRunner(
     {
         if (context.DisableParallelization ||
             TestCases.Count() < 2 ||
-            TestMethod.TestClass.Class.GetCustomAttributes(typeof(CollectionDefinitionAttribute)).FirstOrDefault() is { } attr &&
+            TestMethod.TestClass.Class.GetCustomAttributes(typeof(CollectionDefinitionAttribute)).FirstOrDefault() is
+                { } attr &&
             attr.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) ||
             TestMethod.TestClass.Class.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any() ||
-            TestMethod.TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any() && !context.ForcedParallelization ||
+            TestMethod.TestClass.Class.GetCustomAttributes(typeof(CollectionAttribute)).Any() &&
+            !context.ForcedParallelization ||
             TestMethod.Method.GetCustomAttributes(typeof(DisableParallelizationAttribute)).Any() ||
-            TestMethod.Method.GetCustomAttributes(typeof(MemberDataAttribute)).Any(a =>
-                a.GetNamedArgument<bool>(nameof(MemberDataAttribute.DisableDiscoveryEnumeration))))
-            return await base.RunTestCasesAsync();
+            context is { ParallelSemaphore: not null, MaxParallelThreads: 1 })
+        {
+            if (context.ParallelSemaphore is not null)
+                await context.ParallelSemaphore.WaitAsync(CancellationTokenSource.Token);
+
+            try
+            {
+                return await base.RunTestCasesAsync();
+            }
+            finally
+            {
+                context.ParallelSemaphore?.Release();
+            }
+        }
 
         // Respect MaxParallelThreads by using the MaxConcurrencySyncContext if it exists, mimicking how collections are run
-        // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/XunitTestAssemblyRunner.cs#L169-L176
+        // https://github.com/xunit/xunit/blob/v2-2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/XunitTestAssemblyRunner.cs#L169-L176
         var scheduler = SynchronizationContext.Current == null
             ? TaskScheduler.Default
             : TaskScheduler.FromCurrentSynchronizationContext();
@@ -45,7 +58,7 @@ public class DependencyInjectionTestMethodRunner(
 
                 try
                 {
-                    return await RunTestCaseAsync(testCase).ConfigureAwait(false);
+                    return await Task.Run(() => RunTestCaseAsync(testCase)).ConfigureAwait(false);
                 }
                 finally
                 {

@@ -3,29 +3,29 @@
 public class ParallelCollectionTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>
 {
     [Fact]
-    public async Task Fact1() => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Fact1() => fixture.CheckConcurrencyAsync();
 
     [Fact]
-    public async Task Fact2() => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Fact2() => fixture.CheckConcurrencyAsync();
 
     [Fact]
-    public async Task Fact3() => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Fact3() => fixture.CheckConcurrencyAsync();
 
     [Fact]
-    public async Task Fact4() => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Fact4() => fixture.CheckConcurrencyAsync();
 
     [Fact]
-    public async Task Fact5() => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Fact5() => fixture.CheckConcurrencyAsync();
 
     [Fact]
-    public async Task Fact6() => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Fact6() => fixture.CheckConcurrencyAsync();
 
     [Fact]
-    public async Task Fact7() => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Fact7() => fixture.CheckConcurrencyAsync();
 
     [Fact]
-    public async Task Fact8() => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Fact8() => fixture.CheckConcurrencyAsync();
 
     [Fact]
-    public async Task Fact9() => Assert.InRange(await fixture.CheckConcurrencyAsync(), 1, 2);
+    public Task Fact9() => fixture.CheckConcurrencyAsync();
 }

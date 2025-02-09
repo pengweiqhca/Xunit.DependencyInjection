@@ -1,10 +1,17 @@
-namespace Xunit.DependencyInjection.Test.Parallelization;
+﻿namespace Xunit.DependencyInjection.Test.Parallelization;
 
-public class SequentialTheoryTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>
+public class SequentialTheoryTests(ConcurrencyDisableFixture fixture) : IClassFixture<ConcurrencyDisableFixture>
 {
     [Theory]
     [InlineData(1)]
     [InlineData(2)]
+    [InlineData(3)]
+    [InlineData(4)]
+    [InlineData(5)]
+    [InlineData(6)]
+    [InlineData(7)]
+    [InlineData(8)]
+    [InlineData(9)]
     [DisableParallelization]
-    public async Task Theory(int _) => Assert.Equal(1, await fixture.CheckConcurrencyAsync());
+    public Task Theory(int _) => fixture.CheckConcurrencyAsync();
 }
