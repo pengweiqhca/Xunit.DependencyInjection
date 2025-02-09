@@ -18,7 +18,7 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
             ctxt.TestMethod.TestClass.Class.GetCustomAttribute<CollectionAttribute>() != null &&
             !context.ForcedParallelization ||
             ctxt.TestMethod.Method.GetCustomAttribute<DisableParallelizationAttribute>() != null ||
-            ctxt.TestMethod.Method.GetCustomAttributes<MemberDataAttribute>().Any(a => a.DisableDiscoveryEnumeration))
+            context is { ParallelSemaphore: not null, MaxParallelThreads: 1 })
         {
             if (context.ParallelSemaphore == null) return await base.RunTestCases(ctxt, exception);
 
@@ -35,7 +35,7 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
         }
 
         // Respect MaxParallelThreads by using the MaxConcurrencySyncContext if it exists, mimicking how collections are run
-        // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/XunitTestAssemblyRunner.cs#L169-L176
+        // https://github.com/xunit/xunit/blob/v2-2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/XunitTestAssemblyRunner.cs#L169-L176
         var scheduler = SynchronizationContext.Current == null
             ? TaskScheduler.Default
             : TaskScheduler.FromCurrentSynchronizationContext();
@@ -51,7 +51,7 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
 
                 try
                 {
-                    return await RunTestCase(ctxt, testCase);
+                    return await Task.Run(() => RunTestCase(ctxt, testCase).AsTask());
                 }
                 finally
                 {

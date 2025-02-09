@@ -128,7 +128,8 @@ public class DependencyInjectionTestCollectionRunner(
                         context.ParallelizationMode == ParallelizationMode.Enhance &&
                         (SynchronizationContext.Current is MaxConcurrencySyncContext ||
                             context.ParallelSemaphore != null)),
-                    context.ParallelizationMode == ParallelizationMode.Force, context.ParallelSemaphore))
+                    context.ParallelizationMode == ParallelizationMode.Force,
+                    context.MaxParallelThreads, context.ParallelSemaphore))
             : XunitTestClassRunner.Instance;
 
         return testClassRunner.Run(

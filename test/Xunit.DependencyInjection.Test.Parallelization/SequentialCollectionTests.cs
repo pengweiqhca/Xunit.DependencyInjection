@@ -1,11 +1,32 @@
 namespace Xunit.DependencyInjection.Test.Parallelization;
 
 [DisableParallelization]
-public class SequentialCollectionTests(ConcurrencyFixture fixture) : IClassFixture<ConcurrencyFixture>
+public class SequentialCollectionTests(ConcurrencyDisableFixture fixture) : IClassFixture<ConcurrencyDisableFixture>
 {
     [Fact]
-    public async Task Fact1() => Assert.Equal(1, await fixture.CheckConcurrencyAsync());
+    public Task Fact1() => fixture.CheckConcurrencyAsync();
 
     [Fact]
-    public async Task Fact2() => Assert.Equal(1, await fixture.CheckConcurrencyAsync());
+    public Task Fact2() => fixture.CheckConcurrencyAsync();
+
+    [Fact]
+    public Task Fact3() => fixture.CheckConcurrencyAsync();
+
+    [Fact]
+    public Task Fact4() => fixture.CheckConcurrencyAsync();
+
+    [Fact]
+    public Task Fact5() => fixture.CheckConcurrencyAsync();
+
+    [Fact]
+    public Task Fact6() => fixture.CheckConcurrencyAsync();
+
+    [Fact]
+    public Task Fact7() => fixture.CheckConcurrencyAsync();
+
+    [Fact]
+    public Task Fact8() => fixture.CheckConcurrencyAsync();
+
+    [Fact]
+    public Task Fact9() => fixture.CheckConcurrencyAsync();
 }

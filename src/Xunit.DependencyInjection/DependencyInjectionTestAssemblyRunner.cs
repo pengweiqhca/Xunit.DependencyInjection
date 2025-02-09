@@ -56,6 +56,89 @@ public class DependencyInjectionTestAssemblyRunner(
         return await Run(ctxt);
     }
 
+#pragma warning disable CA2012 // We guarantee that parallel ValueTasks are only awaited once
+
+	/// <inheritdoc/>
+	protected override async ValueTask<RunSummary> RunTestCollections(
+        DependencyInjectionAssemblyRunnerContext ctxt,
+		Exception? exception)
+	{
+		if (ctxt.DisableParallelization || exception is not null)
+			return await base.RunTestCollections(ctxt, exception);
+
+		ctxt.SetupParallelism();
+
+		Func<Func<ValueTask<RunSummary>>, ValueTask<RunSummary>> taskRunner;
+		if (SynchronizationContext.Current is not null)
+		{
+			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
+			taskRunner = code => new(Task.Factory.StartNew(() => code().AsTask(), ctxt.CancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler, scheduler).Unwrap());
+		}
+		else
+			taskRunner = code => new(Task.Run(() => code().AsTask(), ctxt.CancellationTokenSource.Token));
+
+		List<ValueTask<RunSummary>>? parallel = null;
+		List<Func<ValueTask<RunSummary>>>? nonParallel = null;
+		var summaries = new List<RunSummary>();
+
+        var previous = new SemaphoreSlim(1, 1);
+
+		foreach (var (collection, testCases) in OrderTestCollections(ctxt))
+		{
+			ValueTask<RunSummary> task() => RunTestCollection(ctxt, collection, testCases);
+			if (collection.DisableParallelization)
+				(nonParallel ??= []).Add(task);
+			else
+            {
+                var current = previous;
+                var next = new SemaphoreSlim(0, 1);
+                previous = next;
+                (parallel ??= []).Add(taskRunner(async () =>
+                {
+                    // Keep TestCollection order
+                    await current.WaitAsync();
+                    try
+                    {
+                        return await task();
+                    }
+                    finally
+                    {
+                        next.Release();
+                        current.Dispose();
+                    }
+                }));
+            }
+		}
+
+		if (parallel?.Count > 0)
+			foreach (var task in parallel)
+				try
+				{
+					summaries.Add(await task);
+				}
+				catch (TaskCanceledException) { }
+
+		if (nonParallel?.Count > 0)
+			foreach (var taskFactory in nonParallel)
+				try
+				{
+					summaries.Add(await taskRunner(taskFactory));
+					if (ctxt.CancellationTokenSource.IsCancellationRequested)
+						break;
+				}
+				catch (TaskCanceledException) { }
+
+		return new RunSummary()
+		{
+			Total = summaries.Sum(s => s.Total),
+			Failed = summaries.Sum(s => s.Failed),
+			NotRun = summaries.Sum(s => s.NotRun),
+			Skipped = summaries.Sum(s => s.Skipped),
+		};
+	}
+
+#pragma warning restore CA2012
+
     /// <inheritdoc />
     protected override ValueTask<RunSummary> RunTestCollection(DependencyInjectionAssemblyRunnerContext ctxt,
         IXunitTestCollection testCollection,
@@ -76,6 +159,8 @@ public class DependencyInjectionAssemblyRunnerContext(
     public override void SetupParallelism()
     {
         base.SetupParallelism();
+
+        context.MaxParallelThreads = MaxParallelThreads;
 
         if (ParallelAlgorithm != default) return;
 
