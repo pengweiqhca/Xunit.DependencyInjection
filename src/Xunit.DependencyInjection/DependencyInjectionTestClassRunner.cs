@@ -103,14 +103,16 @@ public class DependencyInjectionTestClassRunner(
     {
         await base.BeforeTestClassFinishedAsync();
 
-        foreach (var fixture in ClassFixtureMappings.Values.OfType<IAsyncDisposable>())
+        foreach (var fixture in ClassFixtureMappings.Values
+                     .Where(x => x is not IDisposable and not IAsyncLifetime)
+                     .OfType<IAsyncDisposable>())
             await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask());
 
         if (_serviceScope is { } disposable) await disposable.DisposeAsync();
     }
 
     // This method has been slightly modified from the original implementation to run tests in parallel
-    // https://github.com/xunit/xunit/blob/2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/TestClassRunner.cs#L194-L219
+    // https://github.com/xunit/xunit/blob/v2-2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/TestClassRunner.cs#L194-L219
     protected override async Task<RunSummary> RunTestMethodsAsync()
     {
         if (context.DisableParallelization ||
