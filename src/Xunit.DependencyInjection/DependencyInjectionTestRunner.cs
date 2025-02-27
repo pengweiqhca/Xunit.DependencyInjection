@@ -114,10 +114,8 @@ public class DependencyInjectionTestRunner(
             if (test.TestMethod is not XunitTestMethod testMethod) return test;
 
             var field = typeof(XunitTestMethod).GetField("method", BindingFlags.Instance | BindingFlags.NonPublic);
-            if (field == null) return test;
-            var methodInfo = field.GetValue(testMethod) as MethodInfo;
-            if (methodInfo == null) return test;
-            if (methodInfo is DependencyInjectionMethodInfo) return test;
+            if (field == null || field.GetValue(testMethod) is not MethodInfo methodInfo ||
+                methodInfo is DependencyInjectionMethodInfo) return test;
 
             field.SetValue(testMethod, new DependencyInjectionMethodInfo(test.TestCase, exceptionFilter, methodInfo));
 
