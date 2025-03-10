@@ -5,10 +5,10 @@ public class DependencyInjectionTestFrameworkExecutor(
     ParallelizationMode parallelizationMode)
     : XunitTestFrameworkExecutor(testAssembly)
 {
-    /// <inheritdoc />
     public override async ValueTask RunTestCases(IReadOnlyCollection<IXunitTestCase> testCases,
         IMessageSink executionMessageSink,
-        ITestFrameworkExecutionOptions executionOptions)
+        ITestFrameworkExecutionOptions executionOptions,
+        CancellationToken cancellationToken)
     {
         var exceptions = new List<Exception>();
 
@@ -23,7 +23,7 @@ public class DependencyInjectionTestFrameworkExecutor(
 
         try
         {
-            await hostManager.StartAsync(default);
+            await hostManager.StartAsync(cancellationToken);
         }
         catch (Exception ex)
         {
@@ -32,9 +32,9 @@ public class DependencyInjectionTestFrameworkExecutor(
 
         await new DependencyInjectionTestAssemblyRunner(new(host, parallelizationMode, contextMap), exceptions)
             .Run(new(TestAssembly, host?.Services), testCases, executionMessageSink,
-                executionOptions);
+                executionOptions, cancellationToken);
 
-        await hostManager.StopAsync(default);
+        await hostManager.StopAsync(cancellationToken);
         return;
 
         static DependencyInjectionContext? GetHost(ICollection<Exception> exceptions,

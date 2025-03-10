@@ -6,11 +6,12 @@
 
 Release notes:
 
+10.2: Update xunit.v3 to 2.0.0.
 10.2: Fix some parallelization problem.
 10.1: Allow the default startup to be missing anywhere.
 10.0: Upgrade xunit to v3.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>10.2.1</Version>
+    <Version>10.3.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>
@@ -26,7 +27,7 @@ Release notes:
     <InternalsVisibleTo Include="Xunit.DependencyInjection.Test" />
 
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
-    <PackageReference Include="xunit.v3.extensibility.core" Version="[1.0.0, 2.0.0)" />
+    <PackageReference Include="xunit.v3.extensibility.core" Version="[2.0.0, 3.0.0)" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection.Analyzer\Xunit.DependencyInjection.Analyzer.csproj" PrivateAssets="All" ReferenceOutputAssembly="false" />
   </ItemGroup>

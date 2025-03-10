@@ -43,13 +43,15 @@ public class DependencyInjectionTestAssemblyRunner(
     /// <param name="testCases">The test cases associated with the test assembly.</param>
     /// <param name="executionMessageSink">The message sink to send execution messages to.</param>
     /// <param name="executionOptions">The execution options to use when running tests.</param>
+    /// <param name="cancellationToken">The cancellation token used to cancel execution</param>
     public async ValueTask<RunSummary> Run(DependencyInjectionTestAssembly testAssembly,
         IReadOnlyCollection<IXunitTestCase> testCases,
         IMessageSink executionMessageSink,
-        ITestFrameworkExecutionOptions executionOptions)
+        ITestFrameworkExecutionOptions executionOptions,
+        CancellationToken cancellationToken)
     {
         await using var ctxt = new DependencyInjectionAssemblyRunnerContext(context, testAssembly,
-            testCases, executionMessageSink, executionOptions);
+            testCases, executionMessageSink, executionOptions, cancellationToken);
 
         await ctxt.InitializeAsync();
 
@@ -147,14 +149,16 @@ public class DependencyInjectionTestAssemblyRunner(
             ctxt.AssemblyTestCaseOrderer ?? DefaultTestCaseOrderer.Instance);
 }
 
+/// <inheritdoc />
 public class DependencyInjectionAssemblyRunnerContext(
     DependencyInjectionStartupContext context,
     DependencyInjectionTestAssembly testAssembly,
     IReadOnlyCollection<IXunitTestCase> testCases,
     IMessageSink executionMessageSink,
-    ITestFrameworkExecutionOptions executionOptions)
+    ITestFrameworkExecutionOptions executionOptions,
+    CancellationToken cancellationToken)
     : XunitTestAssemblyRunnerBaseContext<DependencyInjectionTestAssembly, IXunitTestCase>(testAssembly, testCases,
-        executionMessageSink, executionOptions)
+        executionMessageSink, executionOptions, cancellationToken)
 {
     public override void SetupParallelism()
     {
