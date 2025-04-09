@@ -152,6 +152,19 @@ internal static class TestHelper
 
                 fixtureCache[fixtureType] = provider.GetService(fixtureType) ??
                     await GetFixture(fixtureType, parentMappingManager, provider, fixtureCategory);
+
+                // Do async initialization
+                if (fixtureCache[fixtureType] is IAsyncLifetime asyncLifetime)
+                    try
+                    {
+                        await asyncLifetime.InitializeAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new TestPipelineException(
+                            string.Format(CultureInfo.CurrentCulture, "{0} fixture type '{1}' threw in InitializeAsync",
+                                fixtureCategory, fixtureType.SafeName()), ex.Unwrap());
+                    }
             });
     }
 
@@ -221,19 +234,6 @@ internal static class TestHelper
                 string.Format(CultureInfo.CurrentCulture, "{0} fixture type '{1}' threw in its constructor",
                     fixtureCategory, fixtureType.SafeName()), ex.Unwrap());
         }
-
-        // Do async initialization
-        if (result is IAsyncLifetime asyncLifetime)
-            try
-            {
-                await asyncLifetime.InitializeAsync();
-            }
-            catch (Exception ex)
-            {
-                throw new TestPipelineException(
-                    string.Format(CultureInfo.CurrentCulture, "{0} fixture type '{1}' threw in InitializeAsync",
-                        fixtureCategory, fixtureType.SafeName()), ex.Unwrap());
-            }
 
         return result;
     }
