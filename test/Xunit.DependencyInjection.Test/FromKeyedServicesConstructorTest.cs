@@ -1,6 +1,6 @@
 ﻿namespace Xunit.DependencyInjection.Test;
 
-public class ParameterlessConstructorTest([FromKeyedServices("Test")]IDependency keyedDependency)
+public class FromKeyedServicesConstructorTest([FromKeyedServices("Test")] IDependency keyedDependency)
 {
     [Theory]
     [InlineData(null)]
