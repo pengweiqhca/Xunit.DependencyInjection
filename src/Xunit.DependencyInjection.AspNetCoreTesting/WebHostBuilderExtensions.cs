@@ -63,6 +63,8 @@ public static class WebHostBuilderExtensions
         {
             if (names.Length > 0 && !names.Contains(name)) return;
 
+            options.HttpClientActions.Add(client => client.BaseAddress ??= new("http://localhost"));
+
             options.HttpMessageHandlerBuilderActions.Add(x => x.PrimaryHandler = ((TestServer)server).CreateHandler());
         }
     }
@@ -76,7 +78,7 @@ public static class WebHostBuilderExtensions
         {
             if (names.Length > 0 && !names.Contains(name)) return;
 
-            options.HttpClientActions.Add(client => client.BaseAddress = new("http://localhost"));
+            options.HttpClientActions.Add(client => client.BaseAddress ??= new("http://localhost"));
 
             options.HttpMessageHandlerBuilderActions.Add(x => x.PrimaryHandler = new SocketsHttpHandler
             {
