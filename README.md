@@ -105,6 +105,8 @@ public class Startup
 
 * `BuildHostApplicationBuilder` method
 
+  > **NOTE**: If this method signature is not found, the host is built by simply calling `hostApplicationBuilder.Build();`.
+
   ``` C#
   public IHost BuildHostApplicationBuilder(HostApplicationBuilder hostApplicationBuilder)
   {
@@ -138,6 +140,17 @@ public class Startup
     public class Startup
     {
         public void ConfigureServices(IServiceCollection services[, HostBuilderContext context]) { }
+    }
+    ```
+
+* `BuildHost` method
+
+  > **NOTE**: If this method signature is not found, the host is built by simply calling `hostBuilder.Build();`.
+
+    ```C#
+    public class Startup
+    {
+        public IHost BuildHost([IHostBuilder hostBuilder]) { return hostBuilder.Build(); }
     }
     ```
 
