@@ -108,6 +108,8 @@ public class Startup
 
 * `BuildHostApplicationBuilder` method
 
+  > **NOTE**: If this method signature is not found, the host is built by simply calling `hostApplicationBuilder.Build();`.
+
   ``` C#
   public IHost BuildHostApplicationBuilder(HostApplicationBuilder hostApplicationBuilder)
   {
