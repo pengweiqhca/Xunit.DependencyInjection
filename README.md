@@ -93,36 +93,53 @@ public class Startup
 
 ## `Startup` limitation
 
+`Startup` supports two configuration styles, and the `Configure` method is supported by both.
+
+### HostApplicationBuilder-style
+
+* `ConfigureHostApplicationBuilder` method (distinguish by this method)
+
+    ``` C#
+    public void ConfigureHostApplicationBuilder(IHostApplicationBuilder hostApplicationBuilder) { }
+    ```
+
+* `BuildHostApplicationBuilder` method
+
+  ``` C#
+  public IHost BuildHostApplicationBuilder(HostApplicationBuilder hostApplicationBuilder)
+  {
+      return hostApplicationBuilder.Build();
+  }
+  ```
+
+### Startup-style
+
 * `CreateHostBuilder` method
 
-```C#
-public class Startup
-{
-    public IHostBuilder CreateHostBuilder([AssemblyName assemblyName]) { }
-}
-```
+  ``` C#
+  public class Startup
+  {
+      public IHostBuilder CreateHostBuilder([AssemblyName assemblyName]) { }
+  }
+  ```
 
 * `ConfigureHost` method
 
-```C#
-public class Startup
-{
-    public void ConfigureHost(IHostBuilder hostBuilder) { }
-}
-```
+    ```C#
+    public class Startup
+    {
+        public void ConfigureHost(IHostBuilder hostBuilder) { }
+    }
+    ```
 
 * `ConfigureServices` method
 
-```C#
-public class Startup
-{
-    public void ConfigureServices(IServiceCollection services[, HostBuilderContext context]) { }
-}
-```
-
-* `Configure` method
-
-  Anything defined in `ConfigureServices`, can be specified in the `Configure` method signature. These services are injected if they're available.
+    ```C#
+    public class Startup
+    {
+        public void ConfigureServices(IServiceCollection services[, HostBuilderContext context]) { }
+    }
+    ```
 
 ## How to find `Startup`?
 
