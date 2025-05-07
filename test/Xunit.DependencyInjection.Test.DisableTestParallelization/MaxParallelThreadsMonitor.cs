@@ -1,6 +1,6 @@
 ﻿using System.Collections.Concurrent;
 
-namespace Xunit.DependencyInjection.Test.DisableTestParallelization;
+namespace Xunit.DependencyInjection.Test.Parallelization;
 
 public class MaxParallelThreadsMonitor
 {

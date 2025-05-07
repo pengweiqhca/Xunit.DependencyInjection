@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Xunit.DependencyInjection.Test.DisableTestParallelization;
+namespace Xunit.DependencyInjection.Test.Parallelization;
 
 public class Startup
 {

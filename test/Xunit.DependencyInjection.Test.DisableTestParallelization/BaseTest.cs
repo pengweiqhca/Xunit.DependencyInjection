@@ -1,4 +1,4 @@
-﻿namespace Xunit.DependencyInjection.Test.DisableTestParallelization;
+﻿namespace Xunit.DependencyInjection.Test.Parallelization;
 
 public abstract class BaseTest(MaxParallelThreadsMonitor monitor)
 {

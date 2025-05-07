@@ -2,6 +2,7 @@
 
   <PropertyGroup>
     <ParallelizationMode>Enhance</ParallelizationMode>
+    <RootNamespace>Xunit.DependencyInjection.Test.Parallelization</RootNamespace>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
