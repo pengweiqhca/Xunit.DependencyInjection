@@ -210,6 +210,8 @@ If you want to use a special `Startup`, you can define `XunitStartupAssembly` an
 
 By default, xUnit runs all test cases in a test class synchronously. This package can extend the test framework to execute tests in parallel.
 
+> If you register a custom `ITestCollectionOrderer`,  test collections will be run in the specified order, which may be slower than running without the custom `ITestCollectionOrderer`.
+
 ```xml
 <Project>
 
