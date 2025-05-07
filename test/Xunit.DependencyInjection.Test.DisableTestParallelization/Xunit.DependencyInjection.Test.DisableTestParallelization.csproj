@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <DefineConstants>$(DefineConstants);DisableTestParallelization</DefineConstants>
     <ParallelizationMode>Enhance</ParallelizationMode>
     <RootNamespace>Xunit.DependencyInjection.Test.Parallelization</RootNamespace>
+    <XunitStartupFullName>$(RootNamespace).Startup</XunitStartupFullName>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
@@ -16,6 +18,8 @@
       <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
     </AssemblyAttribute>
 
+    <PackageReference Include="Shouldly" Version="4.*" />
+    
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
 
