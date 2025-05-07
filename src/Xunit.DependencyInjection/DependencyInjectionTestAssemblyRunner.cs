@@ -79,7 +79,8 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
         List<Func<Task<RunSummary>>>? nonParallel = null;
         var summaries = new List<RunSummary>();
 
-        var previous = new SemaphoreSlim(1, 1);
+        // If it has a custom TestCollectionOrderer, we need to run the collections in the order.
+        var previous = TestCollectionOrderer is DefaultTestCollectionOrderer ? null : new SemaphoreSlim(1, 1);
 
         foreach (var collection in OrderTestCollections())
         {
@@ -93,6 +94,8 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
 
             if (attr?.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) == true)
                 (nonParallel ??= []).Add(task);
+            else if (previous == null)
+                (parallel ??= []).Add(taskRunner(task));
             else
             {
                 var current = previous;
