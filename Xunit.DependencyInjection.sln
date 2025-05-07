@@ -58,7 +58,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MinimalApiSample", "test\Mi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Xunit.DependencyInjection.Test.Parallelization", "test\Xunit.DependencyInjection.Test.Parallelization\Xunit.DependencyInjection.Test.Parallelization.csproj", "{4C426CCA-AEA3-4AC1-A89B-F0AC9FD5A816}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.Test.Parallelization2", "test\Xunit.DependencyInjection.Test.Parallelization2\Xunit.DependencyInjection.Test.Parallelization2.csproj", "{7CAECA8D-F29A-47C6-9167-074CE49F3C6F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Xunit.DependencyInjection.Test.DisableTestParallelization", "test\Xunit.DependencyInjection.Test.DisableTestParallelization\Xunit.DependencyInjection.Test.DisableTestParallelization.csproj", "{7CAECA8D-F29A-47C6-9167-074CE49F3C6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,6 +1,6 @@
 ﻿using Xunit.Abstractions;
 
-namespace Xunit.DependencyInjection.Test.Parallelization2;
+namespace Xunit.DependencyInjection.Test.DisableTestParallelization;
 
 public class RunMonitorCollectionLastOrderer : ITestCollectionOrderer
 {

@@ -10,7 +10,8 @@
 
   <ItemGroup>
     <AssemblyAttribute Include="Xunit.CollectionBehavior">
-      <_Parameter1>MaxParallelThreads = 1</_Parameter1>
+      <_Parameter1 Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">MaxParallelThreads = 1</_Parameter1>
+      <_Parameter1 Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">DisableTestParallelization = true</_Parameter1>
       <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
     </AssemblyAttribute>
 
