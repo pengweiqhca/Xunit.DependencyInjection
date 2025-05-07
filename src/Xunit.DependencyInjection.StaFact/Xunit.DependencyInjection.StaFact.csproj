@@ -14,12 +14,12 @@ Not support:
 2. Can't inject ITestOutputHelper
 3. [MethodData]</Description>
     <PackageTags>xunit ioc di DependencyInjection test stafact</PackageTags>
-    <Version>10.1.0-preview.1</Version>
+    <Version>10.1.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Xunit.StaFact" Version="2.*-*" />
+    <PackageReference Include="Xunit.StaFact" Version="2.1.7" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
