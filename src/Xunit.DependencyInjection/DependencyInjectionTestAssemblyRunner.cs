@@ -83,13 +83,18 @@ public class DependencyInjectionTestAssemblyRunner(
 		List<Func<ValueTask<RunSummary>>>? nonParallel = null;
 		var summaries = new List<RunSummary>();
 
-        var previous = new SemaphoreSlim(1, 1);
+        // If it has a custom TestCollectionOrderer, we need to run the collections in the order.
+        var previous = ctxt.TestAssembly.TestCollectionOrderer is DefaultTestCollectionOrderer
+            ? null
+            : new SemaphoreSlim(1, 1);
 
 		foreach (var (collection, testCases) in OrderTestCollections(ctxt))
 		{
 			ValueTask<RunSummary> task() => RunTestCollection(ctxt, collection, testCases);
 			if (collection.DisableParallelization)
 				(nonParallel ??= []).Add(task);
+            else if (previous == null)
+                (parallel ??= []).Add(taskRunner(task));
 			else
             {
                 var current = previous;

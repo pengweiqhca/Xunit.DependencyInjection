@@ -14,6 +14,10 @@
       <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
     </AssemblyAttribute>
 
+    <Compile Include="../Xunit.DependencyInjection.Test.DisableTestParallelization/*.cs" />
+
+    <PackageReference Include="Shouldly" Version="4.*" />
+
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
 

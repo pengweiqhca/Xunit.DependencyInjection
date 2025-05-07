@@ -6,7 +6,7 @@ namespace Xunit.DependencyInjection.Test.Parallelization;
 public class ConcurrencyFixture
 {
     private readonly bool _enableParallelization;
-    private readonly ConcurrentBag<int> _results = new();
+    private readonly ConcurrentBag<int> _results = [];
     private int _concurrency;
 
     public ConcurrencyFixture() => _enableParallelization = true;

@@ -12,7 +12,7 @@ Release notes:
 10.1: Allow the default startup to be missing anywhere.
 10.0: Upgrade xunit to v3.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>10.4.0</Version>
+    <Version>10.4.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>
