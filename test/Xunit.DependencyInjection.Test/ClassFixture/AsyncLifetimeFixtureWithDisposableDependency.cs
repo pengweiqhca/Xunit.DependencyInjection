@@ -1,4 +1,4 @@
-using Xunit.DependencyInjection.Test.CollectionFixture;
+﻿using Xunit.DependencyInjection.Test.CollectionFixture;
 
 namespace Xunit.DependencyInjection.Test.ClassFixture;
 
@@ -10,7 +10,7 @@ public class AsyncLifetimeFixtureWithDisposableDependency(
 
     public CollectionFixtureWithDependency CollectionFixtureWithDependency { get; } = collectionFixtureWithDependency;
 
-    public IList<string> Journal { get; } = new List<string>();
+    public IList<string> Journal { get; } = [];
 
     public Task InitializeAsync()
     {
