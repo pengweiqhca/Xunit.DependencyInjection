@@ -84,7 +84,7 @@ public class DependencyInjectionTestAssemblyRunner(
 		var summaries = new List<RunSummary>();
 
         // If it has a custom TestCollectionOrderer, we need to run the collections in the order.
-        var previous = ctxt.TestAssembly.TestCollectionOrderer is DefaultTestCollectionOrderer
+        var previous = ctxt.TestAssembly.TestCollectionOrderer is null or DefaultTestCollectionOrderer
             ? null
             : new SemaphoreSlim(1, 1);
 
