@@ -126,7 +126,7 @@ internal static class TestHelper
             throw new NotSupportedException("Not found `parentMappingManager` field in FixtureMappingManager");
 
         var value = field.GetValue(manager);
-        if (value != null && value is not FixtureMappingManager)
+        if (value is not null and not FixtureMappingManager)
             throw new NotSupportedException("`parentMappingManager` is not a FixtureMappingManager");
 
         var parentMappingManager = value as FixtureMappingManager;
