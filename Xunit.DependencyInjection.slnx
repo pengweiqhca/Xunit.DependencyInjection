@@ -1,0 +1,36 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitignore" />
+    <File Path="azure-pipelines.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="global.json" />
+    <File Path="Key.snk" />
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/src/">
+    <File Path="src/Directory.Build.props" />
+    <Project Path="src/Xunit.DependencyInjection.Analyzer/Xunit.DependencyInjection.Analyzer.csproj" />
+    <Project Path="src/Xunit.DependencyInjection.AspNetCoreTesting/Xunit.DependencyInjection.AspNetCoreTesting.csproj" />
+    <Project Path="src/Xunit.DependencyInjection.Demystifier/Xunit.DependencyInjection.Demystifier.csproj" />
+    <Project Path="src/Xunit.DependencyInjection.Logging/Xunit.DependencyInjection.Logging.csproj" />
+    <Project Path="src/Xunit.DependencyInjection.SkippableFact/Xunit.DependencyInjection.SkippableFact.csproj" />
+    <Project Path="src/Xunit.DependencyInjection.StaFact/Xunit.DependencyInjection.StaFact.csproj" />
+    <Project Path="src/Xunit.DependencyInjection.Template/Xunit.DependencyInjection.Template.csproj" />
+    <Project Path="src/Xunit.DependencyInjection.xRetry/Xunit.DependencyInjection.xRetry.csproj" />
+    <Project Path="src/Xunit.DependencyInjection/Xunit.DependencyInjection.csproj" />
+  </Folder>
+  <Folder Name="/test/">
+    <File Path="test/Directory.Build.props" />
+    <File Path="test/TestPackages.targets" />
+    <Project Path="test/MinimalApiSample/MinimalApiSample.csproj" />
+    <Project Path="test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj" />
+    <Project Path="test/Xunit.DependencyInjection.FakeTest/Xunit.DependencyInjection.FakeTest.csproj" />
+    <Project Path="test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj" />
+    <Project Path="test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj" />
+    <Project Path="test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj" />
+    <Project Path="test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj" />
+    <Project Path="test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj" />
+  </Folder>
+</Solution>
