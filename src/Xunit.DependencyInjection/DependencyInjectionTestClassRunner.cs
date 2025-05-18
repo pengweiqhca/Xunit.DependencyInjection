@@ -135,7 +135,7 @@ public class DependencyInjectionTestClassRunner(
             DiagnosticMessageSink.OnMessage(new DiagnosticMessage(
                 $"Test case orderer '{TestCaseOrderer.GetType().FullName}' threw '{ex.GetType().FullName}' during ordering: {ex.Message}{Environment.NewLine}{ex.StackTrace}"));
 
-            orderedTestCases = TestCases.ToList();
+            orderedTestCases = [.. TestCases];
         }
 
         var constructorArguments = CreateTestClassConstructorArguments();

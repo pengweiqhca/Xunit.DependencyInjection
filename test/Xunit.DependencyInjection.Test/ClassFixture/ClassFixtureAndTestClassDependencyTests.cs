@@ -4,16 +4,10 @@ public class ClassFixtureAndTestClassDependencyTests(FixtureWithDependency fixtu
     : IClassFixture<FixtureWithDependency>
 {
     [Fact]
-    public void FixtureWithDependencyIsInjected()
-    {
-        Assert.NotNull(fixture);
-    }
+    public void FixtureWithDependencyIsInjected() => Assert.NotNull(fixture);
 
     [Fact]
-    public void ClassFixtureContainsInjectedDependency()
-    {
-        Assert.IsType<DependencyClass>(fixture.Dependency);
-    }
+    public void ClassFixtureContainsInjectedDependency() => Assert.IsType<DependencyClass>(fixture.Dependency);
 
     [Fact]
     public void TestCaseDependencyIsInjected()
@@ -23,10 +17,7 @@ public class ClassFixtureAndTestClassDependencyTests(FixtureWithDependency fixtu
     }
 
     [Fact]
-    public void TestCaseDependencyInstanceIsDifferentToFixtureDependencyInstance()
-    {
-        Assert.NotSame(dependency, fixture.Dependency);
-    }
+    public void TestCaseDependencyInstanceIsDifferentToFixtureDependencyInstance() => Assert.NotSame(dependency, fixture.Dependency);
 
     [Fact]
     public void FixtureIsSharedClassDependencyIsNot_1()

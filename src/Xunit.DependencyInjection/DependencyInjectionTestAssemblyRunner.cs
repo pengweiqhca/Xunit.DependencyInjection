@@ -84,7 +84,7 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
 
         foreach (var collection in OrderTestCollections())
         {
-            var task = () =>
+            Task<RunSummary> Run() =>
                 RunTestCollectionAsync(messageBus, collection.Item1, collection.Item2, cancellationTokenSource);
 
             // attr is null here from our new unit test, but I'm not sure if that's expected or there's a cheaper approach here
@@ -93,9 +93,9 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
                 .SingleOrDefault();
 
             if (attr?.GetNamedArgument<bool>(nameof(CollectionDefinitionAttribute.DisableParallelization)) == true)
-                (nonParallel ??= []).Add(task);
+                (nonParallel ??= []).Add(Run);
             else if (previous == null)
-                (parallel ??= []).Add(taskRunner(task));
+                (parallel ??= []).Add(taskRunner(Run));
             else
             {
                 var current = previous;
@@ -109,7 +109,7 @@ public class DependencyInjectionTestAssemblyRunner : XunitTestAssemblyRunner
 
                     try
                     {
-                        return await task();
+                        return await Run();
                     }
                     finally
                     {

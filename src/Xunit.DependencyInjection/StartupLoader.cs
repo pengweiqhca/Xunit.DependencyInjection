@@ -196,7 +196,7 @@ internal static class StartupLoader
         using var scope = provider.CreateScope();
 
         method.Invoke(method.IsStatic ? null : startup,
-            method.GetParameters().Select(scope.ServiceProvider.GetRequiredService).ToArray());
+            [.. method.GetParameters().Select(scope.ServiceProvider.GetRequiredService)]);
     }
 
     private static IHost? BuildHostWithHostApplicationBuilder(HostApplicationBuilder hostApplicationBuilder,

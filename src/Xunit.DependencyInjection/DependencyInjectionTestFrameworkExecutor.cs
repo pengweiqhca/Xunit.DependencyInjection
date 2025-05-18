@@ -18,7 +18,7 @@ public class DependencyInjectionTestFrameworkExecutor(
         IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions)
     {
-        testCases = testCases.ToList();
+        testCases = [.. testCases];
 
         var exceptions = new List<Exception>();
 

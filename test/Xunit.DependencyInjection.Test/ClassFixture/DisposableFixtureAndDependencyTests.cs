@@ -12,16 +12,16 @@ public class MonitorDisposableFixturesCollection : ICollectionFixture<Collection
 public class DisposableFixtureUnderTest : IClassFixture<FixtureWithDisposableDependency>
 {
     private readonly FixtureWithDisposableDependency _fixture;
-    public static FixtureWithDisposableDependency? s_fixture;
+    public static FixtureWithDisposableDependency? Fixture;
     private readonly IDependencyWithManagedLifetime _dependency;
-    public static IDependencyWithManagedLifetime? s_dependency;
+    public static IDependencyWithManagedLifetime? Dependency;
 
     public DisposableFixtureUnderTest(FixtureWithDisposableDependency fixture, IDependencyWithManagedLifetime dependency)
     {
         _fixture = fixture;
-        s_fixture = fixture;
+        Fixture = fixture;
         _dependency = dependency;
-        s_dependency = dependency;
+        Dependency = dependency;
     }
 
     [Fact]
@@ -36,20 +36,12 @@ public class DisposableFixtureUnderTest : IClassFixture<FixtureWithDisposableDep
 public class DisposableFixtureTests
 {
     [Fact]
-    public void FixtureIsDisposed()
-    {
-        Assert.True(DisposableFixtureUnderTest.s_fixture?.IsDisposed);
-    }
+    public void FixtureIsDisposed() => Assert.True(DisposableFixtureUnderTest.Fixture?.IsDisposed);
 
     [Fact]
-    public void FixtureDependencyIsDisposed()
-    {
-        Assert.True(DisposableFixtureUnderTest.s_fixture?.Dependency?.IsDisposed);
-    }
+    public void FixtureDependencyIsDisposed() =>
+        Assert.True(DisposableFixtureUnderTest.Fixture?.Dependency?.IsDisposed);
 
     [Fact]
-    public void ClassDependencyIsDisposed()
-    {
-        Assert.True(DisposableFixtureUnderTest.s_dependency?.IsDisposed);
-    }
+    public void ClassDependencyIsDisposed() => Assert.True(DisposableFixtureUnderTest.Dependency?.IsDisposed);
 }

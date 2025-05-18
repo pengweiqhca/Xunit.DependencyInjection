@@ -5,14 +5,16 @@ namespace Xunit.DependencyInjection.Test;
 public class XRetryTest(IDependency dependency)
 {
     private static int _factNumCalls = 0;
+
     // testId => numCalls
-    private static readonly Dictionary<int, int> _theoryNumCalls = new()
+    private static readonly Dictionary<int, int> TheoryNumCalls = new()
     {
         { 0, 0 },
         { 1, 0 }
     };
+
     // testId => numCalls
-    private static readonly Dictionary<int, int> _nonSerializableTheoryNumCalls = new()
+    private static readonly Dictionary<int, int> NonSerializableTheoryNumCalls = new()
     {
         { 0, 0 },
         { 1, 0 }
@@ -34,8 +36,8 @@ public class XRetryTest(IDependency dependency)
     {
         AssertDependencyUnique();
 
-        _theoryNumCalls[id]++;
-        Assert.Equal(3, _theoryNumCalls[id]);
+        TheoryNumCalls[id]++;
+        Assert.Equal(3, TheoryNumCalls[id]);
     }
 
     public class NonSerializableTestData(int id)
@@ -49,8 +51,8 @@ public class XRetryTest(IDependency dependency)
     {
         AssertDependencyUnique();
 
-        _nonSerializableTheoryNumCalls[nonSerializableWrapper.Id]++;
-        Assert.Equal(3, _nonSerializableTheoryNumCalls[nonSerializableWrapper.Id]);
+        NonSerializableTheoryNumCalls[nonSerializableWrapper.Id]++;
+        Assert.Equal(3, NonSerializableTheoryNumCalls[nonSerializableWrapper.Id]);
     }
 
     public static IEnumerable<object[]> GetTestData() =>
