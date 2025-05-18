@@ -53,7 +53,6 @@ public class DependencyInjectionTestClassRunner(DependencyInjectionTestContext c
 
             _serviceScope = serviceScope;
 
-            //TODO ClassFixtureTypes没有切换到新的方法
             await ctxt.ClassFixtureMappings.CreateFixtures(ctxt.TestClass.ClassFixtureTypes, ctxt.Aggregator,
                 serviceScope.ServiceProvider);
         }

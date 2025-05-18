@@ -2,7 +2,9 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
+#pragma warning disable IDE1006 // Naming Styles
 namespace Xunit.DependencyInjection.xRetry;
+#pragma warning restore IDE1006 // Naming Styles
 
 public class RetryTestCaseRunnerWrapper : DependencyInjectionTestCaseRunnerWrapper
 {

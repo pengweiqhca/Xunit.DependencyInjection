@@ -74,7 +74,7 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
         IXunitTestCaseRunnerWrapper[] wrappers;
         try
         {
-            wrappers = context.RootServices.GetServices<IXunitTestCaseRunnerWrapper>().Reverse().ToArray();
+            wrappers = [.. context.RootServices.GetServices<IXunitTestCaseRunnerWrapper>().Reverse()];
         }
         catch (Exception ex)
         {

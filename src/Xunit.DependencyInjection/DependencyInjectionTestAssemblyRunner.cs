@@ -90,11 +90,11 @@ public class DependencyInjectionTestAssemblyRunner(
 
 		foreach (var (collection, testCases) in OrderTestCollections(ctxt))
 		{
-			ValueTask<RunSummary> task() => RunTestCollection(ctxt, collection, testCases);
+			ValueTask<RunSummary> Run() => RunTestCollection(ctxt, collection, testCases);
 			if (collection.DisableParallelization)
-				(nonParallel ??= []).Add(task);
+				(nonParallel ??= []).Add(Run);
             else if (previous == null)
-                (parallel ??= []).Add(taskRunner(task));
+                (parallel ??= []).Add(taskRunner(Run));
 			else
             {
                 var current = previous;
@@ -106,7 +106,7 @@ public class DependencyInjectionTestAssemblyRunner(
                     await current.WaitAsync();
                     try
                     {
-                        return await task();
+                        return await Run();
                     }
                     finally
                     {
