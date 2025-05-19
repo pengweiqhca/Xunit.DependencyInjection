@@ -34,11 +34,11 @@ public class ConcurrencyFixture
 
         static ValueTask Delay(int millisecondsDelay)
         {
-            // xunit 2.8.0+ and `parallelAlgorithm` is not `aggressive`
+            // `parallelAlgorithm` is not `aggressive`
             if (SynchronizationContext.Current is null)
                 return new(Task.Delay(millisecondsDelay));
 
-            // xunit lt 2.8.0+ or `parallelAlgorithm` is `aggressive`
+            // `parallelAlgorithm` is `aggressive`
             // MaxConcurrencySyncContext is limit thread rather than task, so we should use `Thread.Sleep` rather than `Task.Delay`.
             Thread.Sleep(millisecondsDelay);
 
