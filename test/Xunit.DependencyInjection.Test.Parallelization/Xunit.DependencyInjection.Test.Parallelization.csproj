@@ -14,6 +14,8 @@
       <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
     </AssemblyAttribute>
 
+    <Using Include="Xunit.Abstractions" />
+    <Compile Include="../Xunit.DependencyInjection.Test/RunMonitorCollectionLastOrderer.cs" />
     <Compile Include="../Xunit.DependencyInjection.Test.DisableTestParallelization/*.cs" />
 
     <PackageReference Include="Shouldly" Version="4.*" />

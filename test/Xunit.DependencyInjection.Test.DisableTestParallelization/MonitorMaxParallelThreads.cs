@@ -3,7 +3,7 @@ using Xunit.Abstractions;
 
 namespace Xunit.DependencyInjection.Test.Parallelization;
 
-public class MaxParallelThreadsMonitor(ITestOutputHelperAccessor output)
+public class MonitorMaxParallelThreads(ITestOutputHelperAccessor output)
 {
     private readonly ConcurrentBag<DateTime> _startTimes = [];
 
