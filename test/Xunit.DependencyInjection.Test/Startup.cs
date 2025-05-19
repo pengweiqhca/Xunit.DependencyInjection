@@ -1,5 +1,4 @@
 ﻿using Autofac.Extensions.DependencyInjection;
-using System.Diagnostics;
 using Xunit.DependencyInjection.Demystifier;
 using Xunit.v3;
 

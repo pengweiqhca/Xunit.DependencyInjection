@@ -1,5 +1,4 @@
 ﻿using System.Collections.Concurrent;
-using Xunit.Sdk;
 
 namespace Xunit.DependencyInjection.Test.Parallelization;
 
