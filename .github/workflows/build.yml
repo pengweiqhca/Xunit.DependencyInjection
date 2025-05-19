@@ -27,9 +27,9 @@ jobs:
       run: |
         dotnet test ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
         dotnet test ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+        dotnet test ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
         dotnet test ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
         dotnet test ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj
-        dotnet test ./test/Xunit.DependencyInjection.Test.Parallelization2/Xunit.DependencyInjection.Test.Parallelization2.csproj
 
   windows-build:
     runs-on: windows-latest
@@ -43,9 +43,9 @@ jobs:
       run: dotnet build -c Release -v n
     - name: test
       run: |
+        dotnet test ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
         dotnet test ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
         dotnet test ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-        dotnet test ./test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj
+        dotnet test ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
         dotnet test ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
         dotnet test ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj
-        dotnet test ./test/Xunit.DependencyInjection.Test.Parallelization2/Xunit.DependencyInjection.Test.Parallelization2.csproj
