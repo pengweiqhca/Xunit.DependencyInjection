@@ -5,6 +5,7 @@
 
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <IsTestProject Condition="'$(Configuration)' != 'Release'">false</IsTestProject>
   </PropertyGroup>
 
   <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
