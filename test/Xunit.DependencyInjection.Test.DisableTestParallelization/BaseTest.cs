@@ -1,6 +1,6 @@
 ﻿namespace Xunit.DependencyInjection.Test.Parallelization;
 
-public abstract class BaseTest(MaxParallelThreadsMonitor monitor)
+public abstract class BaseTest(MonitorMaxParallelThreads monitor)
 {
     [Fact]
     public async Task Test1()
@@ -27,6 +27,6 @@ public abstract class BaseTest(MaxParallelThreadsMonitor monitor)
     }
 }
 
-public class TestClass1(MaxParallelThreadsMonitor monitor) : BaseTest(monitor);
+public class TestClass1(MonitorMaxParallelThreads monitor) : BaseTest(monitor);
 
-public class TestClass2(MaxParallelThreadsMonitor monitor) : BaseTest(monitor);
+public class TestClass2(MonitorMaxParallelThreads monitor) : BaseTest(monitor);

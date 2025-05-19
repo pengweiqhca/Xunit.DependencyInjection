@@ -2,7 +2,7 @@
 
 namespace Xunit.DependencyInjection.Test.Parallelization;
 
-public class MaxParallelThreadsMonitorTest(MaxParallelThreadsMonitor monitor, ITestOutputHelper output)
+public class MonitorMaxParallelThreadsTest(MonitorMaxParallelThreads monitor, ITestOutputHelper output)
 {
     [Fact]
     public void MonitorTest()
