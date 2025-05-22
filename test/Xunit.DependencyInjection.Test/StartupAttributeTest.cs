@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+﻿using Shouldly;
 
 namespace Xunit.DependencyInjection.Test;
 
@@ -43,5 +43,5 @@ public class StartupAttributeTest(StartupAttributeTest.Dependency2 dependency)
 public class StartupAttributeSharedTest
 {
     [Fact]
-    public void SharedTest() => StartupAttributeTest.Startup2.Counter.Should().BeGreaterOrEqualTo(1);
+    public void SharedTest() => StartupAttributeTest.Startup2.Counter.ShouldBeGreaterThanOrEqualTo(1);
 }
