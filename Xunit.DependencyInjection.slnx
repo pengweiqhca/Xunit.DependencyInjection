@@ -8,9 +8,9 @@
     <File Path="Key.snk" />
     <File Path="LICENSE" />
     <File Path="README.md" />
+    <File Path="Directory.Packages.props" />
   </Folder>
   <Folder Name="/src/">
-    <File Path="src/Directory.Build.props" />
     <Project Path="src/Xunit.DependencyInjection.Analyzer/Xunit.DependencyInjection.Analyzer.csproj" />
     <Project Path="src/Xunit.DependencyInjection.AspNetCoreTesting/Xunit.DependencyInjection.AspNetCoreTesting.csproj" />
     <Project Path="src/Xunit.DependencyInjection.Demystifier/Xunit.DependencyInjection.Demystifier.csproj" />
@@ -20,10 +20,9 @@
     <Project Path="src/Xunit.DependencyInjection.Template/Xunit.DependencyInjection.Template.csproj" />
     <Project Path="src/Xunit.DependencyInjection.xRetry/Xunit.DependencyInjection.xRetry.csproj" />
     <Project Path="src/Xunit.DependencyInjection/Xunit.DependencyInjection.csproj" />
+    <File Path="src/Directory.Build.props" />
   </Folder>
   <Folder Name="/test/">
-    <File Path="test/Directory.Build.props" />
-    <File Path="test/TestPackages.targets" />
     <Project Path="test/MinimalApiSample/MinimalApiSample.csproj" />
     <Project Path="test/Xunit.DependencyInjection.Analyzer.Test/Xunit.DependencyInjection.Analyzer.Test.csproj" />
     <Project Path="test/Xunit.DependencyInjection.FakeTest/Xunit.DependencyInjection.FakeTest.csproj" />
@@ -32,5 +31,7 @@
     <Project Path="test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj" />
     <Project Path="test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj" />
     <Project Path="test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj" />
+    <File Path="test/Directory.Build.props" />
+    <File Path="test/TestPackages.targets" />
   </Folder>
 </Solution>
