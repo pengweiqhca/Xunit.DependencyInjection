@@ -11,8 +11,8 @@
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
     <ImplicitUsings>enable</ImplicitUsings>
     <DebugType>embedded</DebugType>
-    <LangVersion>12.0</LangVersion>
-    <NoWarn>$(NoWarn);1591;NU1903;NU5104</NoWarn>
+    <LangVersion>13.0</LangVersion>
+    <NoWarn>$(NoWarn);1591;NU1507;NU1903</NoWarn>
     <NeutralLanguage>en-us</NeutralLanguage>
     <Nullable>enable</Nullable>
     <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
@@ -24,10 +24,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.*" PrivateAssets="All" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.*" PrivateAssets="All" />
-    <PackageReference Include="PolySharp" Version="1.*" PrivateAssets="All" />
-
     <Reference Include="System.Net.Http" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
   </ItemGroup>
 

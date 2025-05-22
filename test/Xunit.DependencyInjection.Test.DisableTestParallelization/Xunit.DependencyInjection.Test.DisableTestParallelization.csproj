@@ -21,7 +21,7 @@
     <Using Include="Xunit.Sdk" />
     <Compile Include="../Xunit.DependencyInjection.Test/RunMonitorCollectionLastOrderer.cs" />
 
-    <PackageReference Include="Shouldly" Version="4.*" />
+    <PackageReference Include="Shouldly" />
 
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>

@@ -18,7 +18,7 @@
     <Compile Include="../Xunit.DependencyInjection.Test/RunMonitorCollectionLastOrderer.cs" />
     <Compile Include="../Xunit.DependencyInjection.Test.DisableTestParallelization/*.cs" />
 
-    <PackageReference Include="Shouldly" Version="4.*" />
+    <PackageReference Include="Shouldly" />
 
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
