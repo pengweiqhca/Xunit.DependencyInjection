@@ -8,7 +8,6 @@
   <ItemGroup>
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.*" />
     <PackageVersion Include="Ben.Demystifier" Version="0.*" />
-    <PackageVersion Include="FluentAssertions" Version="6.*" />
     <PackageVersion Include="FSharp.Core" Version="9.*" />
     <PackageVersion Include="MartinCostello.Logging.XUnit" Version="0.*" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(_TargetFrameworkVersionWithoutV)" />
@@ -24,11 +23,11 @@
     <PackageVersion Include="System.ValueTuple" Version="4.*" />
     <PackageVersion Include="xRetry" Version="[1.9.0, 2.0.0)" />
     <PackageVersion Include="xunit" Version="2.*" />
+    <PackageVersion Include="xunit.core" Version="[2.4.2, 3.0.0)" />
     <PackageVersion Include="xunit.extensibility.execution" Version="[2.4.2, 3.0.0)" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="2.*" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.*" />
     <PackageVersion Include="Xunit.SkippableFact" Version="1.5.23" />
     <PackageVersion Include="Xunit.StaFact" Version="1.2.69" />
-    <PackageVersion Include="xunit.core" Version="[2.4.2, 3.0.0)" />
   </ItemGroup>
 
   <ItemGroup>
