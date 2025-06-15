@@ -30,7 +30,6 @@
 
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.*" PrivateAssets="All" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="1.*" PrivateAssets="All" />
     <GlobalPackageReference Include="PolySharp" Version="1.*" PrivateAssets="All" />
   </ItemGroup>
 
