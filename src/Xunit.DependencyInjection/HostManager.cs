@@ -114,7 +114,7 @@ internal sealed class HostManager(Assembly assembly, IMessageSink diagnosticMess
     {
         _hosts.Reverse();
 
-        return Task.WhenAll(_hosts.Select(x => x.Host.StopAsync(cancellationToken)));
+        return Task.WhenAll(_hosts.Where(x => !x.Disposed).Select(x => x.Host.StopAsync(cancellationToken)));
     }
 
     public ValueTask DisposeAsync() => new(Task.WhenAll(_hosts.Select(x => x.Host).Select(DisposeAsync)));

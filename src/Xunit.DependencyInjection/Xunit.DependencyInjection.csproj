@@ -6,13 +6,14 @@
 
 Release notes:
 
+10.5: Improve compatibility with top level statements.
 10.4: Fix #146.
 10.3: Update xunit.v3 to 2.0.0.
 10.2: Fix some parallelization problem.
 10.1: Allow the default startup to be missing anywhere.
 10.0: Upgrade xunit to v3.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>10.4.3</Version>
+    <Version>10.5.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>
