@@ -12,93 +12,70 @@ namespace Xunit.DependencyInjection.AspNetCoreTesting;
 
 public static class WebHostBuilderExtensions
 {
-    public static IWebHostBuilder UseTestServerAndAddDefaultHttpClient(this IWebHostBuilder webHostBuilder) =>
-        webHostBuilder.UseTestServerAndAddDefaultHttpClient(x => x.PreserveExecutionContext = true, []);
+    public static IWebHostBuilder UseTestServer(this IWebHostBuilder webHostBuilder) => webHostBuilder
+        .UseTestServer(x => x.PreserveExecutionContext = true)
+        .ConfigureServices(x => x
+            .AddSingleton<ITestHttpMessageHandlerFactory, TestServerHttpMessageHandlerFactory>());
 
-    public static IWebHostBuilder UseTestServerAndAddDefaultHttpClient(this IWebHostBuilder webHostBuilder,
-        params string[] httpClientNames) =>
-        webHostBuilder.UseTestServerAndAddDefaultHttpClient(x => x.PreserveExecutionContext = true, httpClientNames);
-
-    public static IWebHostBuilder UseTestServerAndAddDefaultHttpClient(this IWebHostBuilder webHostBuilder,
-        Action<TestServerOptions> testServerConfigure) =>
-        webHostBuilder.UseTestServerAndAddDefaultHttpClient(testServerConfigure, []);
-
-    public static IWebHostBuilder UseTestServerAndAddDefaultHttpClient(this IWebHostBuilder webHostBuilder,
-        Action<TestServerOptions> testServerConfigure, params string[] httpClientNames)
-    {
-        ArgumentNullException.ThrowIfNull(testServerConfigure);
-
-        webHostBuilder.UseTestServer(testServerConfigure)
-            .ConfigureServices(x => x
-                .AddSingleton<IConfigureOptions<HttpClientFactoryOptions>>(provider =>
-                    new ConfigureTestServerHttpClientFactoryOptions(provider.GetRequiredService<IServer>(),
-                        httpClientNames))
-                .TryAddSingleton<HttpClient>(sp => ((TestServer)sp.GetRequiredService<IServer>()).CreateClient()));
-
-        return webHostBuilder;
-    }
-
-    public static IWebHostBuilder UseUnixSocketServerAndAddDefaultHttpClient(this IWebHostBuilder webHostBuilder,
-        params string[] httpClientNames) =>
+    public static IWebHostBuilder UseUnixSocketServer(this IWebHostBuilder webHostBuilder) =>
         webHostBuilder.ConfigureServices(services =>
         {
             var path = Path.Combine(Path.GetTempPath(), Path.GetTempFileName()) + ".socket";
 
-            if (httpClientNames.Length > 0 && !httpClientNames.Contains(Options.DefaultName))
-                httpClientNames = [.. httpClientNames, Options.DefaultName];
-
             services.Configure<KestrelServerOptions>(options => options.ListenUnixSocket(path))
-                .AddSingleton<IConfigureOptions<HttpClientFactoryOptions>>(
-                    new ConfigureUnixSocketHttpClientFactoryOptions(path, httpClientNames))
-                .AddHttpClient()
-                .TryAddSingleton<HttpClient>(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient());
+                .AddSingleton<ITestHttpMessageHandlerFactory>(new UnixSocketHttpMessageHandlerFactory(path));
         });
 
-    private sealed class ConfigureTestServerHttpClientFactoryOptions(IServer server, params string[] names)
+    public static IWebHostBuilder AddTestHttpClient(this IWebHostBuilder webHostBuilder,
+        params string[] httpClientNames) => webHostBuilder.ConfigureServices(x => x
+            .AddSingleton<IConfigureOptions<HttpClientFactoryOptions>>(provider =>
+                new ConfigureTestHttpClientFactoryOptions(provider.GetRequiredService<ITestHttpMessageHandlerFactory>(),
+                    httpClientNames)))
+        .ConfigureServices(services => services.AddHttpClient()
+            .TryAddSingleton<HttpClient>(sp => sp.GetRequiredService<IHttpClientFactory>()
+                .CreateClient(httpClientNames.FirstOrDefault() ?? Options.DefaultName)));
+
+    private sealed class ConfigureTestHttpClientFactoryOptions(ITestHttpMessageHandlerFactory factory, string[] names)
         : IConfigureNamedOptions<HttpClientFactoryOptions>
     {
         public void Configure(HttpClientFactoryOptions options) => Configure(Options.DefaultName, options);
 
         public void Configure(string? name, HttpClientFactoryOptions options)
         {
-            if (names.Length > 0 && !names.Contains(name)) return;
+            if (names.Length < 1 ? name != Options.DefaultName : !names.Contains(name)) return;
 
             options.HttpClientActions.Add(client => client.BaseAddress ??= new("http://localhost"));
 
-            options.HttpMessageHandlerBuilderActions.Add(x => x.PrimaryHandler = ((TestServer)server).CreateHandler());
+            options.HttpMessageHandlerBuilderActions.Add(x => x.PrimaryHandler = factory.CreateHandler());
         }
     }
 
-    private sealed class ConfigureUnixSocketHttpClientFactoryOptions(string path, params string[] names)
-        : IConfigureNamedOptions<HttpClientFactoryOptions>
+    private sealed class TestServerHttpMessageHandlerFactory(IServer server) : ITestHttpMessageHandlerFactory
     {
-        public void Configure(HttpClientFactoryOptions options) => Configure(Options.DefaultName, options);
+        public HttpMessageHandler CreateHandler() => ((TestServer)server).CreateHandler();
+    }
 
-        public void Configure(string? name, HttpClientFactoryOptions options)
+    private sealed class UnixSocketHttpMessageHandlerFactory(string path)
+        : ITestHttpMessageHandlerFactory
+    {
+        public HttpMessageHandler CreateHandler() => new SocketsHttpHandler
         {
-            if (names.Length > 0 && !names.Contains(name)) return;
-
-            options.HttpClientActions.Add(client => client.BaseAddress ??= new("http://localhost"));
-
-            options.HttpMessageHandlerBuilderActions.Add(x => x.PrimaryHandler = new SocketsHttpHandler
+            ConnectCallback = async (_, cancellationToken) =>
             {
-                ConnectCallback = async (_, cancellationToken) =>
+                var socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
+
+                try
                 {
-                    var socket = new Socket(AddressFamily.Unix, SocketType.Stream, ProtocolType.Unspecified);
+                    await socket.ConnectAsync(new UnixDomainSocketEndPoint(path), cancellationToken);
 
-                    try
-                    {
-                        await socket.ConnectAsync(new UnixDomainSocketEndPoint(path), cancellationToken);
-
-                        return new NetworkStream(socket, true);
-                    }
-                    catch
-                    {
-                        socket.Dispose();
-                        throw;
-                    }
+                    return new NetworkStream(socket, true);
                 }
-            });
-        }
+                catch
+                {
+                    socket.Dispose();
+                    throw;
+                }
+            }
+        };
     }
 }

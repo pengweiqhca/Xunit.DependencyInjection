@@ -98,10 +98,10 @@ public static class MinimalApiHostBuilderFactory
 
             configure?.Invoke(webHostBuilder);
 
-            if (useTestServer) webHostBuilder.UseTestServerAndAddDefaultHttpClient(httpClientNames);
-            else webHostBuilder.UseUnixSocketServerAndAddDefaultHttpClient(httpClientNames);
+            if (useTestServer) webHostBuilder.UseTestServer();
+            else webHostBuilder.UseUnixSocketServer();
 
-            webHostBuilder.ConfigureServices((context, services) =>
+            webHostBuilder.AddTestHttpClient(httpClientNames).ConfigureServices((context, services) =>
             {
                 var manager = (ApplicationPartManager)GetApplicationPartManager.Invoke(null,
                     [services, context.HostingEnvironment])!;

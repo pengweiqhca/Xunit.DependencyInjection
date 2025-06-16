@@ -9,7 +9,7 @@ public class Startup
 	public IHostBuilder CreateHostBuilder() =&gt; MinimalApiHostBuilderFactory.GetHostBuilder&lt;Program&gt;();
 }</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>9.4.0</Version>
+    <Version>10.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
   </PropertyGroup>
 
