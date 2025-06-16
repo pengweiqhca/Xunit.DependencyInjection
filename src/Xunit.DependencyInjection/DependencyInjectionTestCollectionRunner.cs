@@ -121,7 +121,7 @@ public class DependencyInjectionTestCollectionRunner(
                 sendTestMethodMessages: true
             ));
 
-        var testClassRunner = context.ContextMap.TryGetValue(testClass, out var value) && value != null
+        var testClassRunner = context.ContextMap.TryGetValue(testClass, out var value) && value is { Disposed: false }
             ? new DependencyInjectionTestClassRunner(
                 new(value.Host, value.DisableParallelization ||
                     !(context.ParallelizationMode == ParallelizationMode.Force ||

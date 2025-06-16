@@ -5,7 +5,7 @@ namespace Xunit.DependencyInjection;
 
 internal static class StartupLoader
 {
-    public static DependencyInjectionContext CreateHost(Type startupType, Assembly assembly,
+    public static DependencyInjectionBuildContext CreateHost(Type startupType, Assembly assembly,
         IMessageSink diagnosticMessageSink)
     {
         var configureHostApplicationBuilderMethodInfo = FindMethod(startupType, "ConfigureHostApplicationBuilder");
@@ -24,7 +24,7 @@ internal static class StartupLoader
             startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
 
-    private static DependencyInjectionContext CreateHostWithHostApplicationBuilder(Type startupType,
+    private static DependencyInjectionBuildContext CreateHostWithHostApplicationBuilder(Type startupType,
         MethodInfo methodInfo, AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
     {
         var hostApplicationBuilder = Host.CreateEmptyApplicationBuilder(new() { ApplicationName = assemblyName.Name });
@@ -45,7 +45,7 @@ internal static class StartupLoader
         return new(host, startupType.GetCustomAttributesData().Any(a => a.AttributeType == typeof(DisableParallelizationAttribute)));
     }
 
-    public static DependencyInjectionContext CreateEmptyStartup(AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
+    public static DependencyInjectionBuildContext CreateEmptyStartup(AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
     {
         var hostApplicationBuilder = Host.CreateEmptyApplicationBuilder(new() { ApplicationName = assemblyName.Name });
 

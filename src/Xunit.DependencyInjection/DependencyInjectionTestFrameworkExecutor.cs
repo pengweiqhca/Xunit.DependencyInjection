@@ -14,7 +14,7 @@ public class DependencyInjectionTestFrameworkExecutor(
 
         await using var hostManager = new HostManager(TestAssembly.Assembly, executionMessageSink);
 
-        var host = GetHost(exceptions, hostManager.BuildDefaultHost)?.Host;
+        var context = GetHost(exceptions, hostManager.BuildDefaultHost);
 
         var contextMap = testCases
             .GroupBy(tc => tc.TestMethod.TestClass)
@@ -30,6 +30,8 @@ public class DependencyInjectionTestFrameworkExecutor(
             exceptions.Add(ex);
         }
 
+        var host = context == null || context.Disposed ? null : context.Host;
+
         await new DependencyInjectionTestAssemblyRunner(new(host, parallelizationMode, contextMap), exceptions)
             .Run(new(TestAssembly, host?.Services), testCases, executionMessageSink,
                 executionOptions, cancellationToken);
@@ -37,8 +39,8 @@ public class DependencyInjectionTestFrameworkExecutor(
         await hostManager.StopAsync(cancellationToken);
         return;
 
-        static DependencyInjectionContext? GetHost(ICollection<Exception> exceptions,
-            Func<DependencyInjectionContext?> func)
+        static DependencyInjectionBuildContext? GetHost(ICollection<Exception> exceptions,
+            Func<DependencyInjectionBuildContext?> func)
         {
             try
             {

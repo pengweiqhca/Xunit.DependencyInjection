@@ -9,6 +9,11 @@ public class DependencyInjectionContext(IHost host, bool disableParallelization)
     public bool DisableParallelization { get; } = disableParallelization;
 }
 
+public class DependencyInjectionBuildContext(IHost host, bool disableParallelization) : DependencyInjectionContext(host, disableParallelization)
+{
+    public bool Disposed { get; set; }
+}
+
 public class DependencyInjectionTestContext(
     IHost host,
     bool disableParallelization,
@@ -27,13 +32,13 @@ public class DependencyInjectionTestContext(
 public class DependencyInjectionStartupContext(
     IHost? defaultHost,
     ParallelizationMode parallelizationMode,
-    IReadOnlyDictionary<IXunitTestClass, DependencyInjectionContext?> contextMap)
+    IReadOnlyDictionary<IXunitTestClass, DependencyInjectionBuildContext?> contextMap)
 {
     public IServiceProvider? DefaultRootServices => defaultHost?.Services;
 
     public ParallelizationMode ParallelizationMode { get; } = parallelizationMode;
 
-    public IReadOnlyDictionary<IXunitTestClass, DependencyInjectionContext?> ContextMap { get; } = contextMap;
+    public IReadOnlyDictionary<IXunitTestClass, DependencyInjectionBuildContext?> ContextMap { get; } = contextMap;
 
     public SemaphoreSlim? ParallelSemaphore { get; internal set; }
 
