@@ -1,4 +1,5 @@
-﻿using Xunit.Internal;
+﻿using System.Collections;
+using Xunit.Internal;
 
 namespace Xunit.DependencyInjection;
 
@@ -31,7 +32,7 @@ public class DependencyInjectionTestCollectionRunner(
         FixtureMappingManager assemblyFixtureMappings)
     {
         await using var ctxt = new DependencyInjectionTestCollectionRunnerContext(
-            new(testCollection), OrderTestClass(testCases, messageBus).CastOrToReadOnlyCollection(), explicitOption,
+            new(testCollection), testCases, explicitOption,
             messageBus, testCaseOrderer, aggregator, cancellationTokenSource, assemblyFixtureMappings);
 
         await ctxt.InitializeAsync();
@@ -39,10 +40,35 @@ public class DependencyInjectionTestCollectionRunner(
         return await Run(ctxt);
     }
 
-    private IEnumerable<IXunitTestCase> OrderTestClass(IReadOnlyCollection<IXunitTestCase> testCases, IMessageBus messageBus)
+    protected override async ValueTask<RunSummary> RunTestClasses(DependencyInjectionTestCollectionRunnerContext ctxt, Exception? exception)
     {
-        if (testClassOrderer == null) return testCases;
+        var summary = new RunSummary();
 
+        var groups = testClassOrderer == null
+            ? ctxt.TestCases
+                .GroupBy(tc => tc.TestClass, TestClassComparer.Instance)
+                .OrderBy(grouping => grouping.Key, TestClassComparer.Instance)
+            : OrderTestClass(testClassOrderer, ctxt.TestCases, ctxt.MessageBus);
+
+        foreach (var testCasesByClass in groups)
+        {
+            var testClass = testCasesByClass.Key as IXunitTestClass;
+            var testCases = testCasesByClass.CastOrToReadOnlyCollection();
+
+            if (exception is not null)
+                summary.Aggregate(await FailTestClass(ctxt, testClass, testCases, exception));
+            else
+                summary.Aggregate(await RunTestClass(ctxt, testClass, testCases));
+
+            if (ctxt.CancellationTokenSource.IsCancellationRequested)
+                break;
+        }
+
+        return summary;
+    }
+
+    private static IEnumerable<IGrouping<ITestClass?, IXunitTestCase>> OrderTestClass(ITestClassOrderer testClassOrderer, IReadOnlyCollection<IXunitTestCase> testCases, IMessageBus messageBus)
+    {
         var dictionary = testCases.GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
             .ToDictionary(group => group.Key!, group => group.ToList());
 
@@ -59,11 +85,21 @@ public class DependencyInjectionTestCollectionRunner(
             messageBus.QueueMessage(new DiagnosticMessage(
                 $"Test class orderer '{testClassOrderer.GetType().FullName}' threw '{innerEx.GetType().FullName}' during ordering: {innerEx.Message}{Environment.NewLine}{innerEx.StackTrace}"));
 
-            return testCases;
+            return dictionary.OrderBy(kv => kv.Key, TestClassComparer.Instance)
+                .Select(x => new Grouping<ITestClass?, IXunitTestCase>(x.Key, x.Value));
         }
 
-        return orderedTestCLasses.SelectMany(testCLass =>
-            dictionary.TryGetValue(testCLass, out var testCasesList) ? testCasesList : []);
+        return orderedTestCLasses.Select(testCLass => new Grouping<ITestClass?, IXunitTestCase>(testCLass,
+            dictionary.TryGetValue(testCLass, out var testCasesList) ? testCasesList : []));
+    }
+
+    private sealed class Grouping<TKey, TElement>(TKey key, IEnumerable<TElement> elements) : IGrouping<TKey, TElement>
+    {
+        public TKey Key => key;
+
+        public IEnumerator<TElement> GetEnumerator() => elements.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
     /// <inheritdoc />
