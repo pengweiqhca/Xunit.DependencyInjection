@@ -6,6 +6,7 @@
 
 Release notes:
 
+10.7: Update xunit.v3 to 3.0.1, does not set ApplicationName if it is already configured.
 10.6: Update xunit.v3 to 3.0.0.
 10.5: Improve compatibility with top level statements.
 10.4: Fix #146.
@@ -14,7 +15,7 @@ Release notes:
 10.1: Allow the default startup to be missing anywhere.
 10.0: Upgrade xunit to v3.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>10.6.0</Version>
+    <Version>10.7.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>

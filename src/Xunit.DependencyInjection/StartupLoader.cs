@@ -96,10 +96,16 @@ internal static class StartupLoader
 
         hostBuilder.ConfigureServices(new DefaultServices(diagnosticMessageSink).ConfigureServices);
 
-        hostBuilder.ConfigureHostConfiguration(builder => builder.AddInMemoryCollection(new Dictionary<string, string?>
+        hostBuilder.ConfigureHostConfiguration(builder =>
         {
-            { HostDefaults.ApplicationKey, assemblyName.Name }
-        }));
+            if (builder is IConfigurationManager configManager &&
+                configManager.GetSection(HostDefaults.ApplicationKey).Exists()) return;
+
+            builder.AddInMemoryCollection(new Dictionary<string, string?>
+            {
+                { HostDefaults.ApplicationKey, assemblyName.Name }
+            });
+        });
 
         ConfigureHost(hostBuilder, startup, startupType, configureHostMethod);
 

@@ -4,7 +4,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSingleton<MinimalApiSample.IRandomService, MinimalApiSample.RandomService>();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddControllersAsServices();
 
 var app = builder.Build();
 
