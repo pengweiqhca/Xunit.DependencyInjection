@@ -17,7 +17,7 @@ public class DependencyInjectionTestRunner(
     {
         var (testClassInstance, syncContext, executionContext) = await base.CreateTestClassInstance(ctxt);
 
-        if (testClassInstance == null ||
+        if (testClassInstance == null || ctxt.TestMethod.ReflectedType == null ||
             HasRequiredMembers.GetOrAdd(ctxt.TestMethod.ReflectedType, GetRequiredProperties) is not
             {
                 Length: > 0
@@ -38,7 +38,7 @@ public class DependencyInjectionTestRunner(
 
     private static PropertyInfo[] GetRequiredProperties(Type testClass) =>
         !testClass.HasRequiredMemberAttribute() || testClass.GetConstructors().FirstOrDefault(static ci =>
-            !ci.IsStatic && ci.IsPublic) is not { } ci || ci.HasSetsRequiredMembersAttribute()
+            ci is { IsStatic: false, IsPublic: true }) is not { } ci || ci.HasSetsRequiredMembersAttribute()
             ? []
             : testClass.GetProperties()
                 .Where(p => p.SetMethod is { IsPublic: true } && p.HasRequiredMemberAttribute())
@@ -141,8 +141,8 @@ public class DependencyInjectionTestRunner(
         public override MethodImplAttributes GetMethodImplementationFlags() =>
             methodInfo.GetMethodImplementationFlags();
 
-        public override object Invoke(object obj, BindingFlags invokeAttr, Binder binder, object[] parameters,
-            CultureInfo culture)
+        public override object Invoke(object? obj, BindingFlags invokeAttr, Binder? binder, object?[]? parameters,
+            CultureInfo? culture)
         {
             var activity = ActivitySource.StartActivity(testCase.TestCaseDisplayName,
                 ActivityKind.Internal, Activity.Current?.Context ?? default, new Dictionary<string, object?>

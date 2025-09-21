@@ -7,10 +7,13 @@ namespace Xunit.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddStaFactSupport(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, UITestCaseRunnerAdapter>());
+        public IServiceCollection AddStaFactSupport()
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, UITestCaseRunnerAdapter>());
 
-        return services;
+            return services;
+        }
     }
 }

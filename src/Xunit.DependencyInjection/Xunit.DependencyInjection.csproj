@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>net472;net8.0</TargetFrameworks>
     <Description>Use Microsoft.Extensions.DependencyInjection to inject xunit testclass. If you want write Microsoft.Extensions.Logging to ITestOutputHelper, please install Xunit.DependencyInjection.Logging.
 
 Release notes:
 
+11.0: C# 14, Downgrade Microsoft.Extensions.Hosting to 8.0.
 10.8: Add CreateHostApplicationBuilder method.
 10.7: Update xunit.v3 to 3.0.1, does not set ApplicationName if it is already configured.
 10.6: Update xunit.v3 to 3.0.0.
@@ -16,7 +17,7 @@ Release notes:
 10.1: Allow the default startup to be missing anywhere.
 10.0: Upgrade xunit to v3.</Description>
     <PackageTags>xunit ioc di DependencyInjection test</PackageTags>
-    <Version>10.8.0</Version>
+    <Version>11.0.0</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <PolySharpExcludeGeneratedTypes>System.Runtime.CompilerServices.RequiresLocationAttribute;System.Diagnostics.CodeAnalysis.SetsRequiredMembersAttribute</PolySharpExcludeGeneratedTypes>
   </PropertyGroup>
@@ -25,6 +26,7 @@ Release notes:
     <Using Include="Microsoft.Extensions.DependencyInjection" />
     <Using Include="Microsoft.Extensions.Hosting" />
     <Using Include="System.Reflection" />
+    <Using Include="Xunit.DependencyInjection" />
     <Using Include="Xunit.v3" />
     <Using Include="Xunit.Sdk" />
 
@@ -32,13 +34,15 @@ Release notes:
     <InternalsVisibleTo Include="Xunit.DependencyInjection.Test" />
 
     <PackageReference Include="Microsoft.Extensions.Hosting" />
+
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" />
     <PackageReference Include="xunit.v3.extensibility.core" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection.Analyzer\Xunit.DependencyInjection.Analyzer.csproj" PrivateAssets="All" ReferenceOutputAssembly="false" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Include="$(PackageId).targets" Pack="True" PackagePath="build\net472;build\netstandard2.1;buildTransitive\net472;buildTransitive\netstandard2.1;buildMultiTargeting" />
+    <None Include="$(PackageId).targets" Pack="True" PackagePath="build\net472;build\net8.0;buildTransitive\net472;buildTransitive\net8.0;buildMultiTargeting" />
 
     <None Include="..\Xunit.DependencyInjection.Analyzer\tools\*.*" PackagePath="tools" Pack="true" />
     <None Include="..\Xunit.DependencyInjection.Analyzer\bin\$(Configuration)\netstandard2.0\Xunit.DependencyInjection.Analyzer.dll" PackagePath="analyzers\dotnet\cs" Pack="true" Visible="false" />

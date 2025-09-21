@@ -12,28 +12,30 @@ namespace Xunit.DependencyInjection.AspNetCoreTesting;
 
 public static class WebHostBuilderExtensions
 {
-    public static IWebHostBuilder UseTestServer(this IWebHostBuilder webHostBuilder) => webHostBuilder
-        .UseTestServer(x => x.PreserveExecutionContext = true)
-        .ConfigureServices(x => x
-            .AddSingleton<ITestHttpMessageHandlerFactory, TestServerHttpMessageHandlerFactory>());
+    extension(IWebHostBuilder webHostBuilder)
+    {
+        public IWebHostBuilder UseTestServer() => webHostBuilder
+            .UseTestServer(x => x.PreserveExecutionContext = true)
+            .ConfigureServices(x => x
+                .AddSingleton<ITestHttpMessageHandlerFactory, TestServerHttpMessageHandlerFactory>());
 
-    public static IWebHostBuilder UseUnixSocketServer(this IWebHostBuilder webHostBuilder) =>
-        webHostBuilder.ConfigureServices(services =>
-        {
-            var path = Path.Combine(Path.GetTempPath(), Path.GetTempFileName()) + ".socket";
+        public IWebHostBuilder UseUnixSocketServer() =>
+            webHostBuilder.ConfigureServices(services =>
+            {
+                var path = Path.Combine(Path.GetTempPath(), Path.GetTempFileName()) + ".socket";
 
-            services.Configure<KestrelServerOptions>(options => options.ListenUnixSocket(path))
-                .AddSingleton<ITestHttpMessageHandlerFactory>(new UnixSocketHttpMessageHandlerFactory(path));
-        });
+                services.Configure<KestrelServerOptions>(options => options.ListenUnixSocket(path))
+                    .AddSingleton<ITestHttpMessageHandlerFactory>(new UnixSocketHttpMessageHandlerFactory(path));
+            });
 
-    public static IWebHostBuilder AddTestHttpClient(this IWebHostBuilder webHostBuilder,
-        params string[] httpClientNames) => webHostBuilder.ConfigureServices(x => x
-            .AddSingleton<IConfigureOptions<HttpClientFactoryOptions>>(provider =>
-                new ConfigureTestHttpClientFactoryOptions(provider.GetRequiredService<ITestHttpMessageHandlerFactory>(),
-                    httpClientNames)))
-        .ConfigureServices(services => services.AddHttpClient()
-            .TryAddSingleton<HttpClient>(sp => sp.GetRequiredService<IHttpClientFactory>()
-                .CreateClient(httpClientNames.FirstOrDefault() ?? Options.DefaultName)));
+        public IWebHostBuilder AddTestHttpClient(params string[] httpClientNames) => webHostBuilder.ConfigureServices(x => x
+                .AddSingleton<IConfigureOptions<HttpClientFactoryOptions>>(provider =>
+                    new ConfigureTestHttpClientFactoryOptions(provider.GetRequiredService<ITestHttpMessageHandlerFactory>(),
+                        httpClientNames)))
+            .ConfigureServices(services => services.AddHttpClient()
+                .TryAddSingleton<HttpClient>(sp => sp.GetRequiredService<IHttpClientFactory>()
+                    .CreateClient(httpClientNames.FirstOrDefault() ?? Options.DefaultName)));
+    }
 
     private sealed class ConfigureTestHttpClientFactoryOptions(ITestHttpMessageHandlerFactory factory, string[] names)
         : IConfigureNamedOptions<HttpClientFactoryOptions>

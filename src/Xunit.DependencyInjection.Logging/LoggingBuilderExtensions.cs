@@ -8,22 +8,24 @@ namespace Xunit.DependencyInjection.Logging;
 
 public static class LoggingBuilderExtensions
 {
-    public static ILoggingBuilder AddXunitOutput(this ILoggingBuilder builder)
+    extension(ILoggingBuilder builder)
     {
-        builder.Services.TryAddSingleton<TestOutputHelperAccessorWrapper>();
+        public ILoggingBuilder AddXunitOutput()
+        {
+            builder.Services.TryAddSingleton<TestOutputHelperAccessorWrapper>();
 
-        builder.Services.AddSingleton<ILoggerProvider>(provider => new XUnitLoggerProvider(
-            provider.GetRequiredService<TestOutputHelperAccessorWrapper>(),
-            provider.GetRequiredService<IOptions<XUnitLoggerOptions>>().Value));
+            builder.Services.AddSingleton<ILoggerProvider>(provider => new XUnitLoggerProvider(
+                provider.GetRequiredService<TestOutputHelperAccessorWrapper>(),
+                provider.GetRequiredService<IOptions<XUnitLoggerOptions>>().Value));
 
-        return builder;
-    }
+            return builder;
+        }
 
-    public static ILoggingBuilder AddXunitOutput(this ILoggingBuilder builder,
-        Action<XUnitLoggerOptions> configureOptions)
-    {
-        builder.Services.Configure(configureOptions);
+        public ILoggingBuilder AddXunitOutput(Action<XUnitLoggerOptions> configureOptions)
+        {
+            builder.Services.Configure(configureOptions);
 
-        return builder.AddXunitOutput();
+            return builder.AddXunitOutput();
+        }
     }
 }

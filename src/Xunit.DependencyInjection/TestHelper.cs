@@ -110,73 +110,76 @@ internal static class TestHelper
     public static bool GenericTypeArgumentIsGenericParameter(Type type) =>
         type.IsGenericType && type.GenericTypeArguments.Any(t => t.IsGenericParameter);
 
-    private static IDictionary<Type, object> GetFixtureCache(this FixtureMappingManager manager)
+    extension(FixtureMappingManager manager)
     {
-        var field =
-            typeof(FixtureMappingManager).GetField("fixtureCache", BindingFlags.Instance | BindingFlags.NonPublic) ??
-            throw new NotSupportedException("Not found `fixtureCache` field in FixtureMappingManager");
+        private IDictionary<Type, object> GetFixtureCache()
+        {
+            var field =
+                typeof(FixtureMappingManager).GetField("fixtureCache", BindingFlags.Instance | BindingFlags.NonPublic) ??
+                throw new NotSupportedException("Not found `fixtureCache` field in FixtureMappingManager");
 
-        return field.GetValue(manager) as Dictionary<Type, object> ??
-            throw new NotSupportedException("`fixtureCache` is not a Dictionary<Type, object>");
-    }
+            return field.GetValue(manager) as Dictionary<Type, object> ??
+                throw new NotSupportedException("`fixtureCache` is not a Dictionary<Type, object>");
+        }
 
-    public static async ValueTask CreateFixtures(this FixtureMappingManager manager, IReadOnlyCollection<Type> fixtureTypes, ExceptionAggregator aggregator, IServiceProvider provider)
-    {
-        var field = typeof(FixtureMappingManager).GetField("parentMappingManager", BindingFlags.Instance | BindingFlags.NonPublic) ??
-            throw new NotSupportedException("Not found `parentMappingManager` field in FixtureMappingManager");
+        public async ValueTask CreateFixtures(IReadOnlyCollection<Type> fixtureTypes, ExceptionAggregator aggregator, IServiceProvider provider)
+        {
+            var field = typeof(FixtureMappingManager).GetField("parentMappingManager", BindingFlags.Instance | BindingFlags.NonPublic) ??
+                throw new NotSupportedException("Not found `parentMappingManager` field in FixtureMappingManager");
 
-        var value = field.GetValue(manager);
-        if (value is not null and not FixtureMappingManager)
-            throw new NotSupportedException("`parentMappingManager` is not a FixtureMappingManager");
+            var value = field.GetValue(manager);
+            if (value is not null and not FixtureMappingManager)
+                throw new NotSupportedException("`parentMappingManager` is not a FixtureMappingManager");
 
-        var parentMappingManager = value as FixtureMappingManager;
+            var parentMappingManager = value as FixtureMappingManager;
 
-        field = typeof(FixtureMappingManager).GetField("knownTypes", BindingFlags.Instance | BindingFlags.NonPublic) ??
-            throw new NotSupportedException("Not found `knownTypes` field in FixtureMappingManager");
+            field = typeof(FixtureMappingManager).GetField("knownTypes", BindingFlags.Instance | BindingFlags.NonPublic) ??
+                throw new NotSupportedException("Not found `knownTypes` field in FixtureMappingManager");
 
-        if (field.GetValue(manager) is not HashSet<Type> knownTypes)
-            throw new NotSupportedException("`knownTypes` is not a HashSet<Type>");
+            if (field.GetValue(manager) is not HashSet<Type> knownTypes)
+                throw new NotSupportedException("`knownTypes` is not a HashSet<Type>");
 
-        field = typeof(FixtureMappingManager).GetField("fixtureCategory", BindingFlags.Instance | BindingFlags.NonPublic) ??
-            throw new NotSupportedException("Not found `fixtureCategory` field in FixtureMappingManager");
+            field = typeof(FixtureMappingManager).GetField("fixtureCategory", BindingFlags.Instance | BindingFlags.NonPublic) ??
+                throw new NotSupportedException("Not found `fixtureCategory` field in FixtureMappingManager");
 
-        if (field.GetValue(manager) is not string fixtureCategory)
-            throw new NotSupportedException("`fixtureCategory` is not a string");
+            if (field.GetValue(manager) is not string fixtureCategory)
+                throw new NotSupportedException("`fixtureCategory` is not a string");
 
-        var fixtureCache = manager.GetFixtureCache();
+            var fixtureCache = manager.GetFixtureCache();
 
-        foreach (var fixtureType in fixtureTypes)
-            await aggregator.RunAsync(async () =>
-            {
-                knownTypes.Add(fixtureType);
+            foreach (var fixtureType in fixtureTypes)
+                await aggregator.RunAsync(async () =>
+                {
+                    knownTypes.Add(fixtureType);
 
-                fixtureCache[fixtureType] = provider.GetService(fixtureType) ??
-                    await GetFixture(fixtureType, parentMappingManager, provider, fixtureCategory);
+                    fixtureCache[fixtureType] = provider.GetService(fixtureType) ??
+                        await GetFixture(fixtureType, parentMappingManager, provider, fixtureCategory);
 
-                // Do async initialization
-                if (fixtureCache[fixtureType] is IAsyncLifetime asyncLifetime)
-                    try
-                    {
-                        await asyncLifetime.InitializeAsync();
-                    }
-                    catch (Exception ex)
-                    {
-                        throw new TestPipelineException(
-                            string.Format(CultureInfo.CurrentCulture, "{0} fixture type '{1}' threw in InitializeAsync",
-                                fixtureCategory, fixtureType.SafeName()), ex.Unwrap());
-                    }
-            });
-    }
+                    // Do async initialization
+                    if (fixtureCache[fixtureType] is IAsyncLifetime asyncLifetime)
+                        try
+                        {
+                            await asyncLifetime.InitializeAsync();
+                        }
+                        catch (Exception ex)
+                        {
+                            throw new TestPipelineException(
+                                string.Format(CultureInfo.CurrentCulture, "{0} fixture type '{1}' threw in InitializeAsync",
+                                    fixtureCategory, fixtureType.SafeName()), ex.Unwrap());
+                        }
+                });
+        }
 
-    public static void ClearFixtures(this FixtureMappingManager manager, IReadOnlyCollection<Type> fixtureTypes,
-        IServiceProvider provider)
-    {
-        var serviceProviderIsService = provider.GetRequiredService<IServiceProviderIsService>();
-        var fixtureCache = manager.GetFixtureCache();
+        public void ClearFixtures(IReadOnlyCollection<Type> fixtureTypes,
+            IServiceProvider provider)
+        {
+            var serviceProviderIsService = provider.GetRequiredService<IServiceProviderIsService>();
+            var fixtureCache = manager.GetFixtureCache();
 
-        foreach (var type in fixtureTypes)
-            if (serviceProviderIsService.IsService(type))
-                fixtureCache.Remove(type);
+            foreach (var type in fixtureTypes)
+                if (serviceProviderIsService.IsService(type))
+                    fixtureCache.Remove(type);
+        }
     }
 
     private static async ValueTask<object> GetFixture(Type fixtureType, FixtureMappingManager? parentMappingManager,
@@ -185,7 +188,7 @@ internal static class TestHelper
         // Ensure there is a single public constructor
         var ctors = fixtureType
             .GetConstructors()
-            .Where(ci => !ci.IsStatic && ci.IsPublic)
+            .Where(ci => ci is { IsStatic: false, IsPublic: true })
             .ToList();
 
         if (ctors.Count != 1)

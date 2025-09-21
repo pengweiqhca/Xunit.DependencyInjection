@@ -138,7 +138,7 @@ internal static class StartupLoader
 
     public static object? CreateStartup(Type startupType)
     {
-        if (startupType == null) throw new ArgumentNullException(nameof(startupType));
+        ArgumentNullException.ThrowIfNull(startupType);
 
         if (startupType is { IsAbstract: true, IsSealed: true }) return null;
 

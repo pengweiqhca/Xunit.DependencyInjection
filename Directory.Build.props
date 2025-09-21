@@ -11,7 +11,7 @@
     <GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release'">True</GeneratePackageOnBuild>
     <ImplicitUsings>enable</ImplicitUsings>
     <DebugType>embedded</DebugType>
-    <LangVersion>13.0</LangVersion>
+    <LangVersion>preview</LangVersion>
     <NoWarn>$(NoWarn);1591;NU1507;NU1903</NoWarn>
     <NeutralLanguage>en-us</NeutralLanguage>
     <Nullable>enable</Nullable>
