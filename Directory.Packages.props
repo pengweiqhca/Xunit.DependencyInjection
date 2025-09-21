@@ -28,7 +28,7 @@
     <PackageVersion Include="xunit.v3.extensibility.core" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.*" PrivateAssets="All" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+    <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.*" />
     <GlobalPackageReference Include="PolySharp" Version="1.*" PrivateAssets="All" />
   </ItemGroup>
 </Project>
