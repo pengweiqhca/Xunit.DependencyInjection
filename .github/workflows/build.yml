@@ -22,7 +22,8 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.x
+        dotnet-version: 10.x
+        include-prerelease: true
     - name: build
       run: dotnet build -c Release -v n
     - name: test
@@ -40,7 +41,8 @@ jobs:
     - name: Setup .NET SDK
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 9.x
+        dotnet-version: 10.x
+        include-prerelease: true
     - name: build
       run: dotnet build -c Release -v n
     - name: test
