@@ -5,7 +5,7 @@ public class DependencyInjectionTestCaseRunnerWrapper : IXunitTestCaseRunnerWrap
     /// <inheritdoc />
     public virtual Type TestCaseType => typeof(XunitTestCase);
 
-    public ValueTask<RunSummary> RunAsync(DependencyInjectionContext context, IXunitTestCase testCase,
+    public virtual ValueTask<RunSummary> RunAsync(DependencyInjectionContext context, IXunitTestCase testCase,
         IReadOnlyCollection<IXunitTest> tests,
         IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource,
         string displayName, string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments) =>

@@ -1,10 +1,10 @@
-﻿using xRetry;
+﻿using xRetry.v3;
 
 namespace Xunit.DependencyInjection.Test;
 
 public class XRetryTest(IDependency dependency)
 {
-    private static int _factNumCalls = 0;
+    private static int _factNumCalls;
 
     // testId => numCalls
     private static readonly Dictionary<int, int> TheoryNumCalls = new()

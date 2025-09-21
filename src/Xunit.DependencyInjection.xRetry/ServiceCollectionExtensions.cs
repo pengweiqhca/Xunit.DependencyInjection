@@ -7,11 +7,14 @@ namespace Xunit.DependencyInjection;
 
 public static class ServiceCollectionExtensions
 {
-    public static IServiceCollection AddXRetrySupport(this IServiceCollection services)
+    extension(IServiceCollection services)
     {
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, RetryTestCaseRunnerWrapper>());
-        services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, RetryTheoryDiscoveryAtRuntimeRunnerWrapper>());
+        public IServiceCollection AddXRetrySupport()
+        {
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, RetryTestCaseRunnerWrapper>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, RetryTheoryDiscoveryAtRuntimeRunnerWrapper>());
 
-        return services;
+            return services;
+        }
     }
 }

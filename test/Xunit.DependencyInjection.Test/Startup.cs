@@ -27,7 +27,7 @@ public class Startup
             .AddSingleton<ITestCaseOrderer, TestCaseByMethodNameOrderer>()
             .AddKeyedScoped<IFromKeyedServicesTest, FromSmallKeyedServicesTest>("small")
             .AddKeyedScoped<IFromKeyedServicesTest, FromLargeKeyedServicesTest>("large")
-            //.AddXRetrySupport()
+            .AddXRetrySupport()
             .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
     public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor,

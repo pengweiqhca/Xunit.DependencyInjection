@@ -18,6 +18,7 @@
     <Project Path="src/Xunit.DependencyInjection.StaFact/Xunit.DependencyInjection.StaFact.csproj" />
     <Project Path="src/Xunit.DependencyInjection.Template/Xunit.DependencyInjection.Template.csproj" />
     <Project Path="src/Xunit.DependencyInjection/Xunit.DependencyInjection.csproj" />
+    <Project Path="src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj" />
     <File Path="src/Directory.Build.props" />
   </Folder>
   <Folder Name="/test/">

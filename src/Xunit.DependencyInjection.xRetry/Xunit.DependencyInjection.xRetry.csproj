@@ -1,7 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>net472;netstandard2.1</TargetFrameworks>
+    <ExcludeRestorePackageImports>true</ExcludeRestorePackageImports>
+    <TargetFrameworks>net472;net8.0</TargetFrameworks>
     <Description>Support xRetry.
 
 public void ConfigureServices(IServiceCollection services)
@@ -9,14 +10,14 @@ public void ConfigureServices(IServiceCollection services)
     services.AddXRetrySupport();
 }</Description>
     <PackageTags>xunit ioc di DependencyInjection test skipping Retry Test-Automation</PackageTags>
-    <Version>9.0.0</Version>
+    <Version>11.0.0-preview.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="xRetry" />
-    <PackageReference Include="xunit.core" />
+    <PackageReference Include="xRetry.v3" />
+    <PackageReference Include="xunit.v3.core" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
