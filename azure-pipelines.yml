@@ -16,9 +16,10 @@ jobs:
     vmImage: 'ubuntu-latest'
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET Sdk 9.0'
+    displayName: 'Use .NET Sdk 10.0'
     inputs:
-      version: 9.x
+      version: 10.x
+      include-prerelease: true
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
@@ -31,9 +32,10 @@ jobs:
     vmImage: 'macOS-latest'
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET Sdk 9.0'
+    displayName: 'Use .NET Sdk 10.0'
     inputs:
-      version: 9.x
+      version: 10.x
+      include-prerelease: true
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
@@ -46,9 +48,10 @@ jobs:
     vmImage: 'windows-latest'
   steps:
   - task: UseDotNet@2
-    displayName: 'Use .NET Sdk 9.0'
+    displayName: 'Use .NET Sdk 10.0'
     inputs:
-      version: 9.x
+      version: 10.x
+      include-prerelease: true
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
   - displayName: 'dotnet test'

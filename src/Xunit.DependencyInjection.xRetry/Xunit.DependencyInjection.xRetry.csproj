@@ -1,6 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <OutputType Condition="'$(IsPacking)' != 'true'">Exe</OutputType>
+    <ExcludeRestorePackageImports Condition="'$(IsPacking)' == 'true'">true</ExcludeRestorePackageImports>
     <TargetFrameworks>net472;net8.0</TargetFrameworks>
     <Description>Support xRetry.
 
