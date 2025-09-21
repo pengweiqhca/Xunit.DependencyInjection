@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <ExcludeRestorePackageImports>true</ExcludeRestorePackageImports>
     <TargetFrameworks>net472;net8.0</TargetFrameworks>
     <Description>Support xRetry.
 

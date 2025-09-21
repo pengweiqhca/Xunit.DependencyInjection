@@ -37,7 +37,7 @@ if ($null -eq $MSBuild) {
     dotnet build -c Release /p:IsPacking=true ..
 }
 else {
-    & "$MSBuild" /r /m /v:m /p:Configuration=Release /p:IsPacking=true ..
+    & "$MSBuild" /r /m /v:m /p:Configuration=Release /p:ExcludeRestorePackageImports=true /p:IsPacking=true ..
 }
 
 foreach ($csproj in (Get-ChildItem -r -filter *.csproj)) {
