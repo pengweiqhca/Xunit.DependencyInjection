@@ -100,6 +100,14 @@ public class Startup
 
 ### HostApplicationBuilder-style
 
+* `CreateHostApplicationBuilder` method
+
+  > **NOTE**: If this method signature is not found, the host is built by simply calling `Host.CreateEmptyApplicationBuilder(new() { ApplicationName = assemblyName.Name });`.
+
+    ``` C#
+    public HostApplicationBuilder CreateHostApplicationBuilder([AssemblyName assemblyName]) { }
+    ```
+
 * `ConfigureHostApplicationBuilder` method (distinguish by this method)
 
     ``` C#

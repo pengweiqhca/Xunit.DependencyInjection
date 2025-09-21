@@ -27,13 +27,14 @@ internal static class StartupLoader
     private static DependencyInjectionBuildContext CreateHostWithHostApplicationBuilder(Type startupType,
         MethodInfo methodInfo, AssemblyName assemblyName, IMessageSink diagnosticMessageSink)
     {
-        var hostApplicationBuilder = Host.CreateEmptyApplicationBuilder(new() { ApplicationName = assemblyName.Name });
+        var hostApplicationBuilder = CreateHostApplicationBuilder(startupType, assemblyName, out var startupObject);
 
         new DefaultServices(diagnosticMessageSink).ConfigureServices(hostApplicationBuilder.Services);
 
         var configureMethod = FindMethod(startupType, nameof(Configure));
 
-        var startupObject = methodInfo.IsStatic && configureMethod is { IsStatic: true } ? null : CreateStartup(startupType);
+        if (startupObject == null && (!methodInfo.IsStatic || configureMethod is not { IsStatic: true }))
+            startupObject = CreateStartup(startupType);
 
         methodInfo.Invoke(startupObject, [hostApplicationBuilder]);
 
@@ -208,6 +209,33 @@ internal static class StartupLoader
 
         method.Invoke(method.IsStatic ? null : startup,
             [.. method.GetParameters().Select(scope.ServiceProvider.GetRequiredService)]);
+    }
+
+    private static HostApplicationBuilder CreateHostApplicationBuilder(
+        Type startupType, AssemblyName assemblyName, out object? startup)
+    {
+        var method = FindMethod(startupType, nameof(CreateHostApplicationBuilder), typeof(HostApplicationBuilder));
+
+        startup = null;
+        if (method == null) return  Host.CreateEmptyApplicationBuilder(new() { ApplicationName = assemblyName.Name });
+
+        if (!method.IsStatic) startup = CreateStartup(startupType);
+
+        var parameters = method.GetParameters();
+
+        var ret = parameters.Length switch
+        {
+            0 => method.Invoke(method.IsStatic ? null : startup, []),
+            1 when parameters[0].ParameterType == typeof(AssemblyName) =>
+                method.Invoke(method.IsStatic ? null : startup, [assemblyName]),
+            _ => throw new InvalidOperationException(
+                $"The '{method.Name}' method of startup type '{startupType.FullName}' must parameterless or have the single 'AssemblyName' parameter.")
+        };
+
+        return ret == null
+            ? throw new InvalidOperationException(
+                $"The '{method.Name}' method in the type '{startupType.FullName}' return value must not be null.")
+            : (HostApplicationBuilder)ret;
     }
 
     private static IHost? BuildHostWithHostApplicationBuilder(HostApplicationBuilder hostApplicationBuilder,
