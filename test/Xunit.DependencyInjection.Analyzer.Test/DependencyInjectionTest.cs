@@ -157,14 +157,14 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "CreateHostApplicationBuilderTestStartup0.cs", null, new[]
             {
-                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 50).WithArguments("CreateHostApplicationBuilder", typeof(HostApplicationBuilder).FullName!)
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 50).WithArguments("CreateHostApplicationBuilder", "Microsoft.Extensions.Hosting.HostApplicationBuilder")
             }
         ];
         yield return
         [
             "CreateHostApplicationBuilderTestStartup1.cs", null, new[]
             {
-                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(7, 19, 7, 48).WithArguments("CreateHostApplicationBuilder", typeof(HostApplicationBuilder).FullName!)
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(7, 19, 7, 48).WithArguments("CreateHostApplicationBuilder", "Microsoft.Extensions.Hosting.HostApplicationBuilder")
             }
         ];
         yield return ["CreateHostApplicationBuilderTestStartup2.cs", null, Array.Empty<DiagnosticResult>()];
@@ -182,7 +182,7 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "ConfigureHostApplicationBuilderTestStartup0.cs", null, new[]
             {
-                new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 53).WithArguments("ConfigureHostApplicationBuilder", nameof(IHostApplicationBuilder))
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 53).WithArguments("ConfigureHostApplicationBuilder", "IHostApplicationBuilder")
             }
         ];
         yield return ["ConfigureHostApplicationBuilderTestStartup1.cs", null, Array.Empty<DiagnosticResult>()];
@@ -197,7 +197,7 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "ConfigureHostApplicationBuilderTestStartup3.cs", null, new[]
             {
-                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 21, 7, 53).WithArguments("ConfigureHostApplicationBuilder", nameof(IHostApplicationBuilder))
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 21, 7, 53).WithArguments("ConfigureHostApplicationBuilder", "IHostApplicationBuilder")
             }
         ];
 
@@ -207,7 +207,7 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
             "BuildHostApplicationBuilderTestStartup0.cs", null, new[]
             {
                 new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 48).WithArguments("BuildHostApplicationBuilder", typeof(IHost).FullName!),
-                new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 48).WithArguments("BuildHostApplicationBuilder", nameof(HostApplicationBuilder))
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 48).WithArguments("BuildHostApplicationBuilder", "HostApplicationBuilder")
             }
         ];
         yield return ["BuildHostApplicationBuilderTestStartup1.cs", null, Array.Empty<DiagnosticResult>()];
@@ -222,7 +222,7 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "BuildHostApplicationBuilderTestStartup3.cs", null, new[]
             {
-                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 18, 7, 45).WithArguments("BuildHostApplicationBuilder", nameof(HostApplicationBuilder))
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 18, 7, 45).WithArguments("BuildHostApplicationBuilder", "HostApplicationBuilder")
             }
         ];
     }
