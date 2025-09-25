@@ -151,6 +151,14 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
             }
         ];
         yield return ["BuildHostTestStartup1.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
+            "BuildHostMultipleOverloadsTest.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.MultipleOverloads).WithSpan(7, 21, 7, 30).WithArguments("BuildHost"),
+                new DiagnosticResult(Rules.MultipleOverloads).WithSpan(10, 21, 10, 30).WithArguments("BuildHost")
+            }
+        ];
 
         // CreateHostApplicationBuilder tests
         yield return

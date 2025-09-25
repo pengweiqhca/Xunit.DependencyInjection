@@ -124,6 +124,7 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
                     AnalyzeOverride(context, type, "ConfigureHost");
                     AnalyzeOverride(context, type, "ConfigureServices");
                     AnalyzeOverride(context, type, "Configure");
+                    AnalyzeOverride(context, type, "BuildHost");
                     AnalyzeOverride(context, type, "CreateHostApplicationBuilder");
                     AnalyzeOverride(context, type, "ConfigureHostApplicationBuilder");
                     AnalyzeOverride(context, type, "BuildHostApplicationBuilder");
