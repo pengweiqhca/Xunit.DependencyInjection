@@ -1,34 +1,34 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    <CentralPackageFloatingVersionsEnabled>false</CentralPackageFloatingVersionsEnabled>
+    <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
-    <PackageVersion Include="Ben.Demystifier" Version="0.4.1" />
-    <PackageVersion Include="FSharp.Core" Version="9.0.100" />
-    <PackageVersion Include="MartinCostello.Logging.XUnit.v3" Version="0.1.0" />
+    <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.*" />
+    <PackageVersion Include="Ben.Demystifier" Version="0.*" />
+    <PackageVersion Include="FSharp.Core" Version="9.*" />
+    <PackageVersion Include="MartinCostello.Logging.XUnit.v3" Version="0.*" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(_TargetFrameworkVersionWithoutV)" />
-    <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.11.0" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" Version="1.1.2" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" Version="1.1.2" />
-    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing" Version="1.1.2" />
+    <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.*" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Analyzer.Testing" Version="1.*" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeFix.Testing" Version="1.*" />
+    <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.CodeRefactoring.Testing" Version="1.*" />
     <PackageVersion Include="Microsoft.CodeAnalysis.CSharp.Workspaces" Version="4.0.1" />
     <PackageVersion Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-    <PackageVersion Include="Shouldly" Version="4.2.1" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.*" />
+    <PackageVersion Include="Shouldly" Version="4.*" />
     <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
-    <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.5.4" />
-    <PackageVersion Include="System.ValueTuple" Version="4.5.0" />
+    <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.*" />
+    <PackageVersion Include="System.ValueTuple" Version="4.*" />
     <PackageVersion Include="xRetry.v3" Version="0.1.0-alpha2" />
-    <PackageVersion Include="xunit.runner.visualstudio" Version="3.0.0" />
+    <PackageVersion Include="xunit.runner.visualstudio" Version="3.*" />
     <PackageVersion Include="Xunit.StaFact" Version="3.0.13" />
-    <PackageVersion Include="xunit.v3" Version="3.0.1" />
+    <PackageVersion Include="xunit.v3" Version="3.*" />
     <PackageVersion Include="xunit.v3.core" Version="3.0.1" />
     <PackageVersion Include="xunit.v3.extensibility.core" Version="3.0.1" />
   </ItemGroup>
   <ItemGroup>
-    <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="All" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <GlobalPackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="All" />
+    <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.*" PrivateAssets="All" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
+    <GlobalPackageReference Include="PolySharp" Version="1.*" PrivateAssets="All" />
   </ItemGroup>
 </Project>
