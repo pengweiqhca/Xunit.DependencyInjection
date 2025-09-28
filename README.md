@@ -6,9 +6,7 @@
 
 ## How to use
 
-[![Xunit.DependencyInjection NuGet](https://img.shields.io/nuget/v/Xunit.DependencyInjection)](https://www.nuget.org/packages/Xunit.DependencyInjection)
-
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/pengweiqhca/xunit.dependencyinjection)
+[![Xunit.DependencyInjection NuGet](https://img.shields.io/nuget/v/Xunit.DependencyInjection)](https://www.nuget.org/packages/Xunit.DependencyInjection)  [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/pengweiqhca/xunit.dependencyinjection)
 
 Install the [NuGet](https://www.nuget.org/packages/Xunit.DependencyInjection) package.
 
