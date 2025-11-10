@@ -5,6 +5,9 @@ public class DependencyInjectionTestFrameworkExecutor(
     ParallelizationMode parallelizationMode)
     : XunitTestFrameworkExecutor(testAssembly)
 {
+    static DependencyInjectionTestFrameworkExecutor() =>
+        TypeActivator.Current = DependencyInjectionTypeActivator.Instance;
+
     public override async ValueTask RunTestCases(IReadOnlyCollection<IXunitTestCase> testCases,
         IMessageSink executionMessageSink,
         ITestFrameworkExecutionOptions executionOptions,

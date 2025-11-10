@@ -11,7 +11,7 @@ public void ConfigureServices(IServiceCollection services)
     services.AddXRetrySupport();
 }</Description>
     <PackageTags>xunit ioc di DependencyInjection test skipping Retry Test-Automation</PackageTags>
-    <Version>11.0.0-preview.1</Version>
+    <Version>11.0.0-rc.1</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>
     <IsPackable>true</IsPackable>
   </PropertyGroup>

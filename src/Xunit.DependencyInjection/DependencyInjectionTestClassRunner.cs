@@ -8,40 +8,15 @@ public class DependencyInjectionTestClassRunner(DependencyInjectionTestContext c
     private AsyncServiceScope? _serviceScope;
 
     /// <inheritdoc />
-    protected override async ValueTask<object?[]> CreateTestClassConstructorArguments(XunitTestClassRunnerContext ctxt)
-    {
-        if (ctxt.Aggregator.HasExceptions || SelectTestClassConstructor(ctxt) is not { } constructor) return [];
-
-        var parameters = constructor.GetParameters();
-
-        var objArray = new object?[parameters.Length];
-        for (var index = 0; index < parameters.Length; ++index)
-        {
-            var parameterInfo = parameters[index];
-
-            var argumentValue = await GetConstructorArgument(ctxt, constructor, index, parameterInfo);
-
-            objArray[index] = argumentValue ?? new TestHelper.DelayArgument(parameterInfo,
-                unusedArguments => FormatConstructorArgsMissingMessage(ctxt, constructor, unusedArguments));
-        }
-
-        return objArray;
-    }
-
-    /// <inheritdoc />
     protected override ValueTask<object?> GetConstructorArgument(XunitTestClassRunnerContext ctxt,
-        ConstructorInfo constructor, int index,
-        ParameterInfo parameter)
+        ConstructorInfo constructor, int index, ParameterInfo parameter)
     {
-        if (parameter.ParameterType == typeof(ITestContextAccessor))
-            return new(TestContextAccessor.Instance);
-
         if (parameter.ParameterType == typeof(ITestOutputHelper))
             return new(TestHelper.TestOutputHelperArgument.Instance);
 
         return parameter.ParameterType == typeof(CancellationToken)
             ? new(ctxt.CancellationTokenSource.Token)
-            : ctxt.ClassFixtureMappings.GetFixture(parameter.ParameterType);
+            : base.GetConstructorArgument(ctxt, constructor, index, parameter);
     }
 
     /// <inheritdoc />
@@ -76,54 +51,6 @@ public class DependencyInjectionTestClassRunner(DependencyInjectionTestContext c
             await disposable.DisposeAsync();
         }
     }
-
-    /*protected override void CreateClassFixture(Type fixtureType)
-    {
-        var serviceScope = context.RootServices.CreateAsyncScope();
-
-        _serviceScope = serviceScope;
-
-        var ctors = fixtureType.GetTypeInfo()
-            .DeclaredConstructors
-            .Where(ci => !ci.IsStatic && ci.IsPublic)
-            .ToList();
-
-        if (ctors.Count != 1)
-        {
-            Aggregator.Add(new TestClassException($"Class fixture type '{fixtureType.FullName}' may only define a single public constructor."));
-            return;
-        }
-
-        var missingParameters = new List<ParameterInfo>();
-        var ctorArgs = ctors[0].GetParameters().Select(p =>
-        {
-            if (CollectionFixtureMappings.TryGetValue(p.ParameterType, out var arg)) return arg;
-
-            arg = serviceScope.ServiceProvider.GetService(p);
-
-            if (arg == null) missingParameters.Add(p);
-
-            return arg;
-        }).ToArray();
-
-        if (missingParameters.Count > 0)
-            Aggregator.Add(new TestClassException(
-                $"Class fixture type '{fixtureType.FullName}' had one or more unresolved constructor arguments: {string.Join(", ", missingParameters.Select(p => $"{p.ParameterType.Name} {p.Name}"))}"));
-        else Aggregator.Run(() => ClassFixtureMappings[fixtureType] = ctors[0].Invoke(ctorArgs));
-    }
-
-    /// <inheritdoc />
-    protected override async Task BeforeTestClassFinishedAsync()
-    {
-        await base.BeforeTestClassFinishedAsync();
-
-        foreach (var fixture in ClassFixtureMappings.Values
-                     .Where(x => x is not IDisposable and not IAsyncLifetime)
-                     .OfType<IAsyncDisposable>())
-            await Aggregator.RunAsync(() => fixture.DisposeAsync().AsTask());
-
-        if (_serviceScope is { } disposable) await disposable.DisposeAsync();
-    }*/
 
     // This method has been slightly modified from the original implementation to run tests in parallel
     // https://github.com/xunit/xunit/blob/v2-2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/TestClassRunner.cs#L194-L219

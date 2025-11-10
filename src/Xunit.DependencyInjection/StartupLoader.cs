@@ -66,13 +66,9 @@ internal static class StartupLoader
             services.TryAddEnumerable(ServiceDescriptor
                 .Singleton<IXunitTestCaseRunnerWrapper, DependencyInjectionTestCaseRunnerWrapper>());
 
-            //TODO: TestContext.CurrentInternal.DiagnosticMessageSink ?? NullMessageSink.Instance is equivalent to diagnosticMessageSink?
-            /*var methodInfo = typeof(TestContext).GetProperty("DiagnosticMessageSink", BindingFlags.Instance | BindingFlags.NonPublic)?.GetMethod;
-            if (methodInfo == null)
-
-            services.TryAddScoped<IMessageSink>(_ => TestContext.Current.me ?? NullMessageSink.Instance);*/
             services.TryAddSingleton<ITestContextAccessor>(_ => TestContextAccessor.Instance);
 
+            services.TryAddSingleton(DependencyInjectionTypeActivator.Instance);
         }
     }
 

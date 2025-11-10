@@ -148,6 +148,8 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
 
         await using var scope = context.RootServices.CreateAsyncScope();
 
+        context.RootServices.GetRequiredService<DependencyInjectionTypeActivator>().Services = scope.ServiceProvider;
+
         return await XunitTestCaseRunner.Instance.Run(
             testCase,
             tests,
@@ -157,6 +159,6 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
             testCase.TestCaseDisplayName,
             testCase.SkipReason,
             explicitOption,
-            scope.ServiceProvider.CreateTestClassConstructorArguments(constructorArguments, aggregator));
+            constructorArguments);
     }
 }

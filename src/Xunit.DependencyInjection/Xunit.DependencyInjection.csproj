@@ -6,6 +6,7 @@
 
 Release notes:
 
+11.1: Update xunit.v3 to 3.2.0.
 11.0: C# 14, Downgrade Microsoft.Extensions.Hosting to 8.0.
 10.8: Add CreateHostApplicationBuilder method.
 10.7: Update xunit.v3 to 3.0.1, does not set ApplicationName if it is already configured.
@@ -34,7 +35,6 @@ Release notes:
     <InternalsVisibleTo Include="Xunit.DependencyInjection.Test" />
 
     <PackageReference Include="Microsoft.Extensions.Hosting" />
-
     <PackageReference Include="System.Diagnostics.DiagnosticSource" />
     <PackageReference Include="xunit.v3.extensibility.core" />
 

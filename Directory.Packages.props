@@ -20,12 +20,12 @@
     <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.*" />
     <PackageVersion Include="System.ValueTuple" Version="4.*" />
-    <PackageVersion Include="xRetry.v3" Version="0.1.0-alpha2" />
+    <PackageVersion Include="xRetry.v3" Version="1.0.0-rc1" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.*" />
     <PackageVersion Include="Xunit.StaFact" Version="3.0.13" />
     <PackageVersion Include="xunit.v3" Version="3.*" />
-    <PackageVersion Include="xunit.v3.core" Version="3.0.1" />
-    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.0.1" />
+    <PackageVersion Include="xunit.v3.core" Version="3.2.0" />
+    <PackageVersion Include="xunit.v3.extensibility.core" Version="3.2.0" />
   </ItemGroup>
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.*" PrivateAssets="All" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />

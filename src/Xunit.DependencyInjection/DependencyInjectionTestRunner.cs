@@ -48,6 +48,8 @@ public class DependencyInjectionTestRunner(
     {
         await using var scope = context.RootServices.CreateAsyncScope();
 
+        context.RootServices.GetRequiredService<DependencyInjectionTypeActivator>().Services = scope.ServiceProvider;
+
         var raw = new Dictionary<int, object?>(ctxt.TestMethodArguments.Length);
         foreach (var kv in fromServices)
         {
@@ -68,7 +70,7 @@ public class DependencyInjectionTestRunner(
                 ctxt.Aggregator,
                 ctxt.CancellationTokenSource,
                 ctxt.BeforeAfterTestAttributes,
-                scope.ServiceProvider.CreateTestClassConstructorArguments(ctxt.ConstructorArguments, ctxt.Aggregator)
+                ctxt.ConstructorArguments
             ));
         }
         finally
