@@ -151,5 +151,87 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
             }
         ];
         yield return ["BuildHostTestStartup1.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
+            "BuildHostMultipleOverloadsTest.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.MultipleOverloads).WithSpan(7, 21, 7, 30).WithArguments("BuildHost"),
+                new DiagnosticResult(Rules.MultipleOverloads).WithSpan(10, 21, 10, 30).WithArguments("BuildHost")
+            }
+        ];
+
+        // CreateHostApplicationBuilder tests
+        yield return
+        [
+            "CreateHostApplicationBuilderTestStartup0.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 50).WithArguments("CreateHostApplicationBuilder", "Microsoft.Extensions.Hosting.HostApplicationBuilder")
+            }
+        ];
+        yield return
+        [
+            "CreateHostApplicationBuilderTestStartup1.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(7, 19, 7, 48).WithArguments("CreateHostApplicationBuilder", "Microsoft.Extensions.Hosting.HostApplicationBuilder")
+            }
+        ];
+        yield return ["CreateHostApplicationBuilderTestStartup2.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return ["CreateHostApplicationBuilderTestStartup3.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
+            "CreateHostApplicationBuilderTestStartup4.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.ParameterlessOrSingleParameter).WithSpan(7, 35, 7, 64).WithArguments("CreateHostApplicationBuilder", nameof(AssemblyName))
+            }
+        ];
+
+        // ConfigureHostApplicationBuilder tests
+        yield return
+        [
+            "ConfigureHostApplicationBuilderTestStartup0.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 53).WithArguments("ConfigureHostApplicationBuilder", "IHostApplicationBuilder")
+            }
+        ];
+        yield return ["ConfigureHostApplicationBuilderTestStartup1.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
+            "ConfigureHostApplicationBuilderTestStartup2.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.NoReturnType).WithSpan(7, 16, 7, 48).WithArguments("ConfigureHostApplicationBuilder")
+            }
+        ];
+        yield return
+        [
+            "ConfigureHostApplicationBuilderTestStartup3.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 21, 7, 53).WithArguments("ConfigureHostApplicationBuilder", "IHostApplicationBuilder")
+            }
+        ];
+
+        // BuildHostApplicationBuilder tests
+        yield return
+        [
+            "BuildHostApplicationBuilderTestStartup0.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 48).WithArguments("BuildHostApplicationBuilder", typeof(IHost).FullName!),
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 48).WithArguments("BuildHostApplicationBuilder", "HostApplicationBuilder")
+            }
+        ];
+        yield return ["BuildHostApplicationBuilderTestStartup1.cs", null, Array.Empty<DiagnosticResult>()];
+        yield return
+        [
+            "BuildHostApplicationBuilderTestStartup2.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(7, 19, 7, 46).WithArguments("BuildHostApplicationBuilder", typeof(IHost).FullName!)
+            }
+        ];
+        yield return
+        [
+            "BuildHostApplicationBuilderTestStartup3.cs", null, new[]
+            {
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 18, 7, 45).WithArguments("BuildHostApplicationBuilder", "HostApplicationBuilder")
+            }
+        ];
     }
 }

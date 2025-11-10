@@ -28,27 +28,31 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
         private readonly INamedTypeSymbol _serviceCollection;
         private readonly INamedTypeSymbol _hostBuilderContext;
         private readonly INamedTypeSymbol _host;
+        private readonly INamedTypeSymbol _hostApplicationBuilder;
+        private readonly INamedTypeSymbol _iHostApplicationBuilder;
         private readonly string _startupName;
 
         private SymbolAnalyzer(INamedTypeSymbol type1, INamedTypeSymbol type2, INamedTypeSymbol type3,
-            INamedTypeSymbol type4, INamedTypeSymbol type5, string startupName)
+            INamedTypeSymbol type4, INamedTypeSymbol type5, INamedTypeSymbol type6, INamedTypeSymbol type7, string startupName)
         {
             _hostBuilder = type1;
             _assemblyName = type2;
             _serviceCollection = type3;
             _hostBuilderContext = type4;
             _host = type5;
+            _hostApplicationBuilder = type6;
+            _iHostApplicationBuilder = type7;
             _startupName = startupName;
         }
 
         public static void RegisterCompilationStartAction(CompilationStartAnalysisContext csac)
         {
-            var (hostBuilder, assemblyName, serviceCollection, hostBuilderContext, hostBuild, startupTypeAttribute) =
+            var (hostBuilder, assemblyName, serviceCollection, hostBuilderContext, hostBuild, hostApplicationBuilder, iHostApplicationBuilder, startupTypeAttribute) =
                 GetTypeSymbols(csac.Compilation);
 
             if (hostBuilder == null || assemblyName == null || serviceCollection == null ||
-                hostBuilderContext == null ||
-                hostBuild == null || startupTypeAttribute == null) return;
+                hostBuilderContext == null || hostBuild == null || hostApplicationBuilder == null || 
+                iHostApplicationBuilder == null || startupTypeAttribute == null) return;
 
             var sta = csac.Compilation.Assembly.GetAttributes()
                 .FirstOrDefault(attr => SymbolComparer.Equals(attr.AttributeClass, startupTypeAttribute));
@@ -75,12 +79,12 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
 
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
             csac.RegisterSymbolAction(
-                new SymbolAnalyzer(hostBuilder, assemblyName, serviceCollection, hostBuilderContext, hostBuild, startupName)
+                new SymbolAnalyzer(hostBuilder, assemblyName, serviceCollection, hostBuilderContext, hostBuild, hostApplicationBuilder, iHostApplicationBuilder, startupName)
                     .AnalyzeSymbol, SymbolKind.Method, SymbolKind.NamedType);
         }
 
         private static (INamedTypeSymbol? HostBuilder, INamedTypeSymbol? AssemblyName, INamedTypeSymbol?
-            ServiceCollection, INamedTypeSymbol? HostBuilderContext, INamedTypeSymbol? HostBuild, INamedTypeSymbol?
+            ServiceCollection, INamedTypeSymbol? HostBuilderContext, INamedTypeSymbol? HostBuild, INamedTypeSymbol? HostApplicationBuilder, INamedTypeSymbol? IHostApplicationBuilder, INamedTypeSymbol?
             StartupTypeAttribute) GetTypeSymbols(Compilation compilation)
         {
             var ass = compilation.References
@@ -93,6 +97,8 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
                 GetTypeSymbol("Microsoft.Extensions.DependencyInjection.IServiceCollection"),
                 GetTypeSymbol("Microsoft.Extensions.Hosting.HostBuilderContext"),
                 GetTypeSymbol("Microsoft.Extensions.Hosting.IHost"),
+                GetTypeSymbol("Microsoft.Extensions.Hosting.HostApplicationBuilder"),
+                GetTypeSymbol("Microsoft.Extensions.Hosting.IHostApplicationBuilder"),
                 GetTypeSymbol("Xunit.DependencyInjection.StartupTypeAttribute"));
 
             INamedTypeSymbol? GetTypeSymbol(string name) => ass
@@ -118,6 +124,10 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
                     AnalyzeOverride(context, type, "ConfigureHost");
                     AnalyzeOverride(context, type, "ConfigureServices");
                     AnalyzeOverride(context, type, "Configure");
+                    AnalyzeOverride(context, type, "BuildHost");
+                    AnalyzeOverride(context, type, "CreateHostApplicationBuilder");
+                    AnalyzeOverride(context, type, "ConfigureHostApplicationBuilder");
+                    AnalyzeOverride(context, type, "BuildHostApplicationBuilder");
 
                     return;
                 case IMethodSymbol method:
@@ -141,6 +151,12 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
                                 AnalyzeConfigure(context, method);
                             else if ("BuildHost".Equals(method.Name, StringComparison.OrdinalIgnoreCase))
                                 AnalyzeBuildHost(context, method);
+                            else if ("CreateHostApplicationBuilder".Equals(method.Name, StringComparison.OrdinalIgnoreCase))
+                                AnalyzeCreateHostApplicationBuilder(context, method);
+                            else if ("ConfigureHostApplicationBuilder".Equals(method.Name, StringComparison.OrdinalIgnoreCase))
+                                AnalyzeConfigureHostApplicationBuilder(context, method);
+                            else if ("BuildHostApplicationBuilder".Equals(method.Name, StringComparison.OrdinalIgnoreCase))
+                                AnalyzeBuildHostApplicationBuilder(context, method);
 
                             return;
                     }
@@ -248,6 +264,36 @@ public class XunitDependencyInjectionAnalyzer : DiagnosticAnalyzer
             if (method.Parameters.Length != 1 || !SymbolComparer.Equals(_hostBuilder, method.Parameters[0].Type))
                 context.ReportDiagnostic(Diagnostic.Create(Rules.SingleParameter, method.Locations[0], method.Name,
                     _hostBuilder.Name));
+        }
+
+        private void AnalyzeCreateHostApplicationBuilder(SymbolAnalysisContext context, IMethodSymbol method)
+        {
+            AnalyzeReturnType(context, method, _hostApplicationBuilder);
+
+            if (method.Parameters.Length == 0) return;
+
+            if (method.Parameters.Length > 1 || !SymbolComparer.Equals(_assemblyName, method.Parameters[0].Type))
+                context.ReportDiagnostic(Diagnostic.Create(Rules.ParameterlessOrSingleParameter, method.Locations[0],
+                    method.Name, _assemblyName.Name));
+        }
+
+        private void AnalyzeConfigureHostApplicationBuilder(SymbolAnalysisContext context, IMethodSymbol method)
+        {
+            AnalyzeReturnType(context, method, null);
+
+            var parameters = method.Parameters;
+            if (parameters.Length != 1 || !SymbolComparer.Equals(parameters[0].Type, _iHostApplicationBuilder))
+                context.ReportDiagnostic(Diagnostic.Create(Rules.SingleParameter, method.Locations[0], method.Name,
+                    _iHostApplicationBuilder.Name));
+        }
+
+        private void AnalyzeBuildHostApplicationBuilder(SymbolAnalysisContext context, IMethodSymbol method)
+        {
+            AnalyzeReturnType(context, method, _host);
+
+            if (method.Parameters.Length != 1 || !SymbolComparer.Equals(_hostApplicationBuilder, method.Parameters[0].Type))
+                context.ReportDiagnostic(Diagnostic.Create(Rules.SingleParameter, method.Locations[0], method.Name,
+                    _hostApplicationBuilder.Name));
         }
     }
 }
