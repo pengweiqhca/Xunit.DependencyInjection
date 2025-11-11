@@ -155,8 +155,8 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "BuildHostMultipleOverloadsTest.cs", null, new[]
             {
-                new DiagnosticResult(Rules.MultipleOverloads).WithSpan(7, 21, 7, 30).WithArguments("BuildHost"),
-                new DiagnosticResult(Rules.MultipleOverloads).WithSpan(10, 21, 10, 30).WithArguments("BuildHost")
+                new DiagnosticResult(Rules.MultipleOverloads).WithSpan(8, 21, 8, 38).WithArguments("ConfigureServices"),
+                new DiagnosticResult(Rules.MultipleOverloads).WithSpan(10, 21, 10, 38).WithArguments("ConfigureServices")
             }
         ];
 
@@ -165,14 +165,14 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "CreateHostApplicationBuilderTestStartup0.cs", null, new[]
             {
-                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 50).WithArguments("CreateHostApplicationBuilder", "Microsoft.Extensions.Hosting.HostApplicationBuilder")
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(5, 21, 5, 49).WithArguments("CreateHostApplicationBuilder", "Microsoft.Extensions.Hosting.HostApplicationBuilder")
             }
         ];
         yield return
         [
             "CreateHostApplicationBuilderTestStartup1.cs", null, new[]
             {
-                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(7, 19, 7, 48).WithArguments("CreateHostApplicationBuilder", "Microsoft.Extensions.Hosting.HostApplicationBuilder")
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(7, 23, 7, 51).WithArguments("CreateHostApplicationBuilder", "Microsoft.Extensions.Hosting.HostApplicationBuilder")
             }
         ];
         yield return ["CreateHostApplicationBuilderTestStartup2.cs", null, Array.Empty<DiagnosticResult>()];
@@ -181,7 +181,7 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "CreateHostApplicationBuilderTestStartup4.cs", null, new[]
             {
-                new DiagnosticResult(Rules.ParameterlessOrSingleParameter).WithSpan(7, 35, 7, 64).WithArguments("CreateHostApplicationBuilder", nameof(AssemblyName))
+                new DiagnosticResult(Rules.ParameterlessOrSingleParameter).WithSpan(7, 39, 7, 67).WithArguments("CreateHostApplicationBuilder", nameof(AssemblyName))
             }
         ];
 
@@ -190,7 +190,7 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "ConfigureHostApplicationBuilderTestStartup0.cs", null, new[]
             {
-                new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 53).WithArguments("ConfigureHostApplicationBuilder", "IHostApplicationBuilder")
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(5, 21, 5, 52).WithArguments("ConfigureHostApplicationBuilder", "IHostApplicationBuilder")
             }
         ];
         yield return ["ConfigureHostApplicationBuilderTestStartup1.cs", null, Array.Empty<DiagnosticResult>()];
@@ -198,14 +198,14 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "ConfigureHostApplicationBuilderTestStartup2.cs", null, new[]
             {
-                new DiagnosticResult(Rules.NoReturnType).WithSpan(7, 16, 7, 48).WithArguments("ConfigureHostApplicationBuilder")
+                new DiagnosticResult(Rules.NoReturnType).WithSpan(7, 20, 7, 51).WithArguments("ConfigureHostApplicationBuilder")
             }
         ];
         yield return
         [
             "ConfigureHostApplicationBuilderTestStartup3.cs", null, new[]
             {
-                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 21, 7, 53).WithArguments("ConfigureHostApplicationBuilder", "IHostApplicationBuilder")
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 21, 7, 52).WithArguments("ConfigureHostApplicationBuilder", "IHostApplicationBuilder")
             }
         ];
 
@@ -223,14 +223,14 @@ public class DependencyInjectionTest(CancellationToken cancellationToken)
         [
             "BuildHostApplicationBuilderTestStartup2.cs", null, new[]
             {
-                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(7, 19, 7, 46).WithArguments("BuildHostApplicationBuilder", typeof(IHost).FullName!)
+                new DiagnosticResult(Rules.ReturnTypeAssignableTo).WithSpan(7, 23, 7, 50).WithArguments("BuildHostApplicationBuilder", typeof(IHost).FullName!)
             }
         ];
         yield return
         [
             "BuildHostApplicationBuilderTestStartup3.cs", null, new[]
             {
-                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 18, 7, 45).WithArguments("BuildHostApplicationBuilder", "HostApplicationBuilder")
+                new DiagnosticResult(Rules.SingleParameter).WithSpan(7, 22, 7, 49).WithArguments("BuildHostApplicationBuilder", "HostApplicationBuilder")
             }
         ];
     }

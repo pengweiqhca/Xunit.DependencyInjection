@@ -1,8 +1,10 @@
 ﻿using Microsoft.Extensions.Hosting;
 
-namespace Xunit.DependencyInjection.Test.Analyzer.Startup;
-
-public class Startup
+namespace TestProject
 {
-    public IHost BuildHostApplicationBuilder(HostApplicationBuilder hostApplicationBuilder) => hostApplicationBuilder.Build();
+    public class Startup
+    {
+        public IHost BuildHostApplicationBuilder(HostApplicationBuilder hostApplicationBuilder) =>
+            hostApplicationBuilder.Build();
+    }
 }

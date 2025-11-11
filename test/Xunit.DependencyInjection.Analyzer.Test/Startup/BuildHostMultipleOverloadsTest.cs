@@ -1,12 +1,12 @@
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace TestProject
 {
     public class Startup
     {
-        public IHost BuildHost(IHostBuilder builder) => builder.Build();
-        
-        // This should trigger MultipleOverloads warning with the fix
-        public IHost BuildHost(IHostBuilder builder, string extra) => builder.Build();
+        public void ConfigureServices(IServiceCollection services) { }
+
+        public void ConfigureServices(IServiceCollection services, HostBuilderContext context) { }
     }
 }

@@ -1,6 +1,7 @@
-﻿namespace Xunit.DependencyInjection.Test.Analyzer.Startup;
-
-public class Startup
+﻿namespace TestProject
 {
-    public void CreateHostApplicationBuilder() { }
+    public class Startup
+    {
+        public void CreateHostApplicationBuilder() { }
+    }
 }
