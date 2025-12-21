@@ -15,12 +15,10 @@ public class DependencyInjectionTypeActivator : ITypeActivator
 
     public static DependencyInjectionTypeActivator Instance { get; } = new();
 
-    private DependencyInjectionTypeActivator(){}
+    private DependencyInjectionTypeActivator() { }
 
-    object ITypeActivator.CreateInstance(
-        ConstructorInfo constructor,
-        object?[]? arguments,
-        Func<Type, IReadOnlyCollection<ParameterInfo>, string> missingArgumentMessageFormatter)
+    object ITypeActivator.CreateInstance(ConstructorInfo constructor,
+        object?[]? arguments, Func<Type, IReadOnlyCollection<ParameterInfo>, string> missingArgumentMessageFormatter)
     {
         Guard.ArgumentNotNull(constructor);
         Guard.ArgumentNotNull(missingArgumentMessageFormatter);
