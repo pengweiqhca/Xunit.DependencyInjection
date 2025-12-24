@@ -24,8 +24,11 @@ jobs:
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
     script: |
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj
 
 - job: MacOS_Build_and_Test
   pool:
@@ -40,8 +43,11 @@ jobs:
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
     script: |
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-      dotnet test -c Release ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj
 
 - job: Windows_Build_and_Test
   pool:
@@ -56,4 +62,8 @@ jobs:
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
     script: |
-      dotnet test
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
+      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj
