@@ -25,3 +25,9 @@ public class UITestCaseRunnerAdapter : IXunitTestCaseRunnerWrapper
             cancellationTokenSource);
     }
 }
+
+public class UITheoryTestCaseRunnerAdapter : UITestCaseRunnerAdapter
+{
+    /// <inheritdoc />
+    public override Type TestCaseType => typeof(UIDelayEnumeratedTestCase);
+}

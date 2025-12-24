@@ -12,6 +12,7 @@ public static class ServiceCollectionExtensions
         public IServiceCollection AddStaFactSupport()
         {
             services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, UITestCaseRunnerAdapter>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, UITheoryTestCaseRunnerAdapter>());
 
             return services;
         }
