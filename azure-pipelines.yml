@@ -9,58 +9,31 @@ trigger:
 variables:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   DOTNET_CLI_TELEMETRY_OPTOUT: 1
+  buildConfiguration: Release
 
 jobs:
-- job: Linux_Build_and_Test
+- job: Build_and_Test
+  strategy:
+    matrix:
+      linux:
+        vmImage: ubuntu-latest
+      macos:
+        vmImage: macOS-latest
+      windows:
+        vmImage: windows-latest
   pool:
-    vmImage: 'ubuntu-latest'
+    vmImage: $(vmImage)
   steps:
   - task: UseDotNet@2
     displayName: 'Use .NET Sdk 10.0'
     inputs:
       version: 10.x
-  - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
+  - script: dotnet build -c $(buildConfiguration) -v n
   - displayName: 'dotnet test'
     script: |
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj
-
-- job: MacOS_Build_and_Test
-  pool:
-    vmImage: 'macOS-latest'
-  steps:
-  - task: UseDotNet@2
-    displayName: 'Use .NET Sdk 10.0'
-    inputs:
-      version: 10.x
-  - script: dotnet build -c $(buildConfiguration) -v n
-    displayName: 'dotnet build'
-  - displayName: 'dotnet test'
-    script: |
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj
-
-- job: Windows_Build_and_Test
-  pool:
-    vmImage: 'windows-latest'
-  steps:
-  - task: UseDotNet@2
-    displayName: 'Use .NET Sdk 10.0'
-    inputs:
-      version: 10.x
-  - script: dotnet build -c $(buildConfiguration) -v n
-    displayName: 'dotnet build'
-  - displayName: 'dotnet test'
-    script: |
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
-      dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj
+      dotnet test -c $(buildConfiguration) --no-build --project ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
+      dotnet test -c $(buildConfiguration) --no-build --project ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
+      dotnet test -c $(buildConfiguration) --no-build --project ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
+      dotnet test -c $(buildConfiguration) --no-build --project ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
+      dotnet test -c $(buildConfiguration) --no-build --project ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj

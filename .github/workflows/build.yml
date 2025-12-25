@@ -11,30 +11,12 @@ on:
       - "v2"
 
 jobs:
-  unix-build:
+  build-and-test:
     name: Running tests on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest]
-    steps:
-    - uses: actions/checkout@v4
-    - name: Setup .NET SDK
-      uses: actions/setup-dotnet@v4
-      with:
-        dotnet-version: 10.x
-    - name: build
-      run: dotnet build -c Release -v n
-    - name: test
-      run: |
-        dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
-        dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.AspNetCore/Xunit.DependencyInjection.Test.AspNetCore.csproj
-        dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.DisableTestParallelization/Xunit.DependencyInjection.Test.DisableTestParallelization.csproj
-        dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.FSharp/Xunit.DependencyInjection.Test.FSharp.fsproj
-        dotnet test -c Release --no-build --project ./test/Xunit.DependencyInjection.Test.Parallelization/Xunit.DependencyInjection.Test.Parallelization.csproj
-
-  windows-build:
-    runs-on: windows-latest
+        os: [ubuntu-latest, macos-latest, windows-latest]
     steps:
     - uses: actions/checkout@v4
     - name: Setup .NET SDK
