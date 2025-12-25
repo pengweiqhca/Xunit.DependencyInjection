@@ -28,8 +28,8 @@ jobs:
     displayName: 'Use .NET Sdk 10.0'
     inputs:
       version: 10.x
-    displayName: 'dotnet build'
   - script: dotnet build -c $(buildConfiguration) -v n
+    displayName: 'dotnet build'
   - displayName: 'dotnet test'
     script: |
       dotnet test -c $(buildConfiguration) --no-build --project ./test/Xunit.DependencyInjection.Test/Xunit.DependencyInjection.Test.csproj
