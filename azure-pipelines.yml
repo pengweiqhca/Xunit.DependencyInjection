@@ -19,7 +19,6 @@ jobs:
     displayName: 'Use .NET Sdk 10.0'
     inputs:
       version: 10.x
-      include-prerelease: true
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
@@ -38,7 +37,6 @@ jobs:
     displayName: 'Use .NET Sdk 10.0'
     inputs:
       version: 10.x
-      include-prerelease: true
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
@@ -57,7 +55,6 @@ jobs:
     displayName: 'Use .NET Sdk 10.0'
     inputs:
       version: 10.x
-      include-prerelease: true
   - script: dotnet build -c $(buildConfiguration) -v n
     displayName: 'dotnet build'
   - displayName: 'dotnet test'
