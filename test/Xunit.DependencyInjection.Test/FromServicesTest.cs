@@ -7,9 +7,9 @@ public class FromServicesTest(IDependency dependency, ITestOutputHelper output)
     [Theory]
     [InlineData("Test", 3, null, null)]
     public void FactTest(string arg1,
-        [FromServices]int invalid,
-        [FromServices]IDependency dependency1,
-        [FromServices]ITestOutputHelper output1)
+        [FromServices] int invalid,
+        [FromServices] IDependency dependency1,
+        [FromServices] ITestOutputHelper output1)
     {
         Assert.Equal("Test", arg1);
         Assert.Equal(3, invalid);
