@@ -44,7 +44,7 @@ public class DependencyInjectionTypeActivator : ITypeActivator
                 {
                     case Missing:
                     case Array { Length: 0 }:
-                        if (Services.GetService(parameters[index].ParameterType) is { } service)
+                        if (Services.GetService(parameters[index]) is { } service)
                             arguments[index] = service;
 
                         break;
