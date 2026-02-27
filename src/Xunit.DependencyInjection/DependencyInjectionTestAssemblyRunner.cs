@@ -1,6 +1,8 @@
 ﻿namespace Xunit.DependencyInjection;
 
-public class DependencyInjectionTestAssemblyRunner(
+internal class DependencyInjectionTestAssemblyRunner(
+    HostManager hostManager,
+    IAsyncExceptionFilter? exceptionFilter,
     DependencyInjectionStartupContext context,
     IReadOnlyCollection<Exception> exceptions)
     : XunitTestAssemblyRunnerBase<DependencyInjectionAssemblyRunnerContext, DependencyInjectionTestAssembly,
@@ -9,10 +11,19 @@ public class DependencyInjectionTestAssemblyRunner(
 {
     protected override async ValueTask<bool> OnTestAssemblyStarting(DependencyInjectionAssemblyRunnerContext ctxt)
     {
+        try
+        {
+            await hostManager.StartAsync(ctxt.CancellationTokenSource.Token);
+        }
+        catch (Exception ex)
+        {
+            ctxt.Aggregator.Add(exceptionFilter?.Process(ex) ?? ex);
+        }
+
         if (exceptions.Count > 0)
         {
             foreach (var ex in exceptions)
-                ctxt.Aggregator.Add(ex);
+                ctxt.Aggregator.Add(exceptionFilter?.Process(ex) ?? ex);
         }
         else if (ctxt.TestAssembly.AssemblyFixtureTypes.Count > 0)
         {
@@ -26,14 +37,24 @@ public class DependencyInjectionTestAssemblyRunner(
         return await base.OnTestAssemblyStarting(ctxt);
     }
 
-    protected override ValueTask<bool> OnTestAssemblyFinished(DependencyInjectionAssemblyRunnerContext ctxt,
+    protected override async ValueTask<bool> OnTestAssemblyFinished(DependencyInjectionAssemblyRunnerContext ctxt,
         RunSummary summary)
     {
         if (context.DefaultRootServices != null)
             ctxt.AssemblyFixtureMappings.ClearFixtures(ctxt.TestAssembly.AssemblyFixtureTypes,
                 context.DefaultRootServices);
 
-        return base.OnTestAssemblyFinished(ctxt, summary);
+        try
+        {
+            await hostManager.StopAsync(ctxt.CancellationTokenSource.Token);
+        }
+        catch (Exception ex)
+        {
+            ctxt.Aggregator.Add(exceptionFilter?.Process(ex) ?? ex);
+            summary.Failed = ctxt.TestCases.Count;
+        }
+
+        return await base.OnTestAssemblyFinished(ctxt, summary).ConfigureAwait(false);
     }
 
     /// <summary>

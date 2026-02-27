@@ -24,22 +24,14 @@ public class DependencyInjectionTestFrameworkExecutor(
             .ToDictionary(group => group.Key,
                 group => GetHost(exceptions, () => hostManager.GetContext(group.Key.Class)));
 
-        try
-        {
-            await hostManager.StartAsync(cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            exceptions.Add(ex);
-        }
-
         var host = context == null || context.Disposed ? null : context.Host;
 
-        await new DependencyInjectionTestAssemblyRunner(new(host, parallelizationMode, contextMap), exceptions)
+        await new DependencyInjectionTestAssemblyRunner(hostManager,
+            host == null ? null : host.Services.GetService<IAsyncExceptionFilter>(),
+                new(host, parallelizationMode, contextMap), exceptions)
             .Run(new(TestAssembly, host?.Services), testCases, executionMessageSink,
                 executionOptions, cancellationToken);
 
-        await hostManager.StopAsync(cancellationToken);
         return;
 
         static DependencyInjectionBuildContext? GetHost(ICollection<Exception> exceptions,
