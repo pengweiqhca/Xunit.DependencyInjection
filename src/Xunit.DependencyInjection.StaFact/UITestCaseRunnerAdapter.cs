@@ -21,13 +21,25 @@ public class UITestCaseRunnerAdapter : IXunitTestCaseRunnerWrapper
 
         context.RootServices.GetRequiredService<DependencyInjectionTypeActivator>().Services = scope.ServiceProvider;
 
-        return await ((UITestCase)testCase).Run(explicitOption, messageBus, constructorArguments, aggregator,
-            cancellationTokenSource);
+        return await Run(testCase, messageBus, aggregator, cancellationTokenSource, explicitOption,
+            constructorArguments);
     }
+
+    protected virtual ValueTask<RunSummary> Run(IXunitTestCase testCase, IMessageBus messageBus,
+        ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource,
+        ExplicitOption explicitOption, object?[] constructorArguments) =>
+        ((UITestCase)testCase).Run(explicitOption, messageBus, constructorArguments, aggregator,
+            cancellationTokenSource);
 }
 
 public class UITheoryTestCaseRunnerAdapter : UITestCaseRunnerAdapter
 {
     /// <inheritdoc />
     public override Type TestCaseType => typeof(UIDelayEnumeratedTestCase);
+
+    protected override ValueTask<RunSummary> Run(IXunitTestCase testCase, IMessageBus messageBus,
+        ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource,
+        ExplicitOption explicitOption, object?[] constructorArguments) =>
+        ((UIDelayEnumeratedTestCase)testCase).Run(explicitOption, messageBus, constructorArguments, aggregator,
+            cancellationTokenSource);
 }
