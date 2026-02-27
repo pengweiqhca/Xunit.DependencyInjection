@@ -78,7 +78,7 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
         }
         catch (Exception ex)
         {
-            ctxt.Aggregator.Add(ex);
+            ctxt.Aggregator.Add(context.Host.Services.GetService<IAsyncExceptionFilter>()?.Process(ex) ?? ex);
 
             return base.RunTestCase(ctxt, testCase);
         }
@@ -129,7 +129,7 @@ public class DependencyInjectionTestMethodRunner(DependencyInjectionTestContext 
                     messageBus,
                     cancellationTokenSource,
                     [testCase],
-                    ex.Message.Substring(DynamicSkipToken.Value.Length),
+                    ex.Message[DynamicSkipToken.Value.Length..],
                     sendTestCaseMessages: false
                 );
 
