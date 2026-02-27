@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
-    <XunitVersion>3.2.1</XunitVersion>
+    <XunitVersion>3.2.2</XunitVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.*" />
@@ -22,7 +22,7 @@
     <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.*" />
     <PackageVersion Include="System.ValueTuple" Version="4.*" />
-    <PackageVersion Include="xRetry.v3" Version="1.0.0-rc2" />
+    <PackageVersion Include="xRetry.v3" Version="1.0.0-rc3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.*" />
     <PackageVersion Include="Xunit.StaFact" Version="3.0.13" />
     <PackageVersion Include="xunit.v3" Version="$(XunitVersion)" />
