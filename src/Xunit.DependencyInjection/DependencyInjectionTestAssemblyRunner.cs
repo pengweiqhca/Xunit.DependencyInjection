@@ -54,7 +54,7 @@ internal class DependencyInjectionTestAssemblyRunner(
             summary.Failed = ctxt.TestCases.Count;
         }
 
-        return await base.OnTestAssemblyFinished(ctxt, summary).ConfigureAwait(false);
+        return await base.OnTestAssemblyFinished(ctxt, summary);
     }
 
     /// <summary>
