@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType Condition="'$(IsPacking)' != 'true'">Exe</OutputType>
     <ExcludeRestorePackageImports Condition="'$(IsPacking)' == 'true'">true</ExcludeRestorePackageImports>
     <TargetFrameworks>net472;net8.0</TargetFrameworks>
     <Description>Support xRetry.
@@ -18,7 +17,7 @@ public void ConfigureServices(IServiceCollection services)
 
   <ItemGroup>
     <PackageReference Include="xRetry.v3" />
-    <PackageReference Include="xunit.v3.core" />
+    <PackageReference Include="xunit.v3.extensibility.core" />
 
     <ProjectReference Include="..\Xunit.DependencyInjection\Xunit.DependencyInjection.csproj" />
   </ItemGroup>
