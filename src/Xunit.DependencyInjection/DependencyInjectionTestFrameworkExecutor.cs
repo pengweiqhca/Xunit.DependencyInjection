@@ -27,7 +27,7 @@ public class DependencyInjectionTestFrameworkExecutor(
         var host = context == null || context.Disposed ? null : context.Host;
 
         await new DependencyInjectionTestAssemblyRunner(hostManager,
-            host == null ? null : host.Services.GetService<IAsyncExceptionFilter>(),
+            host?.Services.GetService<IAsyncExceptionFilter>(),
                 new(host, parallelizationMode, contextMap), exceptions)
             .Run(new(TestAssembly, host?.Services), testCases, executionMessageSink,
                 executionOptions, cancellationToken);

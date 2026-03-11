@@ -14,12 +14,8 @@ public class ContextValue<T>
         }
         set
         {
-            var holder = _value.Value;
-            if (holder != null)
-            {
-                // Clear current value trapped in the AsyncLocals, as its done.
-                holder.Value = default;
-            }
+            // Clear current value trapped in the AsyncLocals, as its done.
+            _value.Value?.Value = default;
 
             if (value != null)
             {
