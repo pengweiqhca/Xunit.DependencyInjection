@@ -80,8 +80,7 @@ internal sealed class HostManager(Assembly assembly, IMessageSink diagnosticMess
             var startupType = testClassType.Assembly.GetType(startupTypeString);
             if (startupType != null) return startupType;
 
-            var index = ns!.LastIndexOf('.');
-            if (index > 0) ns = ns[..index];
+            if (ns?.LastIndexOf('.') is { } index and > 0) ns = ns[..index];
             else break;
         }
 
