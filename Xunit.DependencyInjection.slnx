@@ -14,6 +14,7 @@
     <Project Path="src/Xunit.DependencyInjection.Analyzer/Xunit.DependencyInjection.Analyzer.csproj" />
     <Project Path="src/Xunit.DependencyInjection.AspNetCoreTesting/Xunit.DependencyInjection.AspNetCoreTesting.csproj" />
     <Project Path="src/Xunit.DependencyInjection.Demystifier/Xunit.DependencyInjection.Demystifier.csproj" />
+    <Project Path="src/Xunit.DependencyInjection.FsCheck/Xunit.DependencyInjection.FsCheck.csproj" />
     <Project Path="src/Xunit.DependencyInjection.Logging/Xunit.DependencyInjection.Logging.csproj" />
     <Project Path="src/Xunit.DependencyInjection.StaFact/Xunit.DependencyInjection.StaFact.csproj" />
     <Project Path="src/Xunit.DependencyInjection.Template/Xunit.DependencyInjection.Template.csproj" />

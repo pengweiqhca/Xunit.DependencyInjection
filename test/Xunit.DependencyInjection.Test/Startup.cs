@@ -21,6 +21,7 @@ public class Startup
             .AddScoped<IDependencyWithManagedLifetime, DependencyWithManagedLifetime>()
             .AddScoped<BeforeAfterTest, TestBeforeAfterTest>()
             .AddHostedService<HostServiceTest>()
+            .AddFsCheckSupport()
             .AddStaFactSupport()
             .AddSingleton<ITestCollectionOrderer, RunMonitorCollectionLastOrderer>()
             .AddSingleton<ITestClassOrderer, TestClassByOrderOrderer>()

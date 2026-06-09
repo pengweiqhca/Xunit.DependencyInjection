@@ -7,6 +7,7 @@
   <ItemGroup>
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.*" />
     <PackageVersion Include="Ben.Demystifier" Version="0.*" />
+    <PackageVersion Include="FsCheck.Xunit.v3" Version="3.*" />
     <PackageVersion Include="FSharp.Core" Version="9.*" />
     <PackageVersion Include="MartinCostello.Logging.XUnit.v3" Version="0.*" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(_TargetFrameworkVersionWithoutV)" />
@@ -29,6 +30,6 @@
   </ItemGroup>
   <ItemGroup>
     <GlobalPackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.*" PrivateAssets="All" Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'" />
-    <GlobalPackageReference Include="PolySharp" Version="1.*" PrivateAssets="All" />
+    <GlobalPackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="All" />
   </ItemGroup>
 </Project>
