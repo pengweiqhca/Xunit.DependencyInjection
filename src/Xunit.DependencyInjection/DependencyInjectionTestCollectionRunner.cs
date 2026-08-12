@@ -206,11 +206,17 @@ public sealed class DependencyInjectionTestCollection(IXunitTestCollection testC
     public IReadOnlyCollection<IBeforeAfterTestAttribute> BeforeAfterTestAttributes =>
         testCollection.BeforeAfterTestAttributes;
 
-    IReadOnlyCollection<Type> IXunitTestCollection.ClassFixtureTypes { get; } = testCollection.CollectionFixtureTypes
-        .Where(TestHelper.GenericTypeArgumentIsGenericParameter).ToArray();
+    IReadOnlyCollection<Type> IXunitTestCollection.ClassFixtureTypes { get; } =
+    [
+        .. testCollection.CollectionFixtureTypes
+            .Where(TestHelper.GenericTypeArgumentIsGenericParameter)
+    ];
 
-    public IReadOnlyCollection<Type> CollectionFixtureTypes { get; } = testCollection.CollectionFixtureTypes
-        .WhereNot(TestHelper.GenericTypeArgumentIsGenericParameter).ToArray();
+    public IReadOnlyCollection<Type> CollectionFixtureTypes { get; } =
+    [
+        .. testCollection.CollectionFixtureTypes
+            .WhereNot(TestHelper.GenericTypeArgumentIsGenericParameter)
+    ];
 
     public Type? CollectionDefinition => testCollection.CollectionDefinition;
 

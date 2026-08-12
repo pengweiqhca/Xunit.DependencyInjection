@@ -56,9 +56,11 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
             null => [],
             TheoryData theoryData => theoryData,
             IReadOnlyCollection<ITheoryDataRow> theoryDataRows => theoryDataRows,
-            IEnumerable<ITheoryDataRow> theoryDataRows => theoryDataRows.ToArray(),
-            IEnumerable<object?> dataItems => dataItems.OfType<object?[]>()
-                .Select(ITheoryDataRow (item) => new TheoryDataRow(item)).ToArray(),
+            IEnumerable<ITheoryDataRow> theoryDataRows => [.. theoryDataRows],
+            IEnumerable<object?> dataItems =>
+            [
+                .. dataItems.OfType<object?[]>().Select(ITheoryDataRow (item) => new TheoryDataRow(item))
+            ],
             _ => throw new ArgumentException(
                 $"Method {MethodName} on {type.FullName} did not return IEnumerable<object>")
         };
@@ -66,7 +68,7 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
 
     private MethodInfo? GetMethodInfo(Type type)
     {
-        var parameterTypes = Parameters == null ? Type.EmptyTypes : Parameters.Select(p => p?.GetType()).ToArray();
+        var parameterTypes = Parameters == null ? Type.EmptyTypes : [.. Parameters.Select(p => p?.GetType())];
 
         for (var reflectionType = type; reflectionType != null; reflectionType = reflectionType.GetTypeInfo().BaseType)
         {

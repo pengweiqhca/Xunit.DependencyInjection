@@ -40,9 +40,11 @@ public class DependencyInjectionTestRunner(
         !testClass.HasRequiredMemberAttribute() || testClass.GetConstructors().FirstOrDefault(static ci =>
             ci is { IsStatic: false, IsPublic: true }) is not { } ci || ci.HasSetsRequiredMembersAttribute()
             ? []
-            : testClass.GetProperties()
-                .Where(p => p.SetMethod is { IsPublic: true } && p.HasRequiredMemberAttribute())
-                .ToArray();
+            :
+            [
+                .. testClass.GetProperties()
+                    .Where(p => p.SetMethod is { IsPublic: true } && p.HasRequiredMemberAttribute())
+            ];
 
     protected override async ValueTask<TimeSpan> RunTest(XunitTestRunnerContext ctxt)
     {

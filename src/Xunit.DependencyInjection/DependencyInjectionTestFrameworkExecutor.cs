@@ -69,11 +69,17 @@ public sealed class DependencyInjectionTestAssembly(
 
     public Assembly Assembly => testAssembly.Assembly;
 
-    IReadOnlyCollection<Type> IXunitTestAssembly.AssemblyFixtureTypes { get; } = testAssembly.AssemblyFixtureTypes
-        .Where(TestHelper.GenericTypeArgumentIsGenericParameter).ToArray();
+    IReadOnlyCollection<Type> IXunitTestAssembly.AssemblyFixtureTypes { get; } =
+    [
+        .. testAssembly.AssemblyFixtureTypes
+            .Where(TestHelper.GenericTypeArgumentIsGenericParameter)
+    ];
 
-    public IReadOnlyCollection<Type> AssemblyFixtureTypes { get; } = testAssembly.AssemblyFixtureTypes
-        .WhereNot(TestHelper.GenericTypeArgumentIsGenericParameter).ToArray();
+    public IReadOnlyCollection<Type> AssemblyFixtureTypes { get; } =
+    [
+        .. testAssembly.AssemblyFixtureTypes
+            .WhereNot(TestHelper.GenericTypeArgumentIsGenericParameter)
+    ];
 
     public IReadOnlyCollection<IBeforeAfterTestAttribute> BeforeAfterTestAttributes =>
         testAssembly.BeforeAfterTestAttributes;
