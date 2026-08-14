@@ -1,20 +1,22 @@
-﻿# Use `Microsoft.Extensions.DependencyInjection` to resolve xUnit test cases
+﻿# Xunit.DependencyInjection
 
-> XUnit v2 users: please use [v2](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/v2) branch.
+[![Xunit.DependencyInjection NuGet](https://img.shields.io/nuget/v/Xunit.DependencyInjection)](https://www.nuget.org/packages/Xunit.DependencyInjection) [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/pengweiqhca/xunit.dependencyinjection)
+
+Use `Microsoft.Extensions.DependencyInjection` to resolve xUnit test cases: constructor-inject services into your test classes instead of writing them by hand, and reuse the same `Startup`/host configuration you use in your application.
+
+> xUnit v2 users: please use the [v2](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/v2) branch.
 >
-> Xunit.DependencyInjection.SkippableFact are obsoleted on xunit.v3.
+> `Xunit.DependencyInjection.SkippableFact` is obsolete on xunit.v3 and no longer needed.
 
-## How to use
+## Getting started
 
-[![Xunit.DependencyInjection NuGet](https://img.shields.io/nuget/v/Xunit.DependencyInjection)](https://www.nuget.org/packages/Xunit.DependencyInjection)  [![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/pengweiqhca/xunit.dependencyinjection)
-
-Install the [NuGet](https://www.nuget.org/packages/Xunit.DependencyInjection) package.
+Install the [NuGet](https://www.nuget.org/packages/Xunit.DependencyInjection) package:
 
 ```sh
 dotnet add package Xunit.DependencyInjection
 ```
 
-In your testing project, add the following framework
+Add a `Startup` class to your test project and register your services in `ConfigureServices`:
 
 ```cs
 namespace Your.Test.Project
@@ -29,7 +31,7 @@ namespace Your.Test.Project
 }
 ```
 
-Example test `class`.
+Then inject `IDependency` into your test class constructor, exactly like you would with any other DI-enabled class:
 
 ```cs
 public interface IDependency
@@ -56,11 +58,11 @@ public class MyAwesomeTests
 }
 ```
 
->  `Xunit.DependencyInjection` is built into the generic host and fully supports its lifecycle, allowing you to use all features supported by the generic host, including but not limited to `IHostedService`.
+>  `Xunit.DependencyInjection` builds on top of the generic host and fully supports its lifecycle, so you can use any feature the generic host offers, including (but not limited to) `IHostedService`.
 
-## Integration asp.net core TestHost(3.0+)
+## Integrating with ASP.NET Core TestHost (3.0+)
 
-### Asp.Net Core Startup
+### With an ASP.NET Core `Startup` class
 
 ```sh
 dotnet add package Microsoft.AspNetCore.TestHost
@@ -76,11 +78,9 @@ public class Startup
 }
 ```
 
-### MinimalApi
+### With Minimal APIs
 
-If you use MinimalApi rather than asp.net core Startup class.
-
-Add package reference for `Xunit.DependencyInjection.AspNetCoreTesting`
+If your web project uses Minimal APIs instead of an ASP.NET Core `Startup` class, install `Xunit.DependencyInjection.AspNetCoreTesting`:
 
 ```sh
 dotnet add package Xunit.DependencyInjection.AspNetCoreTesting
@@ -93,46 +93,46 @@ public class Startup
 }
 ```
 
-> Maybe your asp.net core project should InternalsVisibleTo or add `public partial class Program {}` in the end of `Program.cs`;
+> Your ASP.NET Core project may need to add `InternalsVisibleTo` for the test project, or add `public partial class Program { }` at the end of `Program.cs`, so the test project can reference `Program`.
 >
-> Detail see [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/test/Xunit.DependencyInjection.Test.AspNetCore)
+> See [Xunit.DependencyInjection.Test.AspNetCore](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/test/Xunit.DependencyInjection.Test.AspNetCore) for a full example.
 
-## `Startup` limitation
+## `Startup` configuration styles
 
-`Startup` supports two configuration styles, and the `Configure` method is supported by both.
+`Startup` supports two configuration styles. The `Configure` method (see [Initializing data on startup](#initializing-data-on-startup)) is supported by both styles.
 
-### HostApplicationBuilder-style
+### `HostApplicationBuilder` style
 
 * `CreateHostApplicationBuilder` method
 
-  > **NOTE**: If this method signature is not found, the host is built by simply calling `Host.CreateEmptyApplicationBuilder(new() { ApplicationName = assemblyName.Name });`.
+  > If this method is not found, the host falls back to `Host.CreateEmptyApplicationBuilder(new() { ApplicationName = assemblyName.Name })`.
 
-    ``` C#
-    public HostApplicationBuilder CreateHostApplicationBuilder([AssemblyName assemblyName]) { }
-    ```
+  ```C#
+  public HostApplicationBuilder CreateHostApplicationBuilder([AssemblyName assemblyName]) { }
+  ```
 
-* `ConfigureHostApplicationBuilder` method (distinguish by this method)
+* `ConfigureHostApplicationBuilder` method (presence of this method selects the `HostApplicationBuilder` style)
 
-    ``` C#
-    public void ConfigureHostApplicationBuilder(IHostApplicationBuilder hostApplicationBuilder) { }
-    ```
+  ```C#
+  public void ConfigureHostApplicationBuilder(IHostApplicationBuilder hostApplicationBuilder) { }
+  ```
 
 * `BuildHostApplicationBuilder` method
 
-  > **NOTE**: If this method signature is not found, the host is built by simply calling `hostApplicationBuilder.Build();`.
+  > If this method is not found, the host is built by simply calling `hostApplicationBuilder.Build()`.
 
-  ``` C#
+  ```C#
   public IHost BuildHostApplicationBuilder(HostApplicationBuilder hostApplicationBuilder)
   {
       return hostApplicationBuilder.Build();
   }
   ```
 
-### Startup-style
+### `Startup`/`HostBuilder` style
 
 * `CreateHostBuilder` method
 
-  ``` C#
+  ```C#
   public class Startup
   {
       public IHostBuilder CreateHostBuilder([AssemblyName assemblyName]) { }
@@ -141,40 +141,44 @@ public class Startup
 
 * `ConfigureHost` method
 
-    ```C#
-    public class Startup
-    {
-        public void ConfigureHost(IHostBuilder hostBuilder) { }
-    }
-    ```
+  ```C#
+  public class Startup
+  {
+      public void ConfigureHost(IHostBuilder hostBuilder) { }
+  }
+  ```
 
 * `ConfigureServices` method
 
-    ```C#
-    public class Startup
-    {
-        public void ConfigureServices(IServiceCollection services[, HostBuilderContext context]) { }
-    }
-    ```
+  ```C#
+  public class Startup
+  {
+      public void ConfigureServices(IServiceCollection services[, HostBuilderContext context]) { }
+  }
+  ```
 
 * `BuildHost` method
 
-  > **NOTE**: If this method signature is not found, the host is built by simply calling `hostBuilder.Build();`.
+  > If this method is not found, the host is built by simply calling `hostBuilder.Build()`.
 
-    ```C#
-    public class Startup
-    {
-        public IHost BuildHost([IHostBuilder hostBuilder]) { return hostBuilder.Build(); }
-    }
-    ```
+  ```C#
+  public class Startup
+  {
+      public IHost BuildHost([IHostBuilder hostBuilder]) { return hostBuilder.Build(); }
+  }
+  ```
 
-## How to find `Startup`?
+Method parameters wrapped in `[...]` above are optional.
 
-### 1. Specific startup
+## How is `Startup` located?
 
-Declare [Startup] on test class
+Startup classes are looked up in the following order; the first match wins.
 
-### 2. Nested startup
+### 1. Startup declared on the test class
+
+Apply `[Startup(typeof(MyStartup))]` on the test class.
+
+### 2. Nested `Startup`
 
 ```C#
 public class TestClass1
@@ -183,26 +187,25 @@ public class TestClass1
     {
         public void ConfigureServices(IServiceCollection services) { }
     }
+}
 ```
 
-### 3. Closest startup
+### 3. Closest `Startup` in the namespace hierarchy
 
-If the class type full name is "A.B.C.TestClass", find Startup in the following order:
+If the test class's full name is `A.B.C.TestClass`, `Startup` is looked up in this order:
 
 1. `A.B.C.Startup`
 2. `A.B.Startup`
 3. `A.Startup`
 4. `Startup`
 
-### 4. Default startup
+### 4. Default `Startup`
 
-> Default startup is required before 8.7.0, is optional in some case after 8.7.0.
->
-> If is required, please add a startup class in your test project.
+> A default `Startup` was required before 8.7.0, and is optional in some cases after 8.7.0. When it's required, add a startup class to your test project as shown above.
 
-Default is find `Your.Test.Project.Startup, Your.Test.Project`.
+By default, `Your.Test.Project.Startup, Your.Test.Project` is used.
 
-If you want to use a special `Startup`, you can define `XunitStartupAssembly` and `XunitStartupFullName` in the `PropertyGroup` section
+If you want to use a custom `Startup`, set `XunitStartupAssembly` and/or `XunitStartupFullName` in your project's `PropertyGroup`:
 
 ```xml
 <Project>
@@ -213,18 +216,20 @@ If you want to use a special `Startup`, you can define `XunitStartupAssembly` an
 </Project>
 ```
 
-| XunitStartupAssembly | XunitStartupFullName | Startup                                      |
-| -------------------- | -------------------- | -------------------------------------------- |
-|                      |                      | Your.Test.Project.Startup, Your.Test.Project |
-| Abc                  |                      | Abc.Startup, Abc                             |
-|                      | Xyz                  | Xyz, Your.Test.Project                       |
-| Abc                  | Xyz                  | Xyz, Abc                                     |
+| XunitStartupAssembly | XunitStartupFullName | Resulting `Startup`                          |
+| --------------------- | --------------------- | --------------------------------------------- |
+|                       |                       | `Your.Test.Project.Startup, Your.Test.Project` |
+| `Abc`                 |                       | `Abc.Startup, Abc`                             |
+|                       | `Xyz`                 | `Xyz, Your.Test.Project`                       |
+| `Abc`                 | `Xyz`                 | `Xyz, Abc`                                     |
 
-## Parallel
+## Running tests in parallel
 
-By default, xUnit runs all test cases in a test class synchronously. This package can extend the test framework to execute tests in parallel.
+By default, xUnit runs all test cases within a test class synchronously. This package extends the test framework so tests can run in parallel.
 
-> If you register a custom `ITestCollectionOrderer`,  test collections will be run in the specified order, which may be slower than running without the custom `ITestCollectionOrderer`.
+> If you register a custom `ITestCollectionOrderer`, test collections run in the order it specifies, which can be slower than running without one.
+
+Enable it with the `ParallelizationMode` MSBuild property:
 
 ```xml
 <Project>
@@ -236,22 +241,22 @@ By default, xUnit runs all test cases in a test class synchronously. This packag
 </Project>
 ```
 
-This package has two policies to run test cases in parallel.
+This package supports two parallelization policies:
 
-1. Enhance or true
+1. `Enhance` (or `true`)
 
-   Respect xunit [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior.
-2. Force
+   Respects xUnit's own [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior.
+2. `Force`
 
-   Ignore xunit [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior and force running tests in parallel.
+   Ignores xUnit's [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior and forces tests to run in parallel.
 
-If [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-297131879)(if ParallelizationMode is not `Force`), `[CollectionDefinition(DisableParallelization = true)]`, `[DisableParallelization]` declared on the test class, the test class will run sequentially. If `[DisableParallelization]`, `[MemberData(DisableDiscoveryEnumeration = true)]` declared on the test method, the test method will run sequentially.
+A test class runs sequentially when it's decorated with [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-297131879) (unless `ParallelizationMode` is `Force`), `[CollectionDefinition(DisableParallelization = true)]`, or `[DisableParallelization]`. A test method runs sequentially when it's decorated with `[DisableParallelization]` or `[MemberData(DisableDiscoveryEnumeration = true)]`.
 
-**It is recommended without setting `parallelAlgorithm`**
+**We recommend leaving `parallelAlgorithm` unset.**
 
-> Thanks [Meziantou.Xunit.ParallelTestFramework](https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework)
+> Thanks to [Meziantou.Xunit.ParallelTestFramework](https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework) for the inspiration.
 
-## How to disable Xunit.DependencyInjection
+## Disabling Xunit.DependencyInjection
 
 ```xml
 <Project>
@@ -261,7 +266,9 @@ If [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-2971
 </Project>
 ```
 
-## How to inject ITestOutputHelper
+## Injecting `ITestOutputHelper`
+
+Inject `ITestOutputHelperAccessor` instead of `ITestOutputHelper` directly, since the actual instance is only available while a test is running:
 
 ```C#
 internal class DependencyClass : IDependency
@@ -275,15 +282,15 @@ internal class DependencyClass : IDependency
 }
 ```
 
-## Write `Microsoft.Extensions.Logging` to `ITestOutputHelper`
+## Writing `Microsoft.Extensions.Logging` output to `ITestOutputHelper`
 
-Add package reference for `Xunit.DependencyInjection.Logging`
+Install `Xunit.DependencyInjection.Logging`:
 
 ```sh
 dotnet add package Xunit.DependencyInjection.Logging
 ```
 
-> The call chain must be from the test case. If not, this feature will not work.
+> The call chain must originate from the running test case; otherwise this feature won't work.
 
 ```C#
 public class Startup
@@ -293,13 +300,13 @@ public class Startup
 }
 ```
 
-## How to inject `IConfiguration` or `IHostEnvironment` into `Startup`?
+## Injecting `IConfiguration` or `IHostEnvironment` into `Startup`
 
 ```C#
 public class Startup
 {
     public void ConfigureHost(IHostBuilder hostBuilder) => hostBuilder
-        .ConfigureServices((context, services) => { context.XXXX });
+        .ConfigureServices((context, services) => { /* use context.Configuration / context.HostingEnvironment */ });
 }
 ```
 
@@ -310,12 +317,12 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services, HostBuilderContext context)
     {
-        context.XXXX;
+        // use context.Configuration / context.HostingEnvironment
     }
 }
 ```
 
-## How to configure `IConfiguration`?
+## Customizing `IConfiguration`
 
 ```C#
 public class Startup
@@ -326,11 +333,13 @@ public class Startup
 }
 ```
 
-## [MemberData] how to inject?
+## How do I inject values with `[MemberData]`?
 
-Use **[MethodData]**
+`[MemberData]` members are static and can't be resolved from the container, so use **[MethodData]** instead — it resolves the referenced method's parameters from DI.
 
-## Integrate OpenTelemetry
+## Integrating with OpenTelemetry
+
+Register the `Xunit.DependencyInjection` activity source with your `TracerProviderBuilder` to capture the spans this library emits:
 
 ```C#
 TracerProviderBuilder builder;
@@ -338,12 +347,110 @@ TracerProviderBuilder builder;
 builder.AddSource("Xunit.DependencyInjection");
 ```
 
-## Do something before and after test case
+## Running code before and after each test
 
-Inherit `BeforeAfterTest` and register as `BeforeAfterTest` service.
+Inherit from `BeforeAfterTest` and register your implementation as a `BeforeAfterTest` service.
 
-[See demo](https://github.com/pengweiqhca/Xunit.DependencyInjection/blob/main/test/Xunit.DependencyInjection.Test/BeforeAfterTestTest.cs#13).
+[See the sample](https://github.com/pengweiqhca/Xunit.DependencyInjection/blob/main/test/Xunit.DependencyInjection.Test/BeforeAfterTestTest.cs#13).
 
-## Initialize some data on startup.
+## Initializing data on startup
 
-If it is synchronous initialization, you can use the `Configure` method. If it is asynchronous initialization, you should use `IHostedService`.
+For synchronous initialization, use the `Configure` method. For asynchronous initialization, use an `IHostedService`.
+
+## Related packages
+
+| Package | Description |
+| --- | --- |
+| [Xunit.DependencyInjection.Logging](https://www.nuget.org/packages/Xunit.DependencyInjection.Logging) | Write `Microsoft.Extensions.Logging` output to `ITestOutputHelper`, see [above](#writing-microsoftextensionslogging-output-to-itestoutputhelper) |
+| [Xunit.DependencyInjection.AspNetCoreTesting](https://www.nuget.org/packages/Xunit.DependencyInjection.AspNetCoreTesting) | Integration with ASP.NET Core Minimal API TestHost, see [above](#with-minimal-apis) |
+| [Xunit.DependencyInjection.StaFact](https://www.nuget.org/packages/Xunit.DependencyInjection.StaFact) | Run `[StaFact]`/`[StaTheory]` test cases on an STA thread (e.g. for UI tests) |
+| [Xunit.DependencyInjection.xRetry](https://www.nuget.org/packages/Xunit.DependencyInjection.xRetry) | Support [xRetry](https://github.com/JoshKeegan/xRetry)'s `[RetryFact]`/`[RetryTheory]` |
+| [Xunit.DependencyInjection.FsCheck](https://www.nuget.org/packages/Xunit.DependencyInjection.FsCheck) | Support FsCheck property-based `[Property]` tests |
+| [Xunit.DependencyInjection.Demystifier](https://www.nuget.org/packages/Xunit.DependencyInjection.Demystifier) | Use [Ben.Demystifier](https://github.com/benaadams/Ben.Demystifier) to format exception stack traces |
+| [Xunit.DependencyInjection.Analyzer](https://www.nuget.org/packages/Xunit.DependencyInjection.Analyzer) | Roslyn analyzer that validates `Startup` class shape at compile time |
+| [Xunit.DependencyInjection.Template](https://www.nuget.org/packages/Xunit.DependencyInjection.Template) | `dotnet new xunit-di` template to scaffold a new test project |
+
+### StaFact
+
+```sh
+dotnet add package Xunit.DependencyInjection.StaFact
+```
+
+```C#
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services) => services.AddStaFactSupport();
+}
+```
+
+```C#
+public class MyStaTests
+{
+    [StaFact]
+    public void RunOnStaThread() { }
+
+    [StaTheory]
+    [InlineData(1)]
+    public void RunOnStaThread(int value) { }
+}
+```
+
+### xRetry
+
+```sh
+dotnet add package Xunit.DependencyInjection.xRetry
+```
+
+```C#
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services) => services.AddXRetrySupport();
+}
+```
+
+```C#
+public class MyRetryTests
+{
+    [RetryFact(3)]
+    public void FlakyTest() { }
+}
+```
+
+### FsCheck
+
+```sh
+dotnet add package Xunit.DependencyInjection.FsCheck
+```
+
+```C#
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services) => services.AddFsCheckSupport();
+}
+```
+
+### Demystifier
+
+```sh
+dotnet add package Xunit.DependencyInjection.Demystifier
+```
+
+```C#
+public class Startup
+{
+    public void ConfigureServices(IServiceCollection services) => services.UseDemystifyExceptionFilter();
+}
+```
+
+### Analyzer
+
+The analyzer is automatically added as an analyzer reference when you install `Xunit.DependencyInjection`, and reports compile-time diagnostics (e.g. multiple `Startup` constructors, invalid `Configure*` method signatures) so misconfigured `Startup` classes are caught early.
+
+### Project template
+
+```sh
+dotnet new install Xunit.DependencyInjection.Template
+dotnet new create xunit-di -n MyTestProject
+```
+
+See [Xunit.DependencyInjection.Template](https://github.com/pengweiqhca/Xunit.DependencyInjection/tree/main/src/Xunit.DependencyInjection.Template) for details.
