@@ -68,7 +68,7 @@ public sealed class MethodDataAttribute(string methodName, params object?[] para
 
     private MethodInfo? GetMethodInfo(Type type)
     {
-        var parameterTypes = Parameters == null ? Type.EmptyTypes : [.. Parameters.Select(p => p?.GetType())];
+        var parameterTypes = Parameters == null ? Type.EmptyTypes : [.. Parameters.Select(p => p?.GetType())!];
 
         for (var reflectionType = type; reflectionType != null; reflectionType = reflectionType.GetTypeInfo().BaseType)
         {
