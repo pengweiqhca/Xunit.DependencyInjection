@@ -2,13 +2,13 @@
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <CentralPackageFloatingVersionsEnabled>true</CentralPackageFloatingVersionsEnabled>
-    <XunitVersion>3.2.2</XunitVersion>
+    <XunitVersion>[3.2.2,4.0.0)</XunitVersion>
   </PropertyGroup>
   <ItemGroup>
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.*" />
     <PackageVersion Include="Ben.Demystifier" Version="0.*" />
-    <PackageVersion Include="FsCheck.Xunit.v3" Version="3.*" />
-    <PackageVersion Include="FSharp.Core" Version="9.*" />
+    <PackageVersion Include="FsCheck.Xunit.v3" Version="3.3.*" />
+    <PackageVersion Include="FSharp.Core" Version="10.*" />
     <PackageVersion Include="MartinCostello.Logging.XUnit.v3" Version="0.*" />
     <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(_TargetFrameworkVersionWithoutV)" />
     <PackageVersion Include="Microsoft.CodeAnalysis" Version="4.*" />
