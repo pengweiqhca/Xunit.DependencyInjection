@@ -13,5 +13,8 @@ public class DependencyInjectionTestCaseRunner(DependencyInjectionContext contex
             ctxt.ExplicitOption,
             ctxt.Aggregator.Clone(),
             ctxt.CancellationTokenSource,
-            ctxt.BeforeAfterTestAttributes);
+            ctxt.ParallelMode,
+            ctxt.Scheduler,
+            ctxt.BeforeAfterTestAttributes,
+            ctxt.CaseFixtureMappings);
 }

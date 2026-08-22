@@ -1,11 +1,16 @@
 ﻿using System.Reflection;
+using Xunit.Internal;
+using Xunit.v3;
 
 namespace Xunit.DependencyInjection.Test;
 
 public class TestClassByOrderOrderer : ITestClassOrderer
 {
-    public IEnumerable<ITestClass> OrderTestClasses(IEnumerable<ITestClass> testCases) => testCases.OrderBy(tc =>
-        Type.GetType(tc.TestClassName)?.GetCustomAttribute<TestClassOrderAttribute>()?.Order ?? int.MaxValue);
+    public IReadOnlyCollection<TTestClass?> OrderTestClasses<TTestClass>(IReadOnlyCollection<TTestClass?> testClasses)
+        where TTestClass : ITestClass => testClasses.OrderBy(tc => tc == null
+            ? int.MaxValue
+            : Type.GetType(tc.TestClassName)?.GetCustomAttribute<TestClassOrderAttribute>()?.Order ?? int.MaxValue)
+        .CastOrToReadOnlyCollection();
 }
 
 [AttributeUsage(AttributeTargets.Class)]

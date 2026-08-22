@@ -1,4 +1,9 @@
-﻿namespace Xunit.DependencyInjection.Test;
+﻿using Xunit;
+using Xunit.DependencyInjection.Test;
+
+[assembly: TestClassOrderer(typeof(TestClassByOrderOrderer))]
+
+namespace Xunit.DependencyInjection.Test;
 
 public class TestClassOrdererTest
 {

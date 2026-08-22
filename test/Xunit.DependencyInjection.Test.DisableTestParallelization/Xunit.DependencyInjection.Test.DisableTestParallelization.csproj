@@ -2,7 +2,6 @@
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);DisableTestParallelization</DefineConstants>
-    <ParallelizationMode>Enhance</ParallelizationMode>
     <RootNamespace>Xunit.DependencyInjection.Test.Parallelization</RootNamespace>
     <XunitStartupFullName>$(RootNamespace).Startup</XunitStartupFullName>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
@@ -12,13 +11,8 @@
   <Import Project="..\TestPackages.targets" />
 
   <ItemGroup>
-    <AssemblyAttribute Include="Xunit.CollectionBehavior">
-      <_Parameter1 Condition="'$(TargetFrameworkIdentifier)' == '.NETFramework'">MaxParallelThreads = 1</_Parameter1>
-      <_Parameter1 Condition="'$(TargetFrameworkIdentifier)' != '.NETFramework'">DisableTestParallelization = true</_Parameter1>
-      <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
-    </AssemblyAttribute>
-
     <Using Include="Xunit.Sdk" />
+
     <Compile Include="../Xunit.DependencyInjection.Test/RunMonitorCollectionLastOrderer.cs" />
 
     <PackageReference Include="Shouldly" />

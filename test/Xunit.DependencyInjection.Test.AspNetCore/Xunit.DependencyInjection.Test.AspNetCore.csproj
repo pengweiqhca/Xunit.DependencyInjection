@@ -1,9 +1,5 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <ParallelizationMode>Force</ParallelizationMode>
-  </PropertyGroup>
-
   <Import Project="..\..\src\Xunit.DependencyInjection\Xunit.DependencyInjection.targets" />
   <Import Project="..\TestPackages.targets" />
 

@@ -1,8 +1,6 @@
 ﻿namespace Xunit.DependencyInjection;
 
-public class DependencyInjectionTestFrameworkExecutor(
-    IXunitTestAssembly testAssembly,
-    ParallelizationMode parallelizationMode)
+public class DependencyInjectionTestFrameworkExecutor(IXunitTestAssembly testAssembly)
     : XunitTestFrameworkExecutor(testAssembly)
 {
     static DependencyInjectionTestFrameworkExecutor() =>
@@ -27,8 +25,7 @@ public class DependencyInjectionTestFrameworkExecutor(
         var host = context == null || context.Disposed ? null : context.Host;
 
         await new DependencyInjectionTestAssemblyRunner(hostManager,
-            host?.Services.GetService<IAsyncExceptionFilter>(),
-                new(host, parallelizationMode, contextMap), exceptions)
+                host?.Services.GetService<IAsyncExceptionFilter>(), new(host, contextMap), exceptions)
             .Run(new(TestAssembly, host?.Services), testCases, executionMessageSink,
                 executionOptions, cancellationToken);
 
@@ -96,6 +93,16 @@ public sealed class DependencyInjectionTestAssembly(
 
     public ITestCollectionOrderer? TestCollectionOrderer =>
         defaultRootServices?.GetService<ITestCollectionOrderer>() ?? testAssembly.TestCollectionOrderer;
+
+    public int? MaxParallelThreads => testAssembly.MaxParallelThreads;
+
+    public ParallelAlgorithm? ParallelAlgorithm => testAssembly.ParallelAlgorithm;
+
+    public ParallelMode? ParallelMode => testAssembly.ParallelMode;
+
+    public ITestClassOrderer? TestClassOrderer => testAssembly.TestClassOrderer;
+
+    public ITestMethodOrderer? TestMethodOrderer => testAssembly.TestMethodOrderer;
 
     public Version Version => testAssembly.Version;
 }

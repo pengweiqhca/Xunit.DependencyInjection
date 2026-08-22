@@ -14,7 +14,10 @@ Install the [NuGet](https://www.nuget.org/packages/Xunit.DependencyInjection) pa
 
 ```sh
 dotnet add package Xunit.DependencyInjection
+dotnet add package xunit.v3 --version 4.0.0
 ```
+
+> xUnit v4 uses the `xunit.v3` package. When upgrading, replace any `xunit.v3.mtp-v2` reference with `xunit.v3`.
 
 Add a `Startup` class to your test project and register your services in `ConfigureServices`:
 
@@ -225,34 +228,27 @@ If you want to use a custom `Startup`, set `XunitStartupAssembly` and/or `XunitS
 
 ## Running tests in parallel
 
-By default, xUnit runs all test cases within a test class synchronously. This package extends the test framework so tests can run in parallel.
+By default, xUnit runs tests from different test collections in parallel, while tests in the same class run sequentially. xUnit v4 supports three parallelization modes:
+
+1. `ParallelMode.None`: Run all tests sequentially.
+2. `ParallelMode.Collections` (default): Run different test collections in parallel.
+3. `ParallelMode.All`: Run all tests in parallel, including tests in the same class.
+
+Configure the mode with xUnit's assembly-level `Parallelization` attribute:
+
+```C#
+using Xunit.v3;
+
+[assembly: Parallelization(MaxThreads = 2, Mode = ParallelMode.All)]
+```
+
+`MaxThreads` is optional; set it to limit the number of tests running concurrently. Remove the `ParallelizationMode` MSBuild property when upgrading, as it no longer controls parallelization.
 
 > If you register a custom `ITestCollectionOrderer`, test collections run in the order it specifies, which can be slower than running without one.
 
-Enable it with the `ParallelizationMode` MSBuild property:
+To run tests in a class or method sequentially when using `ParallelMode.All`, decorate it with `[DisableParallelization]`. To prevent a test collection from running in parallel with other tests, use `[CollectionDefinition(DisableParallelization = true)]`.
 
-```xml
-<Project>
-
-  <PropertyGroup>
-    <ParallelizationMode></ParallelizationMode>
-  </PropertyGroup>
-
-</Project>
-```
-
-This package supports two parallelization policies:
-
-1. `Enhance` (or `true`)
-
-   Respects xUnit's own [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior.
-2. `Force`
-
-   Ignores xUnit's [parallelization](https://xunit.net/docs/running-tests-in-parallel) behavior and forces tests to run in parallel.
-
-A test class runs sequentially when it's decorated with [`[Collection]`](https://github.com/xunit/xunit/issues/1227#issuecomment-297131879) (unless `ParallelizationMode` is `Force`), `[CollectionDefinition(DisableParallelization = true)]`, or `[DisableParallelization]`. A test method runs sequentially when it's decorated with `[DisableParallelization]` or `[MemberData(DisableDiscoveryEnumeration = true)]`.
-
-**We recommend leaving `parallelAlgorithm` unset.**
+See xUnit's [parallelization documentation](https://xunit.net/docs/running-tests-in-parallel) for `Parallelization.Algorithm` and runner-specific configuration.
 
 > Thanks to [Meziantou.Xunit.ParallelTestFramework](https://github.com/meziantou/Meziantou.Xunit.ParallelTestFramework) for the inspiration.
 

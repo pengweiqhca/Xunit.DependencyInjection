@@ -12,16 +12,16 @@ public class RetryTestCaseRunnerWrapper : DependencyInjectionTestCaseRunnerWrapp
     public override Type TestCaseType => typeof(RetryTestCase);
 
     /// <inheritdoc />
-    public override ValueTask<RunSummary> RunAsync(DependencyInjectionContext context, IXunitTestCase testCase,
-        IReadOnlyCollection<IXunitTest> tests,
+    public override ValueTask<RunSummary> RunAsync(DependencyInjectionContext context, IXunitTestCase testCase, IReadOnlyCollection<IXunitTest> tests,
         IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource,
-        string displayName, string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments)
+        string displayName, string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments,
+        ParallelMode parallelMode, ExecutionScheduler scheduler, FixtureMappingManager methodFixtureMappings)
     {
         if (testCase is not IRetryableTestCase retryableTestCase)
             throw new ArgumentException("Must be a retryable test case", nameof(testCase));
 
         return RetryTestCaseRunner.Run(retryableTestCase, messageBus, cancellationTokenSource,
-            blockingMessageBus => base.RunAsync(context, testCase, tests, blockingMessageBus, aggregator,
-                cancellationTokenSource, displayName, skipReason, explicitOption, constructorArguments));
+            _ => base.RunAsync(context, testCase, tests, messageBus, aggregator, cancellationTokenSource, displayName,
+                skipReason, explicitOption, constructorArguments, parallelMode, scheduler, methodFixtureMappings));
     }
 }

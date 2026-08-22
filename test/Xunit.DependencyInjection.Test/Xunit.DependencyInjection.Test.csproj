@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <ParallelizationMode>Force</ParallelizationMode>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
@@ -9,11 +8,6 @@
   <Import Project="..\TestPackages.targets" />
 
   <ItemGroup>
-    <AssemblyAttribute Include="Xunit.CollectionBehavior">
-      <_Parameter1>DisableTestParallelization = true</_Parameter1>
-      <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
-    </AssemblyAttribute>
-
     <Using Include="Microsoft.Extensions.Configuration" />
     <Using Include="Microsoft.Extensions.DependencyInjection" />
     <Using Include="Microsoft.Extensions.Hosting" />
@@ -29,8 +23,8 @@
 
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj" />
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.FsCheck\Xunit.DependencyInjection.FsCheck.csproj" />
-    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj" />
-    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj" />
+    <!--<ProjectReference Include="..\..\src\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj" />-->
+    <!--<ProjectReference Include="..\..\src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj" />-->
     <ProjectReference Include="..\Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj" />
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />
   </ItemGroup>

@@ -17,8 +17,8 @@ public class DependencyInjectionTestRunner(
     {
         var (testClassInstance, syncContext, executionContext) = await base.CreateTestClassInstance(ctxt);
 
-        if (testClassInstance == null || ctxt.TestMethod.ReflectedType == null ||
-            HasRequiredMembers.GetOrAdd(ctxt.TestMethod.ReflectedType, GetRequiredProperties) is not
+        if (testClassInstance == null || ctxt.Method.ReflectedType == null ||
+            HasRequiredMembers.GetOrAdd(ctxt.Method.ReflectedType, GetRequiredProperties) is not
             {
                 Length: > 0
             } properties)
@@ -52,12 +52,12 @@ public class DependencyInjectionTestRunner(
 
         context.RootServices.GetRequiredService<DependencyInjectionTypeActivator>().Services = scope.ServiceProvider;
 
-        var raw = new Dictionary<int, object?>(ctxt.TestMethodArguments.Length);
+        var raw = new Dictionary<int, object?>(ctxt.MethodArguments.Length);
         foreach (var kv in fromServices)
         {
-            raw[kv.Key] = ctxt.TestMethodArguments[kv.Key];
+            raw[kv.Key] = ctxt.MethodArguments[kv.Key];
 
-            ctxt.TestMethodArguments[kv.Key] = kv.Value.ParameterType == typeof(ITestOutputHelper)
+            ctxt.MethodArguments[kv.Key] = kv.Value.ParameterType == typeof(ITestOutputHelper)
                 ? TestContext.Current.TestOutputHelper
                 : scope.ServiceProvider.GetService(kv.Value);
         }
@@ -71,14 +71,17 @@ public class DependencyInjectionTestRunner(
                 ctxt.ExplicitOption,
                 ctxt.Aggregator,
                 ctxt.CancellationTokenSource,
-                ctxt.BeforeAfterTestAttributes,
-                ctxt.ConstructorArguments
+                ctxt.ParallelMode,
+                ctxt.Scheduler,
+                ctxt.Test.TestMethod.BeforeAfterTestAttributes,
+                ctxt.ConstructorArguments,
+                ctxt.TestFixtureMappings
             ));
         }
         finally
         {
             foreach (var kv in raw)
-                ctxt.TestMethodArguments[kv.Key] = kv.Value;
+                ctxt.MethodArguments[kv.Key] = kv.Value;
         }
     }
 
@@ -89,12 +92,12 @@ public class DependencyInjectionTestRunner(
             .ToArray();
 
         foreach (var beforeAfterTest in beforeAfterTests)
-            await beforeAfterTest.BeforeAsync(testClassInstance, ctxt.TestMethod);
+            await beforeAfterTest.BeforeAsync(testClassInstance, ctxt.Method);
 
         var result = await base.InvokeTest(ctxt, testClassInstance);
 
         for (var index = beforeAfterTests.Length - 1; index >= 0; index--)
-            await beforeAfterTests[index].AfterAsync(testClassInstance, ctxt.TestMethod);
+            await beforeAfterTests[index].AfterAsync(testClassInstance, ctxt.Method);
 
         return result;
     }
@@ -106,10 +109,14 @@ public class DependencyInjectionTestRunner(
         ExplicitOption explicitOption,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
+        ParallelMode parallelMode,
+        ExecutionScheduler scheduler,
         IReadOnlyCollection<IBeforeAfterTestAttribute> beforeAfterTestAttributes,
-        object?[] constructorArguments)
-        : XunitTestRunnerContext(ConvertMethod(test, provider.GetService<IAsyncExceptionFilter>()), messageBus,
-            explicitOption, aggregator, cancellationTokenSource, beforeAfterTestAttributes, constructorArguments)
+        object?[] constructorArguments,
+        FixtureMappingManager caseFixtureMappings)
+        : XunitTestRunnerContext(ConvertMethod(test, provider.GetService<IAsyncExceptionFilter>()), explicitOption,
+            messageBus, aggregator, cancellationTokenSource, parallelMode, scheduler, beforeAfterTestAttributes,
+            constructorArguments, caseFixtureMappings)
     {
         public IServiceProvider Provider { get; } = provider;
 

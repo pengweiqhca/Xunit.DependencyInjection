@@ -55,8 +55,8 @@ internal static class TestHelper
 
         public async ValueTask CreateFixtures(IReadOnlyCollection<Type> fixtureTypes, ExceptionAggregator aggregator, IServiceProvider provider)
         {
-            var field = typeof(FixtureMappingManager).GetField("parentMappingManager", BindingFlags.Instance | BindingFlags.NonPublic) ??
-                throw new NotSupportedException("Not found `parentMappingManager` field in FixtureMappingManager");
+            var field = typeof(FixtureMappingManager).GetField("<parentMappingManager>P", BindingFlags.Instance | BindingFlags.NonPublic) ??
+                throw new NotSupportedException("Not found `<parentMappingManager>P` field in FixtureMappingManager");
 
             var value = field.GetValue(manager);
             if (value is not null and not FixtureMappingManager)

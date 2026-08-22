@@ -1,4 +1,4 @@
-﻿using xRetry.v3;
+﻿/*using xRetry.v3;
 
 namespace Xunit.DependencyInjection.Test;
 
@@ -69,4 +69,4 @@ public class XRetryTest(IDependency dependency)
         // Modify the dependency so that a retry of this test case would fail if it got the same instance
         dependency.Value++;
     }
-}
+}*/

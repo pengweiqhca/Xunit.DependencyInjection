@@ -7,7 +7,8 @@ public abstract class SimpleXunitTestCaseRunnerWrapper<T> : IXunitTestCaseRunner
     public async ValueTask<RunSummary> RunAsync(DependencyInjectionContext context, IXunitTestCase testCase,
         IReadOnlyCollection<IXunitTest> tests,
         IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource,
-        string displayName, string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments)
+        string displayName, string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments,
+        ParallelMode parallelMode, ExecutionScheduler scheduler, FixtureMappingManager methodFixtureMappings)
     {
         await using var scope = context.RootServices.CreateAsyncScope();
 
@@ -17,10 +18,11 @@ public abstract class SimpleXunitTestCaseRunnerWrapper<T> : IXunitTestCaseRunner
         context.RootServices.GetRequiredService<DependencyInjectionTypeActivator>().Services = scope.ServiceProvider;
 
         return await RunAsync(testCase, tests, messageBus, aggregator, cancellationTokenSource, displayName, skipReason,
-            explicitOption, constructorArguments);
+            explicitOption, constructorArguments, parallelMode, scheduler, methodFixtureMappings);
     }
 
     protected abstract ValueTask<RunSummary> RunAsync(IXunitTestCase testCase, IReadOnlyCollection<IXunitTest> tests,
         IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource,
-        string displayName, string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments);
+        string displayName, string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments,
+        ParallelMode parallelMode, ExecutionScheduler scheduler, FixtureMappingManager methodFixtureMappings);
 }

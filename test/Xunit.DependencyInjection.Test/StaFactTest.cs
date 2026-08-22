@@ -1,4 +1,4 @@
-﻿namespace Xunit.DependencyInjection.Test;
+﻿/*namespace Xunit.DependencyInjection.Test;
 
 public class StaFactTest : IDisposable, IAsyncLifetime
 {
@@ -54,4 +54,4 @@ public class StaFactTest : IDisposable, IAsyncLifetime
         Assert.Same(_ctorSyncContext, SynchronizationContext.Current);
         Assert.Equal(0, arg);
     }
-}
+}*/

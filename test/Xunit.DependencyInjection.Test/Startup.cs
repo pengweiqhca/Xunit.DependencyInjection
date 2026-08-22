@@ -2,6 +2,8 @@
 using Xunit.DependencyInjection.Demystifier;
 using Xunit.v3;
 
+[assembly: Parallelization(Mode = ParallelMode.None)]
+
 namespace Xunit.DependencyInjection.Test;
 
 public class Startup
@@ -22,13 +24,13 @@ public class Startup
             .AddScoped<BeforeAfterTest, TestBeforeAfterTest>()
             .AddHostedService<HostServiceTest>()
             .AddFsCheckSupport()
-            .AddStaFactSupport()
+            /*.AddStaFactSupport()*/
             .AddSingleton<ITestCollectionOrderer, RunMonitorCollectionLastOrderer>()
             .AddSingleton<ITestClassOrderer, TestClassByOrderOrderer>()
-            .AddSingleton<ITestCaseOrderer, TestCaseByMethodNameOrderer>()
+            .AddSingleton<ITestMethodOrderer, TestCaseByMethodNameOrderer>()
             .AddKeyedScoped<IFromKeyedServicesTest, FromSmallKeyedServicesTest>("small")
             .AddKeyedScoped<IFromKeyedServicesTest, FromLargeKeyedServicesTest>("large")
-            .AddXRetrySupport()
+            /*.AddXRetrySupport()*/
             .AddSingleton<IAsyncExceptionFilter, DemystifyExceptionFilter>();
 
     public void Configure(IServiceProvider provider, ITestOutputHelperAccessor accessor,

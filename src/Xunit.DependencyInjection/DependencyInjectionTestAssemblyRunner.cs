@@ -79,100 +79,11 @@ internal class DependencyInjectionTestAssemblyRunner(
         return await Run(ctxt);
     }
 
-#pragma warning disable CA2012 // We guarantee that parallel ValueTasks are only awaited once
-
-	/// <inheritdoc/>
-	protected override async ValueTask<RunSummary> RunTestCollections(
-        DependencyInjectionAssemblyRunnerContext ctxt,
-		Exception? exception)
-	{
-		if (ctxt.DisableParallelization || exception is not null)
-			return await base.RunTestCollections(ctxt, exception);
-
-		ctxt.SetupParallelism();
-
-		Func<Func<ValueTask<RunSummary>>, ValueTask<RunSummary>> taskRunner;
-		if (SynchronizationContext.Current is not null)
-		{
-			var scheduler = TaskScheduler.FromCurrentSynchronizationContext();
-			taskRunner = code => new(Task.Factory.StartNew(() => code().AsTask(), ctxt.CancellationTokenSource.Token, TaskCreationOptions.DenyChildAttach | TaskCreationOptions.HideScheduler, scheduler).Unwrap());
-		}
-		else
-			taskRunner = code => new(Task.Run(() => code().AsTask(), ctxt.CancellationTokenSource.Token));
-
-		List<ValueTask<RunSummary>>? parallel = null;
-		List<Func<ValueTask<RunSummary>>>? nonParallel = null;
-		var summaries = new List<RunSummary>();
-
-        // If it has a custom TestCollectionOrderer, we need to run the collections in the order.
-        var previous = ctxt.TestAssembly.TestCollectionOrderer is null or DefaultTestCollectionOrderer
-            ? null
-            : new SemaphoreSlim(1, 1);
-
-		foreach (var (collection, testCases) in OrderTestCollections(ctxt))
-		{
-			ValueTask<RunSummary> Run() => RunTestCollection(ctxt, collection, testCases);
-			if (collection.DisableParallelization)
-				(nonParallel ??= []).Add(Run);
-            else if (previous == null)
-                (parallel ??= []).Add(taskRunner(Run));
-			else
-            {
-                var current = previous;
-                var next = new SemaphoreSlim(0, 1);
-                previous = next;
-                (parallel ??= []).Add(taskRunner(async () =>
-                {
-                    // Keep TestCollection order
-                    await current.WaitAsync();
-                    try
-                    {
-                        return await Run();
-                    }
-                    finally
-                    {
-                        next.Release();
-                        current.Dispose();
-                    }
-                }));
-            }
-		}
-
-		if (parallel?.Count > 0)
-			foreach (var task in parallel)
-				try
-				{
-					summaries.Add(await task);
-				}
-				catch (TaskCanceledException) { }
-
-		if (nonParallel?.Count > 0)
-			foreach (var taskFactory in nonParallel)
-				try
-				{
-					summaries.Add(await taskRunner(taskFactory));
-					if (ctxt.CancellationTokenSource.IsCancellationRequested)
-						break;
-				}
-				catch (TaskCanceledException) { }
-
-		return new RunSummary()
-		{
-			Total = summaries.Sum(s => s.Total),
-			Failed = summaries.Sum(s => s.Failed),
-			NotRun = summaries.Sum(s => s.NotRun),
-			Skipped = summaries.Sum(s => s.Skipped),
-		};
-	}
-
-#pragma warning restore CA2012
-
-    /// <inheritdoc />
-    protected override ValueTask<RunSummary> RunTestCollection(DependencyInjectionAssemblyRunnerContext ctxt,
-        IXunitTestCollection testCollection,
-        IReadOnlyCollection<IXunitTestCase> testCases) =>
-        ctxt.RunTestCollection(testCollection, testCases,
-            ctxt.AssemblyTestCaseOrderer ?? DefaultTestCaseOrderer.Instance);
+/// <inheritdoc />
+protected override ValueTask<RunSummary> RunTestCollection(DependencyInjectionAssemblyRunnerContext ctxt,
+    IXunitTestCollection testCollection,
+    IReadOnlyCollection<IXunitTestCase> testCases) =>
+    ctxt.RunTestCollection(testCollection, testCases);
 }
 
 /// <inheritdoc />
@@ -183,38 +94,19 @@ public class DependencyInjectionAssemblyRunnerContext(
     IMessageSink executionMessageSink,
     ITestFrameworkExecutionOptions executionOptions,
     CancellationToken cancellationToken)
-    : XunitTestAssemblyRunnerBaseContext<DependencyInjectionTestAssembly, IXunitTestCase>(testAssembly, testCases,
-        executionMessageSink, executionOptions, cancellationToken)
+    : XunitTestAssemblyRunnerBaseContext<DependencyInjectionTestAssembly, IXunitTestCollection, IXunitTestCase>(
+        testAssembly, testCases, executionMessageSink, executionOptions, cancellationToken)
 {
-    public override void SetupParallelism()
-    {
-        base.SetupParallelism();
-
-        context.MaxParallelThreads = MaxParallelThreads;
-
-        if (ParallelAlgorithm != default) return;
-
-        context.ParallelSemaphore ??=
-            typeof(XunitTestAssemblyRunnerBaseContext<DependencyInjectionTestAssembly, IXunitTestCase>)
-                .GetField("parallelSemaphore", BindingFlags.Instance | BindingFlags.NonPublic)?
-                .GetValue(this) as SemaphoreSlim;
-    }
-
-    /// <summary>
-    /// Delegation of <see cref="XunitTestAssemblyRunnerBase{TContext, TTestAssembly, TTestCollection, TTestCase}.RunTestCollection"/>
-    /// that properly obeys the parallel algorithm requirements.
-    /// </summary>
-    public new async ValueTask<RunSummary> RunTestCollection(IXunitTestCollection testCollection,
-        IReadOnlyCollection<IXunitTestCase> testCases,
-        ITestCaseOrderer testCaseOrderer) =>
-        await new DependencyInjectionTestCollectionRunner(context,
-            context.DefaultRootServices?.GetService<ITestClassOrderer>()).Run(
+    public override async ValueTask<RunSummary> RunTestCollection(IXunitTestCollection testCollection,
+        IReadOnlyCollection<IXunitTestCase> testCases) =>
+        await new DependencyInjectionTestCollectionRunner(context).Run(
             testCollection,
             testCases,
             ExplicitOption,
             MessageBus,
-            testCaseOrderer,
             Aggregator.Clone(),
             CancellationTokenSource,
+            ParallelMode,
+            Scheduler,
             AssemblyFixtureMappings);
 }

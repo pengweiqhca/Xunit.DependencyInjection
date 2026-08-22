@@ -18,7 +18,7 @@ public class MonitorMaxParallelThreadsTest(MonitorMaxParallelThreads monitor, IT
 #if DisableTestParallelization
             diff[i].ShouldBeInRange(TimeSpan.FromMilliseconds(1000), TimeSpan.FromMilliseconds(1200), "i = " + i);
 #else
-            if (i % 3 == 0)
+            if (i % 2 == 0)
                 diff[i].ShouldBeLessThan(TimeSpan.FromMilliseconds(300), "i = " + i);
             else
                 diff[i].ShouldBeInRange(TimeSpan.FromMilliseconds(900), TimeSpan.FromMilliseconds(1300), "i = " + i);

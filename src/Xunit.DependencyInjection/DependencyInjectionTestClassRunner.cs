@@ -1,8 +1,6 @@
-﻿using Xunit.Internal;
+﻿namespace Xunit.DependencyInjection;
 
-namespace Xunit.DependencyInjection;
-
-public class DependencyInjectionTestClassRunner(DependencyInjectionTestContext context)
+public class DependencyInjectionTestClassRunner(DependencyInjectionContext context)
     : XunitTestClassRunner
 {
     private AsyncServiceScope? _serviceScope;
@@ -52,56 +50,11 @@ public class DependencyInjectionTestClassRunner(DependencyInjectionTestContext c
         }
     }
 
-    // This method has been slightly modified from the original implementation to run tests in parallel
-    // https://github.com/xunit/xunit/blob/v2-2.4.2/src/xunit.execution/Sdk/Frameworks/Runners/TestClassRunner.cs#L194-L219
-    protected override async ValueTask<RunSummary> RunTestMethods(XunitTestClassRunnerContext ctxt,
-        Exception? exception)
-    {
-        if (exception != null ||
-            context.DisableParallelization ||
-            ctxt.TestCases.Count < 2 ||
-            ctxt.TestClass.Class.GetCustomAttribute<CollectionDefinitionAttribute>() is
-            {
-                DisableParallelization: true
-            } ||
-            ctxt.TestClass.Class.GetCustomAttribute<DisableParallelizationAttribute>() != null ||
-            ctxt.TestClass.Class.GetCustomAttribute<CollectionAttribute>() != null && !context.ForcedParallelization)
-            return await base.RunTestMethods(ctxt, exception);
-
-        var summary = new RunSummary();
-        IReadOnlyCollection<IXunitTestCase> orderedTestCases;
-        object?[] constructorArguments;
-
-        if (exception is null)
-        {
-            orderedTestCases = OrderTestCases(ctxt);
-            constructorArguments = await CreateTestClassConstructorArguments(ctxt);
-            exception = ctxt.Aggregator.ToException();
-            ctxt.Aggregator.Clear();
-        }
-        else
-        {
-            orderedTestCases = ctxt.TestCases;
-            constructorArguments = [];
-        }
-
-        if (exception != null) return await base.RunTestMethods(ctxt, exception);
-
-        var methodTasks = orderedTestCases.GroupBy(tc => tc.TestMethod, TestMethodComparer.Instance)
-            .Select(method => RunTestMethod(ctxt, method.Key as IXunitTestMethod, method.CastOrToReadOnlyCollection(),
-                constructorArguments).AsTask());
-
-        foreach (var methodSummary in await Task.WhenAll(methodTasks))
-            summary.Aggregate(methodSummary);
-
-        return summary;
-    }
-
     /// <inheritdoc />
     protected override ValueTask<RunSummary> RunTestMethod(XunitTestClassRunnerContext ctxt,
-        IXunitTestMethod? testMethod, IReadOnlyCollection<IXunitTestCase> testCases, object?[] constructorArguments) =>
+        IXunitTestMethod? testMethod, IReadOnlyCollection<IXunitTestCase> testCases) =>
         testMethod == null
-            ? base.RunTestMethod(ctxt, testMethod, testCases, constructorArguments)
+            ? base.RunTestMethod(ctxt, testMethod, testCases)
             : new DependencyInjectionTestMethodRunner(context).Run(
                 testMethod,
                 testCases,
@@ -109,5 +62,11 @@ public class DependencyInjectionTestClassRunner(DependencyInjectionTestContext c
                 ctxt.MessageBus,
                 ctxt.Aggregator.Clone(),
                 ctxt.CancellationTokenSource,
-                constructorArguments);
+                context.DisableParallelization ||
+                testMethod.Method.GetCustomAttribute<DisableParallelizationAttribute>() is not null
+                    ? ParallelMode.None
+                    : ctxt.ParallelMode,
+                ctxt.Scheduler,
+                ctxt.ConstructorArguments ?? [],
+                ctxt.ClassFixtureMappings);
 }

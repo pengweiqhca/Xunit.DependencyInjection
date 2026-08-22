@@ -20,6 +20,9 @@ public interface IXunitTestCaseRunnerWrapper
     /// <param name="skipReason">The skip reason, if the test is to be skipped.</param>
     /// <param name="explicitOption">A flag to indicate how explicit tests should be treated.</param>
     /// <param name="constructorArguments">The arguments to be passed to the test class constructor.</param>
+    /// <param name="parallelMode">The parallel mode for the test case.</param>
+    /// <param name="scheduler">The scheduler used for task/test scheduling.</param>
+    /// <param name="methodFixtureMappings">The fixtures attached to the test method.</param>
     /// <returns>Returns the summary of the test case run.</returns>
     ValueTask<RunSummary> RunAsync(DependencyInjectionContext context,
         IXunitTestCase testCase,
@@ -30,5 +33,8 @@ public interface IXunitTestCaseRunnerWrapper
         string displayName,
         string? skipReason,
         ExplicitOption explicitOption,
-        object?[] constructorArguments);
+        object?[] constructorArguments,
+        ParallelMode parallelMode,
+        ExecutionScheduler scheduler,
+        FixtureMappingManager methodFixtureMappings);
 }

@@ -1,11 +1,7 @@
-﻿using System.Collections;
-using Xunit.Internal;
-
-namespace Xunit.DependencyInjection;
+﻿namespace Xunit.DependencyInjection;
 
 public class DependencyInjectionTestCollectionRunner(
-    DependencyInjectionStartupContext context,
-    ITestClassOrderer? testClassOrderer)
+    DependencyInjectionStartupContext context)
     : XunitTestCollectionRunnerBase<DependencyInjectionTestCollectionRunnerContext, DependencyInjectionTestCollection, IXunitTestClass,
         IXunitTestCase>
 {
@@ -18,88 +14,28 @@ public class DependencyInjectionTestCollectionRunner(
     /// <param name="testCases">The test cases to be run. Cannot be empty.</param>
     /// <param name="explicitOption">A flag to indicate how explicit tests should be treated.</param>
     /// <param name="messageBus">The message bus to report run status to.</param>
-    /// <param name="testCaseOrderer">The test case orderer that was applied at the assembly level.</param>
     /// <param name="aggregator">The exception aggregator used to run code and collection exceptions.</param>
     /// <param name="cancellationTokenSource">The task cancellation token source, used to cancel the test run.</param>
+    /// <param name="parallelMode">The parallel mode for the test collection.</param>
+    /// <param name="scheduler">The scheduler used for task/test scheduling.</param>
     /// <param name="assemblyFixtureMappings">The mapping manager for assembly fixtures.</param>
     public async ValueTask<RunSummary> Run(IXunitTestCollection testCollection,
         IReadOnlyCollection<IXunitTestCase> testCases,
         ExplicitOption explicitOption,
         IMessageBus messageBus,
-        ITestCaseOrderer testCaseOrderer,
         ExceptionAggregator aggregator,
         CancellationTokenSource cancellationTokenSource,
+        ParallelMode parallelMode,
+        ExecutionScheduler scheduler,
         FixtureMappingManager assemblyFixtureMappings)
     {
         await using var ctxt = new DependencyInjectionTestCollectionRunnerContext(
             new(testCollection), testCases, explicitOption,
-            messageBus, testCaseOrderer, aggregator, cancellationTokenSource, assemblyFixtureMappings);
+            messageBus, aggregator, cancellationTokenSource, parallelMode, scheduler, assemblyFixtureMappings);
 
         await ctxt.InitializeAsync();
 
         return await Run(ctxt);
-    }
-
-    protected override async ValueTask<RunSummary> RunTestClasses(DependencyInjectionTestCollectionRunnerContext ctxt, Exception? exception)
-    {
-        var summary = new RunSummary();
-
-        var groups = testClassOrderer == null
-            ? ctxt.TestCases
-                .GroupBy(tc => tc.TestClass, TestClassComparer.Instance)
-                .OrderBy(grouping => grouping.Key, TestClassComparer.Instance)
-            : OrderTestClass(testClassOrderer, ctxt.TestCases, ctxt.MessageBus);
-
-        foreach (var testCasesByClass in groups)
-        {
-            var testClass = testCasesByClass.Key as IXunitTestClass;
-            var testCases = testCasesByClass.CastOrToReadOnlyCollection();
-
-            if (exception is not null)
-                summary.Aggregate(await FailTestClass(ctxt, testClass, testCases, exception));
-            else
-                summary.Aggregate(await RunTestClass(ctxt, testClass, testCases));
-
-            if (ctxt.CancellationTokenSource.IsCancellationRequested)
-                break;
-        }
-
-        return summary;
-    }
-
-    private static IEnumerable<IGrouping<ITestClass?, IXunitTestCase>> OrderTestClass(ITestClassOrderer testClassOrderer, IReadOnlyCollection<IXunitTestCase> testCases, IMessageBus messageBus)
-    {
-        var dictionary = testCases.GroupBy(tc => tc.TestMethod.TestClass, TestClassComparer.Instance)
-            .ToDictionary(group => group.Key!, group => group.ToList());
-
-        IEnumerable<ITestClass> orderedTestCLasses;
-
-        try
-        {
-            orderedTestCLasses = testClassOrderer.OrderTestClasses(dictionary.Keys);
-        }
-        catch (Exception ex)
-        {
-            var innerEx = ex.Unwrap();
-
-            messageBus.QueueMessage(new DiagnosticMessage(
-                $"Test class orderer '{testClassOrderer.GetType().FullName}' threw '{innerEx.GetType().FullName}' during ordering: {innerEx.Message}{Environment.NewLine}{innerEx.StackTrace}"));
-
-            return dictionary.OrderBy(kv => kv.Key, TestClassComparer.Instance)
-                .Select(x => new Grouping<ITestClass?, IXunitTestCase>(x.Key, x.Value));
-        }
-
-        return orderedTestCLasses.Select(testCLass => new Grouping<ITestClass?, IXunitTestCase>(testCLass,
-            dictionary.TryGetValue(testCLass, out var testCasesList) ? testCasesList : []));
-    }
-
-    private sealed class Grouping<TKey, TElement>(TKey key, IEnumerable<TElement> elements) : IGrouping<TKey, TElement>
-    {
-        public TKey Key => key;
-
-        public IEnumerator<TElement> GetEnumerator() => elements.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 
     /// <inheritdoc />
@@ -159,13 +95,7 @@ public class DependencyInjectionTestCollectionRunner(
 
         var testClassRunner = context.ContextMap.TryGetValue(testClass, out var value) && value is { Disposed: false }
             ? new DependencyInjectionTestClassRunner(
-                new(value.Host, value.DisableParallelization ||
-                    !(context.ParallelizationMode == ParallelizationMode.Force ||
-                        context.ParallelizationMode == ParallelizationMode.Enhance &&
-                        (SynchronizationContext.Current is MaxConcurrencySyncContext ||
-                            context.ParallelSemaphore != null)),
-                    context.ParallelizationMode == ParallelizationMode.Force,
-                    context.MaxParallelThreads, context.ParallelSemaphore))
+                new(value.Host, IsParallelizationDisabled(testClass, ctxt)))
             : XunitTestClassRunner.Instance;
 
         return testClassRunner.Run(
@@ -173,23 +103,46 @@ public class DependencyInjectionTestCollectionRunner(
             testCases,
             ctxt.ExplicitOption,
             ctxt.MessageBus,
-            ctxt.TestCaseOrderer,
             ctxt.Aggregator.Clone(),
             ctxt.CancellationTokenSource,
+            IsParallelizationDisabled(testClass, ctxt) ? ParallelMode.None : ParallelMode.All,
+            ctxt.Scheduler,
             ctxt.CollectionFixtureMappings);
     }
+
+    private bool IsParallelizationDisabled(IXunitTestClass testClass,
+        DependencyInjectionTestCollectionRunnerContext ctxt) =>
+        ctxt.ParallelMode == ParallelMode.None ||
+        testClass.Class.GetCustomAttribute<DisableParallelizationAttribute>() is not null ||
+        context.ContextMap.TryGetValue(testClass, out var value) && value is { DisableParallelization: true };
 }
 public class DependencyInjectionTestCollectionRunnerContext(
     DependencyInjectionTestCollection testCollection,
     IReadOnlyCollection<IXunitTestCase> testCases,
     ExplicitOption explicitOption,
     IMessageBus messageBus,
-    ITestCaseOrderer testCaseOrderer,
     ExceptionAggregator aggregator,
     CancellationTokenSource cancellationTokenSource,
+    ParallelMode parallelMode,
+    ExecutionScheduler scheduler,
     FixtureMappingManager assemblyFixtureMappings) :
-    XunitTestCollectionRunnerBaseContext<DependencyInjectionTestCollection, IXunitTestCase>(testCollection, testCases, explicitOption, messageBus, testCaseOrderer, aggregator, cancellationTokenSource, assemblyFixtureMappings)
-{ }
+    XunitTestCollectionRunnerBaseContext<DependencyInjectionTestCollection, IXunitTestClass, IXunitTestCase>(
+        testCollection, testCases, explicitOption, messageBus, aggregator, cancellationTokenSource, parallelMode, scheduler,
+        assemblyFixtureMappings)
+{
+    public override ValueTask<RunSummary> RunTestClass(IXunitTestClass testClass,
+        IReadOnlyCollection<IXunitTestCase> testCases) =>
+        XunitTestClassRunner.Instance.Run(
+            testClass,
+            testCases,
+            ExplicitOption,
+            MessageBus,
+            Aggregator.Clone(),
+            CancellationTokenSource,
+            ParallelMode,
+            Scheduler,
+            CollectionFixtureMappings);
+}
 
 #pragma warning disable CA1711
 public sealed class DependencyInjectionTestCollection(IXunitTestCollection testCollection) : IXunitTestCollection
@@ -225,6 +178,12 @@ public sealed class DependencyInjectionTestCollection(IXunitTestCollection testC
     public IXunitTestAssembly TestAssembly => testCollection.TestAssembly;
 
     public ITestCaseOrderer? TestCaseOrderer => testCollection.TestCaseOrderer;
+
+    public ITestClassOrderer? TestClassOrderer => testCollection.TestClassOrderer;
+
+    public ITestMethodOrderer? TestMethodOrderer => testCollection.TestMethodOrderer;
+
+    ICoreTestAssembly ICoreTestCollection.TestAssembly => TestAssembly;
 
     ITestAssembly ITestCollection.TestAssembly => TestAssembly;
 }

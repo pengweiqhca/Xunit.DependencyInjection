@@ -5,7 +5,7 @@ open Microsoft.Extensions.DependencyInjection
 open Xunit
 open Xunit.DependencyInjection
 
-[<assembly: TestFramework(typeof<DependencyInjectionEnhancedParallelizationTestFramework>)>]
+[<assembly: TestFramework(typeof<DependencyInjectionTestFramework>)>]
 do()
 
 type Dependency1 = {

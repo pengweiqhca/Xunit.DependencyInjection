@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <ParallelizationMode>Enhance</ParallelizationMode>
     <TargetFrameworks Condition="'$(OS)' == 'Windows_NT'">net472;$(TargetFrameworks)</TargetFrameworks>
   </PropertyGroup>
 
@@ -9,12 +8,8 @@
   <Import Project="..\TestPackages.targets" />
 
   <ItemGroup>
-    <AssemblyAttribute Include="Xunit.CollectionBehavior">
-      <_Parameter1>MaxParallelThreads = 2</_Parameter1>
-      <_Parameter1_IsLiteral>true</_Parameter1_IsLiteral>
-    </AssemblyAttribute>
-
     <Using Include="Xunit.Sdk" />
+
     <Compile Include="../Xunit.DependencyInjection.Test/RunMonitorCollectionLastOrderer.cs" />
     <Compile Include="../Xunit.DependencyInjection.Test.DisableTestParallelization/*.cs" />
 

@@ -1,6 +1,6 @@
 ﻿namespace Xunit.DependencyInjection.Test.ClassFixture;
 
-[TestCaseOrderer(typeof(TestCaseByMethodNameOrderer))]
+[TestMethodOrderer(typeof(TestCaseByMethodNameOrderer))]
 public class ClassFixtureTest(FixtureWithDependency fixture) : IClassFixture<FixtureWithDependency>
 {
     [Fact]
