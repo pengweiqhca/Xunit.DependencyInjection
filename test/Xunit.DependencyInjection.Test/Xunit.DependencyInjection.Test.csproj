@@ -23,7 +23,7 @@
 
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Demystifier\Xunit.DependencyInjection.Demystifier.csproj" />
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.FsCheck\Xunit.DependencyInjection.FsCheck.csproj" />
-    <!--<ProjectReference Include="..\..\src\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj" />-->
+    <ProjectReference Include="..\..\src\Xunit.DependencyInjection.StaFact\Xunit.DependencyInjection.StaFact.csproj" />
     <!--<ProjectReference Include="..\..\src\Xunit.DependencyInjection.xRetry\Xunit.DependencyInjection.xRetry.csproj" />-->
     <ProjectReference Include="..\Xunit.DependencyInjection.FakeTest\Xunit.DependencyInjection.FakeTest.csproj" />
     <ProjectReference Include="..\..\src\Xunit.DependencyInjection.Logging\Xunit.DependencyInjection.Logging.csproj" />

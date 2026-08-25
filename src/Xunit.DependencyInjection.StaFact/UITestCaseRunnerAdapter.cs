@@ -10,8 +10,7 @@ public class UITestCaseRunnerAdapter : SimpleXunitTestCaseRunnerWrapper<UITestCa
         ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, string displayName,
         string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments, ParallelMode parallelMode,
         ExecutionScheduler scheduler, FixtureMappingManager methodFixtureMappings) =>
-        ((UITestCase)testCase).Run(explicitOption, messageBus, constructorArguments, aggregator,
-            cancellationTokenSource);
+        ((UITestCase)testCase).Run(explicitOption, messageBus, constructorArguments, aggregator, cancellationTokenSource, parallelMode, scheduler, methodFixtureMappings);
 }
 
 public class UITheoryTestCaseRunnerAdapter : SimpleXunitTestCaseRunnerWrapper<UIDelayEnumeratedTestCase>
@@ -21,5 +20,5 @@ public class UITheoryTestCaseRunnerAdapter : SimpleXunitTestCaseRunnerWrapper<UI
         string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments, ParallelMode parallelMode,
         ExecutionScheduler scheduler, FixtureMappingManager methodFixtureMappings) =>
         ((UIDelayEnumeratedTestCase)testCase).Run(explicitOption, messageBus, constructorArguments, aggregator,
-            cancellationTokenSource);
+            cancellationTokenSource, parallelMode, scheduler, methodFixtureMappings);
 }

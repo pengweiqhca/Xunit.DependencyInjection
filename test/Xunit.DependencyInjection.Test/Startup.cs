@@ -24,7 +24,7 @@ public class Startup
             .AddScoped<BeforeAfterTest, TestBeforeAfterTest>()
             .AddHostedService<HostServiceTest>()
             .AddFsCheckSupport()
-            /*.AddStaFactSupport()*/
+            .AddStaFactSupport()
             .AddSingleton<ITestCollectionOrderer, RunMonitorCollectionLastOrderer>()
             .AddSingleton<ITestClassOrderer, TestClassByOrderOrderer>()
             .AddSingleton<ITestMethodOrderer, TestCaseByMethodNameOrderer>()
