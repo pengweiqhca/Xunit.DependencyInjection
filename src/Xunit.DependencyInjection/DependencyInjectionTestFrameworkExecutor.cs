@@ -94,15 +94,17 @@ public sealed class DependencyInjectionTestAssembly(
     public ITestCollectionOrderer? TestCollectionOrderer =>
         defaultRootServices?.GetService<ITestCollectionOrderer>() ?? testAssembly.TestCollectionOrderer;
 
+    public ITestClassOrderer? TestClassOrderer =>
+        defaultRootServices?.GetService<ITestClassOrderer>() ?? testAssembly.TestClassOrderer;
+
+    public ITestMethodOrderer? TestMethodOrderer =>
+        defaultRootServices?.GetService<ITestMethodOrderer>() ?? testAssembly.TestMethodOrderer;
+
     public int? MaxParallelThreads => testAssembly.MaxParallelThreads;
 
     public ParallelAlgorithm? ParallelAlgorithm => testAssembly.ParallelAlgorithm;
 
     public ParallelMode? ParallelMode => testAssembly.ParallelMode;
-
-    public ITestClassOrderer? TestClassOrderer => testAssembly.TestClassOrderer;
-
-    public ITestMethodOrderer? TestMethodOrderer => testAssembly.TestMethodOrderer;
 
     public Version Version => testAssembly.Version;
 }
