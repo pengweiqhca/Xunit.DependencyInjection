@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using xRetry.v3;
 using Xunit.DependencyInjection.xRetry;
 
 // ReSharper disable once CheckNamespace
@@ -11,8 +12,8 @@ public static class ServiceCollectionExtensions
     {
         public IServiceCollection AddXRetrySupport()
         {
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, RetryTestCaseRunnerWrapper>());
-            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, RetryTheoryDiscoveryAtRuntimeRunnerWrapper>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, RetryTestCaseRunnerWrapper<RetryTestCase>>());
+            services.TryAddEnumerable(ServiceDescriptor.Singleton<IXunitTestCaseRunnerWrapper, RetryTestCaseRunnerWrapper<RetryTheoryDiscoveryAtRuntimeCase>>());
 
             return services;
         }

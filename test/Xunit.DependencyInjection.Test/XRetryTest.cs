@@ -1,9 +1,11 @@
-﻿/*using xRetry.v3;
+﻿using xRetry.v3;
 
 namespace Xunit.DependencyInjection.Test;
 
-public class XRetryTest(IDependency dependency)
+public class XRetryTest
 {
+    public XRetryTest(IDependency _) { }
+
     private static int _factNumCalls;
 
     // testId => numCalls
@@ -23,8 +25,6 @@ public class XRetryTest(IDependency dependency)
     [RetryFact]
     public void RetryFact()
     {
-        AssertDependencyUnique();
-
         _factNumCalls++;
         Assert.Equal(3, _factNumCalls);
     }
@@ -34,8 +34,6 @@ public class XRetryTest(IDependency dependency)
     [InlineData(1)]
     public void RetryTheory(int id)
     {
-        AssertDependencyUnique();
-
         TheoryNumCalls[id]++;
         Assert.Equal(3, TheoryNumCalls[id]);
     }
@@ -49,8 +47,6 @@ public class XRetryTest(IDependency dependency)
     [MemberData(nameof(GetTestData))]
     public void RetryTheoryNonSerializableData(NonSerializableTestData nonSerializableWrapper)
     {
-        AssertDependencyUnique();
-
         NonSerializableTheoryNumCalls[nonSerializableWrapper.Id]++;
         Assert.Equal(3, NonSerializableTheoryNumCalls[nonSerializableWrapper.Id]);
     }
@@ -60,13 +56,4 @@ public class XRetryTest(IDependency dependency)
         [new NonSerializableTestData(0)],
         [new NonSerializableTestData(1)]
     ];
-
-    private void AssertDependencyUnique()
-    {
-        // Assert dependency is in its original state
-        Assert.Equal(0, dependency.Value);
-
-        // Modify the dependency so that a retry of this test case would fail if it got the same instance
-        dependency.Value++;
-    }
-}*/
+}

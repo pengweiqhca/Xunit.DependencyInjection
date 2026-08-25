@@ -6,22 +6,16 @@ using Xunit.v3;
 namespace Xunit.DependencyInjection.xRetry;
 #pragma warning restore IDE1006 // Naming Styles
 
-public class RetryTestCaseRunnerWrapper : DependencyInjectionTestCaseRunnerWrapper
+public class RetryTestCaseRunnerWrapper<T> : SimpleXunitTestCaseRunnerWrapper<T>
+    where T : IRetryableTestCase
 {
     /// <inheritdoc />
-    public override Type TestCaseType => typeof(RetryTestCase);
-
-    /// <inheritdoc />
-    public override ValueTask<RunSummary> RunAsync(DependencyInjectionContext context, IXunitTestCase testCase, IReadOnlyCollection<IXunitTest> tests,
-        IMessageBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource,
-        string displayName, string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments,
-        ParallelMode parallelMode, ExecutionScheduler scheduler, FixtureMappingManager methodFixtureMappings)
-    {
-        if (testCase is not IRetryableTestCase retryableTestCase)
-            throw new ArgumentException("Must be a retryable test case", nameof(testCase));
-
-        return RetryTestCaseRunner.Run(retryableTestCase, messageBus, cancellationTokenSource,
-            _ => base.RunAsync(context, testCase, tests, messageBus, aggregator, cancellationTokenSource, displayName,
-                skipReason, explicitOption, constructorArguments, parallelMode, scheduler, methodFixtureMappings));
-    }
+    protected override ValueTask<RunSummary> RunAsync(IXunitTestCase testCase, IReadOnlyCollection<IXunitTest> tests,
+        IMessageBus messageBus,
+        ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, string displayName,
+        string? skipReason, ExplicitOption explicitOption, object?[] constructorArguments, ParallelMode parallelMode,
+        ExecutionScheduler scheduler, FixtureMappingManager methodFixtureMappings) =>
+        RetryTestCaseRunner.Instance.Run((IRetryableTestCase)testCase, tests, messageBus, aggregator,
+            cancellationTokenSource, displayName, skipReason,
+            explicitOption, constructorArguments, parallelMode, scheduler, methodFixtureMappings);
 }

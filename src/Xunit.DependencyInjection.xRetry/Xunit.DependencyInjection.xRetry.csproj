@@ -8,7 +8,12 @@
 public void ConfigureServices(IServiceCollection services)
 {
     services.AddXRetrySupport();
-}</Description>
+}
+
+Not support:
+1. ITestOutputHelperAccessor.Output is alway null. so, ILogger can't output to xunit output.
+2. Can't inject ITestOutputHelper
+3. [MethodData]</Description>
     <PackageTags>xunit ioc di DependencyInjection test skipping Retry Test-Automation</PackageTags>
     <Version>11.0.0-rc.3</Version>
     <PackageReleaseNotes>$(Description)</PackageReleaseNotes>

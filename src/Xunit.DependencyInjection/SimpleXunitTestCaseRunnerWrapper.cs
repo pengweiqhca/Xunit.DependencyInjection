@@ -13,7 +13,7 @@ public abstract class SimpleXunitTestCaseRunnerWrapper<T> : IXunitTestCaseRunner
         await using var scope = context.RootServices.CreateAsyncScope();
 
         if (FromServicesAttribute.CreateFromServices(testCase.TestMethod.Method).Count > 0)
-            throw new NotSupportedException("Can't inject service via method arguments when use StaFact");
+            throw new NotSupportedException("Can't inject service via method arguments when use StaFact or Retry");
 
         context.RootServices.GetRequiredService<DependencyInjectionTypeActivator>().Services = scope.ServiceProvider;
 

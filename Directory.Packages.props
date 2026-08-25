@@ -23,7 +23,7 @@
     <PackageVersion Include="System.Diagnostics.DiagnosticSource" Version="9.0.0" />
     <PackageVersion Include="System.Threading.Tasks.Extensions" Version="4.*" />
     <PackageVersion Include="System.ValueTuple" Version="4.*" />
-    <PackageVersion Include="xRetry.v3" Version="1.0.0-rc3" />
+    <PackageVersion Include="xRetry.v3" Version="1.0.0" />
     <PackageVersion Include="Xunit.StaFact" Version="4.0.23" />
     <PackageVersion Include="xunit.v3.extensibility.core" Version="$(XunitVersion)" />
     <PackageVersion Include="xunit.v3" Version="$(XunitVersion)" />
